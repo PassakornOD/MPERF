@@ -1,0 +1,39 @@
+
+services:
+  mperf-db:
+    image: mysql:8.0
+    container_name: mperf-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: sarlog
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Initialize database with provided SQL files in specific order
+      - ../sarlog.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ../data_user_hg_hn.sql:/docker-entrypoint-initdb.d/02-data_users.sql
+      - ../data_bss.sql:/docker-entrypoint-initdb.d/03-data_bss.sql
+      - ../data_tux.sql:/docker-entrypoint-initdb.d/04-data_tux.sql
+
+  mperf-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mperf-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=mysql://root:password@mperf-db:3306/sarlog
+      - NEXTAUTH_SECRET=y0ur_sup3r_s3cr3t_s3ssi0n_k3y
+      - NEXTAUTH_URL=http://localhost:3000
+    depends_on:
+      - mperf-db
+    volumes:
+      - ./data_RedHat:/app/data_RedHat
+      - ./data_Solaris:/app/data_Solaris
+
+volumes:
+  mysql_data:
