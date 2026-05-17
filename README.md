@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MPERF Deployment
 
-## Getting Started
+This guide explains how to build and deploy the MPERF application using Docker.
 
-First, run the development server:
+## Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) installed on your machine.
+- Access to the MySQL database server containing the `sarlog` database.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Configuration
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Before building the images, you must configure your environment variables.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+2. Edit the `.env` file and update the following variables with your actual database credentials:
+   ```env
+   DB_HOST=your-db-host
+   DB_USER=your-db-user
+   DB_PASSWORD=your-db-password
+   DB_NAME=sarlog
+   ```
 
-## Learn More
+## Building and Running
 
-To learn more about Next.js, take a look at the following resources:
+The application uses `docker-compose` to manage the service.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Start the application:**
+   To build and start the application in detached mode, run:
+   ```bash
+   docker-compose up -d --build
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Access the application:**
+   Once running, the application will be accessible at `http://localhost:3000`.
 
-## Deploy on Vercel
+## Common Commands
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Stop the application:**
+  ```bash
+  docker-compose down
+  ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **View logs:**
+  ```bash
+  docker-compose logs -f app
+  ```
+
+- **Restart the application (after code changes):**
+  ```bash
+  docker-compose restart app
+  ```
+
+## Troubleshooting
+
+- **Database Connection:** If the application fails to start, ensure the `DB_HOST` is reachable from the container. If your DB is on the host machine, you may need to use `host.docker.internal` as the `DB_HOST`.
+- **Logs:** Always check the logs if you experience unexpected behavior: `docker-compose logs -f app`.
