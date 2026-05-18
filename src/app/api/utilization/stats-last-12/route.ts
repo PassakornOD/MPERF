@@ -19,8 +19,9 @@ export async function GET(req: NextRequest) {
     const tableName = `${hostgroup}:${type}`;
     
     // Construct temporal boundaries based on target month/year
+    // If target month/year provided, we want to INCLUDE that month as the most recent
     const refDate = (targetMonth && targetYear) 
-      ? `'${targetYear}-${targetMonth.padStart(2, '0')}-01'` 
+      ? `DATE_ADD('${targetYear}-${targetMonth.padStart(2, '0')}-01', INTERVAL 1 MONTH)` 
       : 'NOW()';
 
     let query;

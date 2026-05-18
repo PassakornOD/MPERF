@@ -12,5 +12,5 @@ export default withAuth({
 
 export const config = {
   // Allow access to login, auth APIs, static assets, and the logo folder without authentication
-  matcher: ["/((?!login|api/auth|_next/static|_next/image|favicon.ico|logo).*)"],
+  matcher: ["/((?!login|api/auth|api/export-pdf|_next/static|_next/image|favicon.ico|logo).*)"],
 };

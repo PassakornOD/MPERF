@@ -1,4 +1,3 @@
-
 services:
   mperf-db:
     image: mysql:8.0
@@ -11,7 +10,6 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      # Initialize database with provided SQL files in specific order
       - ../sarlog.sql:/docker-entrypoint-initdb.d/01-schema.sql
       - ../data_user_hg_hn.sql:/docker-entrypoint-initdb.d/02-data_users.sql
       - ../data_bss.sql:/docker-entrypoint-initdb.d/03-data_bss.sql

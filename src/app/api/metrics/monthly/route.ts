@@ -10,7 +10,8 @@ export async function GET(req: NextRequest) {
   const hostnameId = searchParams.get('hostnameId');
   const month = searchParams.get('month');
   const year = searchParams.get('year');
-  const isMem = req.nextUrl.pathname.includes('mem');
+  const typeParam = searchParams.get('type');
+  const isMem = req.nextUrl.pathname.includes('mem') || typeParam === 'r';
   const type = isMem ? 'r' : 'u';
 
   if (!hostgroup || !hostnameId || !month || !year) {

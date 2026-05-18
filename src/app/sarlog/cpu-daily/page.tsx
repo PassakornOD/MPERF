@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
@@ -19,6 +19,8 @@ const CpuDailyPage = () => {
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [selectedHostnameId, setSelectedHostnameId] = useState<string>('');
   const [type, setType] = useState<'Peak' | 'Normal' | 'Average'>('Normal');
+  const chartRef = useRef<any>(null);
+  const [isExporting, setIsExporting] = useState(false);
   
   const getPrevMonthDates = () => {
     const now = new Date();
@@ -55,6 +57,49 @@ const CpuDailyPage = () => {
   });
 
   const getHostnameLabel = () => hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.find(h => String(h.hostname_id) === selectedHostnameId)?.hostname || selectedHostnameId;
+
+  const handleExport = async () => {
+    if (!chartRef.current) return;
+    setIsExporting(true);
+    try {
+      // Use chartOptions to override title and subtitle during SVG generation
+      const svg = chartRef.current.getSVG({
+          chart: { backgroundColor: '#ffffff' },
+          title: { text: `Sar ${startDate} To ${endDate}` },
+          subtitle: { text: `Hostname : ${getHostnameLabel()} Type : ${type}` }
+      });
+      const hostname = getHostnameLabel();
+      const group = selectedGroup;
+
+      const payload = {
+        reportMonth: `${startDate} to ${endDate}`,
+        generatedDate: new Date().toLocaleDateString(),
+        hostgroups: [{
+          name: group,
+          hosts: [{
+            name: hostname,
+            cpuStats: [],
+            memStats: [],
+            charts: [{ label: `CPU Daily (${type})`, data: svg }]
+          }]
+        }]
+      };
+
+      const res = await axios.post('/api/export-pdf', payload, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `CPU_Daily_${hostname}_${startDate}_${endDate}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (e) {
+      console.error('Export failed:', e);
+      alert('PDF Export failed.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const getChartOptions = (): Highcharts.Options => {
     if (!metrics || metrics.length === 0) return { title: { text: 'No Data Found' } };
@@ -158,9 +203,17 @@ const CpuDailyPage = () => {
         <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 h-[30px]" disabled={!selectedGroup || !selectedHostnameId}>Query</button>
       </div>
 
+      <div className="flex justify-end mb-4">
+        {metrics && metrics.length > 0 && (
+            <button onClick={handleExport} className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700" disabled={isExporting}>
+                {isExporting ? 'Exporting...' : 'Export PDF'}
+            </button>
+        )}
+      </div>
+
       <div id="container" className="min-h-[435px]">
         {isFetching ? <div className="text-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div><p className="mt-4 text-gray-500">Loading...</p></div> : queryEnabled ? (
-          metrics && metrics.length > 0 ? <SarChart options={getChartOptions()} /> : <div className="text-center py-20 bg-gray-50 rounded">No records found.</div>
+          metrics && metrics.length > 0 ? <SarChart ref={chartRef} options={getChartOptions()} /> : <div className="text-center py-20 bg-gray-50 rounded">No records found.</div>
         ) : <div className="text-gray-400 italic text-center">Please select filters and click Query.</div>}
       </div>
     </Block>

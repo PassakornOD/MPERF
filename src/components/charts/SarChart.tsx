@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
@@ -45,9 +45,15 @@ interface SarChartProps {
   options: Highcharts.Options;
 }
 
-const SarChart: React.FC<SarChartProps> = ({ options }) => {
+const SarChart = forwardRef(({ options }: SarChartProps, ref) => {
   const [isClient, setIsClient] = useState(false);
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
+
+  useImperativeHandle(ref, () => ({
+    getSVG: () => {
+      return (chartComponentRef.current?.chart as any)?.getSVG();
+    }
+  }));
 
   useEffect(() => {
     setIsClient(true);
@@ -57,9 +63,8 @@ const SarChart: React.FC<SarChartProps> = ({ options }) => {
     return <div className="w-full h-[435px] bg-gray-50 animate-pulse flex items-center justify-center border border-gray-100 rounded text-gray-400">Loading Chart Components...</div>;
   }
 
-  // Inject the instance into a data attribute or global context for PDF export access
   return (
-    <div className="w-full h-[435px]" data-chart-ref={options.chart?.renderTo}>
+    <div className="w-full h-[435px]">
       <HighchartsReact
         highcharts={Highcharts}
         options={options}
@@ -67,6 +72,7 @@ const SarChart: React.FC<SarChartProps> = ({ options }) => {
       />
     </div>
   );
-};
+});
 
+SarChart.displayName = 'SarChart';
 export default SarChart;

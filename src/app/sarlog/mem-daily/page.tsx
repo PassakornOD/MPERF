@@ -7,7 +7,7 @@ import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-const SarChart = dynamic(() => import('@/components/charts/SarChart'), { 
+const SarChart = dynamic(() => import('@/components/charts/SarChart'), {
   ssr: false,
   loading: () => <div className="w-full h-[435px] bg-gray-50 animate-pulse flex items-center justify-center">Loading Chart...</div>
 });
@@ -27,16 +27,16 @@ const MemDailyPage = () => {
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [selectedHostnameId, setSelectedHostnameId] = useState<string>('');
   const [type, setType] = useState<'Peak' | 'Normal'>('Normal');
-  
+
   const getPrevMonthDates = () => {
     const now = new Date();
     const firstDay = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const lastDay = new Date(now.getFullYear(), now.getMonth(), 0);
     const format = (d: Date) => {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${y}-${m}-${day}`;
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
     };
     return { start: format(firstDay), end: format(lastDay) };
   };
@@ -69,14 +69,17 @@ const MemDailyPage = () => {
     const totalAvg = response?.totalAvg || 0;
 
     if (!metrics || metrics.length === 0) return { title: { text: 'No Data Found' } };
-    
+
     const hostnameInfo = hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.find(h => String(h.hostname_id) === selectedHostnameId);
     const totalMem = (hostnameInfo as any)?.mem || 16;
 
     const categories = metrics.map((m: any) => {
-        const d = new Date(m.time);
-        if (type === 'Peak') return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-        return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
+      const d = new Date(m.time);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const time = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day} ${time}`;
     });
 
     const tickInterval = type === 'Normal' ? Math.max(1, Math.floor(metrics.length / 20)) : 1;
@@ -85,7 +88,7 @@ const MemDailyPage = () => {
       chart: { shadow: false },
       title: { text: `Sar ${startDate} To ${endDate}` },
       subtitle: { text: `Hostname : ${getHostnameLabel()} Type : ${type}` },
-      xAxis: { 
+      xAxis: {
         categories,
         tickInterval,
         labels: { rotation: -45, align: 'right', style: { font: 'normal 10px Verdana, sans-serif' } }
@@ -94,11 +97,13 @@ const MemDailyPage = () => {
         title: { text: `Memory (${totalMem} GB)` },
         min: 0,
         max: totalMem,
+        maxPadding: 0.2,
+        endOnTick: false,
         labels: {
-          formatter: function() {
+          formatter: function () {
             const val = (this as any).value as number;
             const percent = (val * 100 / totalMem).toFixed(2);
-            return val + ' GB (' + percent + '%)';
+            return val + ' GB ';
           }
         }
       },
@@ -110,23 +115,30 @@ const MemDailyPage = () => {
 
     if (type === 'Normal') {
       options.chart.type = 'area';
+      options.plotOptions.area = {
+        stacking: undefined,
+        lineColor: '#000000',
+        lineWidth: 0.5,
+        shadow: false,
+        marker: { enabled: false }
+      };
       options.yAxis.plotLines = [{
-          value: totalMem,
-          color: 'white',
-          dashStyle: 'Dash',
-          width: 2,
-          label: {
-              text: `AVG Memory Usage = ${totalAvg.toFixed(2)} GB = ${((totalAvg / totalMem) * 100).toFixed(2)} %`,
-              y: 15,
-              style: { color: '#CC0000' },
-              align: 'right'
-          }
+        value: totalMem,
+        color: 'white',
+        dashStyle: 'Dash',
+        width: 2,
+        label: {
+          text: `AVG Memory Usage = ${totalAvg.toFixed(2)} GB = ${((totalAvg / totalMem) * 100).toFixed(2)} %`,
+          y: 15,
+          style: { color: '#CC0000' },
+          align: 'right'
+        }
       }];
       options.series = [{
-          name: 'mem usage',
-          data: metrics.map((m: any) => m.mem || 0),
-          color: "#AA4643",
-          type: 'area'
+        name: 'mem usage',
+        data: metrics.map((m: any) => Number(m.mem) || 0),
+        color: "#AA4643",
+        type: 'area'
       }];
     } else {
       options.series = [
@@ -134,7 +146,6 @@ const MemDailyPage = () => {
         { name: 'mem avg', data: metrics.map((m: any) => m.avg_mem || 0), color: "#AA4643", type: 'area' }
       ];
     }
-
     return options;
   };
 
