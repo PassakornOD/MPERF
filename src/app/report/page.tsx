@@ -3,18 +3,14 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Block from '@/components/common/Block';
+import Modal from '@/components/common/Modal';
 import dynamic from 'next/dynamic';
 import { 
-  FileDown, 
-  Download, 
-  CheckCircle2, 
-  List, 
   ChevronDown, 
-  ChevronUp, 
-  Square, 
   FileText,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  Loader2
 } from 'lucide-react';
 import { ReportPayload } from '@/types/report';
 
@@ -24,60 +20,6 @@ const SarChart = dynamic(() => import('@/components/charts/SarChart'), {
   ssr: false,
   loading: () => <div className="w-full h-64 bg-gray-50 flex items-center justify-center animate-pulse border border-dashed rounded-lg text-xs text-gray-400">Loading Chart Engine...</div>
 });
-
-const ReportGroupStat = ({ group, type, month, year }: any) => {
-  const { data: metrics, isFetching } = useQuery({
-    queryKey: ['report-group-stat', group.name, type, month, year],
-    queryFn: async () => (await axios.get('/api/utilization/stats-last-12', { params: { hostgroup: group.name, month, year }, headers: { 'x-type': type } })).data
-  });
-
-  const months: Array<{ label: string; month: number; year: number }> = [];
-  const targetDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-  for (let i = 0; i < 12; i++) {
-    const d = new Date(targetDate.getFullYear(), targetDate.getMonth() - i, 1);
-    months.push({
-      label: d.toLocaleString('en-US', { month: 'short' }) + String(d.getFullYear()).slice(-2),
-      month: d.getMonth() + 1,
-      year: d.getFullYear()
-    });
-  }
-
-  const hostnames = group.hosts.map((h: any) => h.name);
-
-  if (isFetching) return <div className="h-32 flex items-center justify-center text-gray-400 text-xs animate-pulse italic">Loading {type.toUpperCase()} statistical matrices...</div>;
-
-  return (
-    <table className="w-full text-sm text-left border-collapse" id={`table-${group.name}-${type}`}>
-      <thead>
-        <tr className="bg-slate-50 border-b border-gray-200 text-gray-600 uppercase text-[10px] font-bold tracking-widest">
-          <th className="px-4 py-4 whitespace-nowrap">Hostname</th>
-          {months.map(m => <th key={m.label} className="px-2 py-4 text-center">{m.label}</th>)}
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-gray-100 text-gray-700">
-        {hostnames.map((hn: any) => (
-          <tr key={hn} className="hover:bg-blue-50/30 transition-colors">
-            <td className="px-4 py-4 font-bold text-gray-900 text-[11px] whitespace-nowrap">{hn}</td>
-            {months.map(m => {
-              const val = metrics?.find((s: any) => s.hostname === hn && s.month === m.month && s.year === m.year);
-
-              let displayVal = '-';
-              let colorClass = 'text-gray-400';
-              if (val) {
-                const numericVal = type === 'cpu' ? (100 - Number(val.avg_idle)) : Number(val.val);
-                if (!isNaN(numericVal)) {
-                  displayVal = numericVal.toFixed(2);
-                  colorClass = numericVal > 80 ? 'text-red-600 font-bold' : numericVal > 60 ? 'text-orange-600' : 'text-gray-700';
-                }
-              }
-              return <td key={m.label} className={`px-2 py-4 text-center text-[10px] ${colorClass}`}>{displayVal}</td>
-            })}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-};
 
 const ReportContentItem = ({ type, mode, host, startDate, endDate, month, year, itemLabel }: any) => {
   const { data: metrics, isFetching } = useQuery({
@@ -92,7 +34,7 @@ const ReportContentItem = ({ type, mode, host, startDate, endDate, month, year, 
 
   if (isFetching) return (
     <div className="h-64 flex flex-col items-center justify-center text-gray-400 gap-4 animate-pulse">
-      <div className="w-12 h-12 border-4 border-blue-100 border-t-blue-500 rounded-full animate-spin"></div>
+      <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
       <span className="text-[10px] font-bold uppercase tracking-widest">Aggregating {host.name} Data...</span>
     </div>
   );
@@ -252,7 +194,7 @@ const ReportExportPage = () => {
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [selectedHostnames, setSelectedHostnames] = useState<{ id: string, name: string, group: string, mem?: number }[]>([]);
   const [isExporting, setIsFetchingPDF] = useState(false);
-  const [queryEnabled, setQueryEnabled] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   const getPrevMonthDates = () => {
     const now = new Date();
@@ -365,8 +307,8 @@ const ReportExportPage = () => {
     setActiveReports(newReports);
   };
 
-  const handleExportPDF = async () => {
-    if (isExporting) return;
+  const handlePreviewPDF = async () => {
+    if (isExporting || selectedHostnames.length === 0) return;
     setIsFetchingPDF(true);
 
     const getChartSVG = (id: string) => {
@@ -424,18 +366,23 @@ const ReportExportPage = () => {
 
       const response = await axios.post('/api/export-pdf', payload, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `MFEC_Report_${Date.now()}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      setPdfUrl(url);
     } catch (e) {
       console.error(e);
-      alert("PDF Export failed");
+      alert("PDF Preview failed");
     } finally {
       setIsFetchingPDF(false);
     }
+  };
+
+  const handleDownloadPDF = () => {
+    if (!pdfUrl) return;
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.setAttribute('download', `MFEC_Report_${Date.now()}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   };
 
   return (
@@ -521,32 +468,19 @@ const ReportExportPage = () => {
         </div>
       </div>
 
-      <div className="flex gap-4 justify-center border-t pt-6">
-         <button onClick={() => setQueryEnabled(true)} className="bg-blue-600 text-white px-8 py-3 rounded font-bold hover:bg-blue-700">Preview</button>
-         <button onClick={handleExportPDF} disabled={!queryEnabled || isExporting} className={`px-8 py-3 rounded font-bold ${!queryEnabled || isExporting ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'} text-white`}>
-            {isExporting ? 'Exporting...' : 'Export PDF'}
+      <div className="flex gap-4 justify-center pt-6">
+         <button 
+           onClick={handlePreviewPDF} 
+           disabled={isExporting || selectedHostnames.length === 0} 
+           className={`px-8 py-3 rounded font-bold ${isExporting || selectedHostnames.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
+         >
+            {isExporting ? 'Generating...' : 'Preview PDF'}
          </button>
       </div>
 
-      {queryEnabled && (
-        <div id="preview-section" className="mt-10 border-t pt-10">
-          {structuredData.map(group => (
-            <div key={group.name} className="mt-6">
-              <h2 className="text-xl font-bold mb-4">{group.name}</h2>
-              {group.hosts.map((host: any) => (
-                <div key={host.id} className="mt-4">
-                  <h3 className="font-bold text-lg">{host.name}</h3>
-                  {selectedReportsList.map(item => (
-                    <div key={item.id} id={`host-item-${host.id}-${item.id}`} className="mt-2">
-                      <ReportContentItem type={item.type} mode={item.mode} host={host} startDate={startDate} endDate={endDate} month={month} year={year} itemLabel={item.label} />
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      )}
+      <Modal isOpen={!!pdfUrl} onClose={() => setPdfUrl(null)} title="PDF Preview" onDownload={handleDownloadPDF}>
+          {pdfUrl && <iframe src={pdfUrl} className="w-full h-full" title="PDF Preview" />}
+      </Modal>
     </Block>
   );
 };
