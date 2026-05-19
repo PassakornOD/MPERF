@@ -7,6 +7,10 @@ import path from 'path';
 const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = {}, logoBase64: string = '', totalLogicalPages: number = 0): string => {
   const months = Array.from({ length: 12 }, (_, i) => {
     const d = new Date();
+    if (payload.targetYear && payload.targetMonth) {
+      // Set to 1st of the month AFTER the target month to match stats-last-12 logic
+      d.setFullYear(payload.targetYear, payload.targetMonth, 1);
+    }
     d.setMonth(d.getMonth() - 1 - i);
     return {
       label: d.toLocaleString('en-US', { month: 'short' }) + String(d.getFullYear()).slice(-2),
@@ -39,7 +43,7 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
           .page-break { 
             page-break-after: always; 
             position: relative; 
-            min-height: calc(297mm - 30mm); /* Exact A4 height minus top/bottom margins */
+            min-height: 267mm; /* Optimized for A4 content area with 15mm margins */
             display: flex;
             flex-direction: column;
           }
@@ -64,21 +68,21 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
           .toc-hostname .dots { flex: 1; border-bottom: 1px dotted #ccc; margin: 0 10px; }
 
           /* Content */
-          .header { display: flex; justify-content: space-between; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 20px; font-size: 8pt; }
-          .section-title { font-size: 14pt; font-weight: bold; margin-bottom: 15px; }
+          .header { display: flex; justify-content: space-between; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 10px; font-size: 8pt; }
+          .section-title { font-size: 14pt; font-weight: bold; margin-bottom: 10px; }
           h3 { font-size: 14pt; font-weight: bold; margin: 10px 0; }
           .section-divider { font-size: 32pt; font-weight: bold; text-align: center; justify-content: center; align-items: center; }
           .content-indent { padding-left: 40px; }
           table { width: 100%; border-collapse: collapse; margin: 15px 0; }
           th, td { border: 1px solid #000; padding: 4px; text-align: center; font-size: 8pt; }
           th { background: #f0f0f0; }
-          .chart-container { height: 113mm; margin: 5px 0; display: flex; align-items: center; justify-content: center; }
+          .chart-container { height: 110mm; margin: 2px 0; display: flex; align-items: center; justify-content: center; }
           img { max-width: 100%; max-height: 100%; object-fit: contain; }
           
           .footer-spacer { height: 5mm; }
           .footer {
             position: absolute;
-            bottom: -15mm;
+            bottom: -12mm;
             width: 100%;
             text-align: center;
             font-size: 8pt;
@@ -139,28 +143,28 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
               <table>
                   <thead><tr><th>Hostname</th>${months.map(m => `<th>${m.label}</th>`).join('')}</tr></thead>
                   <tbody>${g.hosts.map(h => `<tr><td style="text-align:left;">${h.name}</td>${months.map(m => {
-    const stat = h.cpuStats.find(s => s.month === m.month && s.year === m.year);
-    return `<td>${stat ? stat.value : '-'}</td>`;
-  }).join('')}</tr>`).join('')}</tbody>
+                    const stat = (h.cpuStats || []).find(s => s.month === m.month && s.year === m.year);
+                    return `<td>${stat ? stat.value : '-'}</td>`;
+                  }).join('')}</tr>`).join('')}</tbody>
               </table>
               <div style="height: 20px;"></div>
               <h3>Memory Utilization (Last 12 months)</h3>
               <table>
                   <thead><tr><th>Hostname</th>${months.map(m => `<th>${m.label}</th>`).join('')}</tr></thead>
                   <tbody>${g.hosts.map(h => `<tr><td style="text-align:left;">${h.name}</td>${months.map(m => {
-    const stat = h.memStats.find(s => s.month === m.month && s.year === m.year);
-    return `<td>${stat ? stat.value : '-'}</td>`;
-  }).join('')}</tr>`).join('')}</tbody>
+                    const stat = (h.memStats || []).find(s => s.month === m.month && s.year === m.year);
+                    return `<td>${stat ? stat.value : '-'}</td>`;
+                  }).join('')}</tr>`).join('')}</tbody>
               </table>
             </div>
             ${getFooter(`group-stats-${gi}`)}
           </div>
 
           ${g.hosts.map((h, hi) => {
-    const chartPairs: any[][] = [];
-    for (let i = 0; i < h.charts.length; i += 2) {
-      chartPairs.push(h.charts.slice(i, i + 2));
-    }
+            const chartPairs: any[][] = [];
+            for (let i = 0; i < (h.charts || []).length; i += 2) {
+              chartPairs.push(h.charts.slice(i, i + 2));
+            }
 
     return chartPairs.map((pair, pi) => {
       const pageId = `host-${gi}-${hi}${pi === 0 ? '' : '-p' + pi}`;
@@ -223,8 +227,16 @@ export async function POST(req: NextRequest) {
     }
 
     browser = await puppeteer.launch({
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: [
+        '--no-sandbox', 
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--no-zygote',
+        '--single-process'
+      ]
     });
 
     console.log('Starting Pass 1 (Mock Render)');

@@ -49,8 +49,8 @@ const MemMonthlyPage = () => {
   const { data: metrics, isFetching, refetch } = useQuery({
     queryKey: ['memMonthly', selectedGroup, selectedHostnameId, month, year],
     queryFn: async () => {
-      const res = await axios.get('/api/metrics/monthly/mem', {
-        params: { hostgroup: selectedGroup, hostnameId: selectedHostnameId, month, year }
+      const res = await axios.get('/api/metrics/monthly', {
+        params: { hostgroup: selectedGroup, hostnameId: selectedHostnameId, month, year, type: 'r' }
       });
       return res.data;
     },

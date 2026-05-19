@@ -1,5 +1,5 @@
-const pool = require('../src/lib/db').default;
-const crypto = require('crypto');
+import pool from '../src/lib/db';
+import crypto from 'crypto';
 
 async function createDefaultAdmin() {
   const username = 'mfadmin';
@@ -10,10 +10,10 @@ async function createDefaultAdmin() {
   const hashedPassword = crypto.createHash('sha1').update(password).digest('hex');
 
   try {
-    const [existing]: any = await pool.query('SELECT * FROM user WHERE username = ?', [username]);
+    const [existing]: any = await (pool as any).query('SELECT * FROM user WHERE username = ?', [username]);
     
     if (existing.length === 0) {
-      await pool.query(
+      await (pool as any).query(
         'INSERT INTO user (username, password, role) VALUES (?, ?, ?)',
         [username, hashedPassword, role]
       );

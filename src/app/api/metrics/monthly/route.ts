@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getAllowedHostgroups } from '@/lib/rbac';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,19 +21,6 @@ export async function GET(req: NextRequest) {
 
   if (!hostgroup || !hostnameId || !month || !year) {
     return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
-  }
-
-  // RBAC Check
-  const userRole = (session.user as any).role;
-  const allowedGroups = await getAllowedHostgroups(userRole);
-  
-  // Find hostgroup ID to verify access (Assuming a quick lookup or passed as param)
-  const [hg]: any = await pool.query('SELECT hostgroup_id FROM hostgroup WHERE hostgroup = ?', [hostgroup]);
-  if (hg.length > 0) {
-      const hgId = hg[0].hostgroup_id;
-      if (userRole !== 'admin' && !allowedGroups.includes(hgId)) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-      }
   }
 
   try {
