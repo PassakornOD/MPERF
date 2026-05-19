@@ -11,7 +11,8 @@ import {
   Database, 
   Package, 
   FileBarChart, 
-  HelpCircle 
+  HelpCircle,
+  Settings
 } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useState, useRef, useEffect } from 'react';
@@ -23,6 +24,7 @@ const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const navbarRef = useRef<HTMLDivElement>(null);
+  const userRole = (session?.user as any)?.role;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -55,16 +57,15 @@ const Navbar = () => {
         { href: '/report', label: 'Export PDF' },
     ]},
     { name: 'FAQ', href: '/faq', icon: HelpCircle },
+    ...(userRole === 'admin' ? [{ name: 'Admin', icon: Settings, subItems: [
+        { href: '/admin/roles', label: 'Manage Roles' },
+        { href: '/admin/users', label: 'Manage Users' },
+    ]}] : []),
   ];
 
   const toggleDropdown = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name);
     setUserMenuOpen(false);
-  };
-
-  const toggleUserMenu = () => {
-    setUserMenuOpen(!userMenuOpen);
-    setOpenDropdown(null);
   };
 
   return (

@@ -1,10 +1,16 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getAllowedHostgroups } from '@/lib/rbac';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   const { searchParams } = new URL(req.url);
   const hostgroup = searchParams.get('hostgroup');
   const hostnameId = searchParams.get('hostnameId');
@@ -18,13 +24,23 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
   }
 
+  // RBAC Check
+  const userRole = (session.user as any).role;
+  const allowedGroups = await getAllowedHostgroups(userRole);
+  
+  // Find hostgroup ID to verify access (Assuming a quick lookup or passed as param)
+  const [hg]: any = await pool.query('SELECT hostgroup_id FROM hostgroup WHERE hostgroup = ?', [hostgroup]);
+  if (hg.length > 0) {
+      const hgId = hg[0].hostgroup_id;
+      if (userRole !== 'admin' && !allowedGroups.includes(hgId)) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
+  }
+
   try {
     const tableName = `${hostgroup}:${type}`;
-    
-    // CPU: return idle to calculate 100-idle later, or mem for RAM
     const valCol = type === 'u' ? 'idle' : 'mem';
     
-    // PHP Logic mirrors: Fetch all points with time labels
     const query = `SELECT TIME_FORMAT(time,'%H:%i') as time_label, DAY(time) as day, ${valCol} as val 
                    FROM \`${tableName}\` 
                    WHERE hostname_id = ? AND MONTH(time) = ? AND YEAR(time) = ? 
