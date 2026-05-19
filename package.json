@@ -13,6 +13,7 @@
     "axios": "^1.16.1",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
+    "framer-motion": "^12.39.0",
     "highcharts": "^12.6.0",
     "highcharts-react-official": "^3.2.3",
     "html2canvas": "^1.4.1",
@@ -20,11 +21,11 @@
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^1.16.0",
     "mysql2": "^3.22.3",
-    "next": "16.2.6",
+    "next": "^16.2.6",
     "next-auth": "^4.24.14",
     "puppeteer": "^25.0.2",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -34,7 +35,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.6",
+    "eslint-config-next": "^16.2.6",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
