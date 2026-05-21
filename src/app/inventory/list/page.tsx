@@ -1,8 +1,6 @@
-
 'use client';
 
 import React from 'react';
-import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -12,7 +10,6 @@ const InventoryList = () => {
     queryFn: async () => (await axios.get('/api/inventory/list')).data
   });
 
-  // Group items by hostgroup_id
   const groupedInventory = items?.reduce((acc: any, item: any) => {
     const groupId = item.hostgroup_id || '0';
     const groupName = item.hostgroup || 'Uncategorized';
@@ -25,7 +22,8 @@ const InventoryList = () => {
   }, {});
 
   return (
-    <Block title="Server Inventory" tabs={['List']}>
+    <>
+      <h2 className="text-xl font-black text-gray-800 mb-6">Server Inventory List</h2>
       <div className="overflow-x-auto">
         {isFetching ? (
           <div className="text-center py-10">Loading...</div>
@@ -69,7 +67,7 @@ const InventoryList = () => {
           ))
         )}
       </div>
-    </Block>
+    </>
   );
 };
 

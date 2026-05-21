@@ -1,10 +1,16 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user as any;
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   const { searchParams } = new URL(req.url);
   const hostgroup = searchParams.get('hostgroup');
   const type = req.headers.get('x-type') === 'mem' ? 'r' : 'u';
@@ -15,18 +21,27 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Missing hostgroup' }, { status: 400 });
   }
 
+  // Auth check: verify if the user can access this specific hostgroup via the unified chain
+  if (user.role !== 'admin') {
+    const [access]: any = await pool.query(`
+        SELECT 1 FROM user_to_user_groups uug 
+        JOIN ug_permission_groups upg ON uug.ug_id = upg.ug_id 
+        JOIN pg_hostgroups pgh ON upg.pg_id = pgh.pg_id 
+        JOIN hostgroup hg ON pgh.hostgroup_id = hg.hostgroup_id 
+        WHERE uug.user_id = ? AND hg.hostgroup = ?`,
+        [user.id, hostgroup]
+    );
+    if (access.length === 0) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   try {
     const tableName = `${hostgroup}:${type}`;
-    
-    // Construct temporal boundaries based on target month/year
-    // If target month/year provided, we want to INCLUDE that month as the most recent
     const refDate = (targetMonth && targetYear) 
       ? `DATE_ADD('${targetYear}-${targetMonth.padStart(2, '0')}-01', INTERVAL 1 MONTH)` 
       : 'NOW()';
 
     let query;
     if (type === 'u') {
-        // CPU utilization as per legacy: 100 - idle
         query = `SELECT h.hostname, MONTH(t.time) as month, YEAR(t.time) as year, 
                         AVG(t.usr) as avg_usr, AVG(t.sys) as avg_sys, AVG(t.wio) as avg_wio, AVG(t.idle) as avg_idle
                  FROM \`${tableName}\` t 
@@ -36,7 +51,6 @@ export async function GET(req: NextRequest) {
                  GROUP BY h.hostname, YEAR(t.time), MONTH(t.time) 
                  ORDER BY h.hostname, YEAR(t.time), MONTH(t.time)`;
     } else {
-        // Memory utilization: mem column
         query = `SELECT h.hostname, MONTH(t.time) as month, YEAR(t.time) as year, AVG(t.mem) as val 
                  FROM \`${tableName}\` t 
                  JOIN hostname h ON t.hostname_id = h.hostname_id 

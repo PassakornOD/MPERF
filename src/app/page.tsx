@@ -7,13 +7,20 @@ import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { LayoutDashboard, BarChart3, Database, Package } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 export default function Dashboard() {
+  const { data: session } = useSession();
+  const user = session?.user as any;
   const [selectedGroupIds, setSelectedGroupIds] = useState<number[]>([]);
 
   const { data: hostGroups } = useQuery({
-    queryKey: ['hostGroups'],
-    queryFn: async () => (await axios.get('/api/host-groups')).data
+    queryKey: ['hostGroups', user?.id],
+    queryFn: async () => {
+        if (!user) return [];
+        return (await axios.get('/api/host-groups')).data;
+    },
+    enabled: !!user
   });
 
   const toggleGroup = (id: number) => {

@@ -56,8 +56,7 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
   };
 
   return (
-    <Block title={`${type} Utilization Stat (Last 12 Months)`} tabs={['Per Month']}>
-      <div className="bg-gray-100 p-4 rounded-md mb-8 flex flex-wrap gap-4 items-end justify-center">
+    <Block title={`${type} Utilization Stat (Last 12 Months)`}>      <div className="bg-gray-100 p-4 rounded-md mb-8 flex flex-wrap gap-4 items-end justify-center">
         <div>
           <label className="block text-xs text-gray-500 mb-1">Hostgroup</label>
           <select className="border border-gray-300 rounded px-2 py-1 text-sm min-w-[150px]" value={hostgroup} onChange={(e) => setHostgroup(e.target.value)}>

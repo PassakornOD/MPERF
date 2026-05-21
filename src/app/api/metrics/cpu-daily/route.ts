@@ -8,13 +8,11 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
-
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const user = session?.user as any;
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { searchParams } = new URL(req.url);
-  const hostgroup = searchParams.get('hostgroup');
+  const hostgroup = searchParams.get('hostgroup') || '';
   const hostnameId = searchParams.get('hostnameId');
   const type = searchParams.get('type') as 'Peak' | 'Normal' | 'Average';
   const startDate = searchParams.get('startDate');
@@ -26,6 +24,8 @@ export async function GET(req: NextRequest) {
 
   try {
     const data = await MetricService.getCpuDaily(
+      Number(user.id),
+      user.role,
       hostgroup,
       Number(hostnameId),
       type || 'Normal',

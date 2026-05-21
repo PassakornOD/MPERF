@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
 
 const SarChart = dynamic(() => import('@/components/charts/SarChart'), { 
   ssr: false,
@@ -40,9 +41,17 @@ const CpuDailyPage = () => {
   const [endDate, setEndDate] = useState<string>(datesObj.end);
   const [queryEnabled, setQueryEnabled] = useState(false);
 
+  const { data: session } = useSession();
+  const user = session?.user as any;
+
   const { data: hostGroups } = useQuery<HostGroup[]>({
-    queryKey: ['hostGroups'],
-    queryFn: async () => (await axios.get('/api/host-groups')).data
+    queryKey: ['hostGroups', user?.id],
+    queryFn: async () => {
+        if (!user) return [];
+        const res = await axios.get('/api/host-groups');
+        return res.data;
+    },
+    enabled: !!user
   });
 
   const { data: metrics, isFetching, refetch } = useQuery({
@@ -168,7 +177,7 @@ const CpuDailyPage = () => {
   };
 
   return (
-    <Block title="Sar stats" subtitle="CPU Daily Usage" tabs={['Per days']}>
+    <Block title="Sar stats" subtitle="CPU Daily Usage" tabs={[]}>
       <div className="bg-gray-100 p-4 rounded-md mb-8 flex flex-wrap gap-4 items-end justify-center">
         <div>
           <label className="block text-xs text-gray-500 mb-1">Hostgroup</label>

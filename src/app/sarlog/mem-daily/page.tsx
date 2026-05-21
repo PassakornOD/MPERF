@@ -150,7 +150,7 @@ const MemDailyPage = () => {
   };
 
   return (
-    <Block title="Sar stats" subtitle="Memory Daily Usage" tabs={['Per days']}>
+    <Block title="Sar stats" subtitle="Memory Daily Usage" tabs={[]}>
       <div className="bg-gray-100 p-4 rounded-md mb-8 flex flex-wrap gap-4 items-end justify-center">
         <div>
           <label className="block text-xs text-gray-500 mb-1">Hostgroup</label>

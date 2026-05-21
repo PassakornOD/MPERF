@@ -31,8 +31,8 @@ export const authOptions: NextAuthOptions = {
 
         if (hashedPassword === user.password) {
           logSecurityEvent('Successful login', { username: credentials.username });
-          // Map 'permission' field from DB to user object
-          return { id: user.user_id.toString(), name: user.username, permission: user.permission };
+          // Map 'permission' and 'role' fields from DB to user object
+          return { id: user.user_id.toString(), name: user.username, permission: user.permission, role: user.role };
         }
         
         logSecurityEvent('Failed login attempt: Incorrect password', { username: credentials.username });
@@ -45,6 +45,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.permission = (user as any).permission;
+        token.role = (user as any).role;
       }
       return token;
     },
@@ -52,6 +53,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         (session.user as any).id = token.id;
         (session.user as any).permission = token.permission;
+        (session.user as any).role = token.role;
       }
       return session;
     }

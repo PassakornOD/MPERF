@@ -4,25 +4,26 @@
 import { usePathname } from 'next/navigation';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { useModal } from '@/components/context/ModalContext';
 
 export default function DashboardWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { isModalOpen } = useModal();
 
   // If we are on the login page, don't show Navbar/Footer
   if (pathname === '/login') {
     return <>{children}</>;
   }
 
-  const isSpecialPage = pathname.includes('/inventory');
-  const mainClass = `p-8 flex-1 overflow-y-auto bg-gray-50 ${!isSpecialPage ? 'max-w-7xl mx-auto w-full px-12 mt-6' : ''}`;
+  const mainClass = "p-8 flex-1 overflow-y-auto max-w-7xl mx-auto w-full";
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      {!isModalOpen && <Navbar />}
       <main className={mainClass}>
         {children}
       </main>
-      <Footer />
+      {!isModalOpen && <Footer />}
     </div>
   );
 }

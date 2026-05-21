@@ -3,26 +3,31 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
-import { getAllowedHostgroups } from '@/lib/rbac';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const user = session?.user as any;
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const userRole = (session.user as any).role;
-  const allowedGroups = await getAllowedHostgroups(userRole);
-
-  let query = 'SELECT i.* FROM inventory i JOIN hostname h ON i.hostname_id = h.hostname_id WHERE i.delbit = 0';
+  let query = `
+    SELECT i.* 
+    FROM inventory i 
+    JOIN hostname h ON i.hostname_id = h.hostname_id 
+    WHERE i.delbit = 0
+  `;
   const params: any[] = [];
 
-  if (userRole !== 'admin') {
-    if (allowedGroups.length === 0) {
-      return NextResponse.json([]); // ไม่มีสิทธิ์เข้าถึงกลุ่มใดเลย
-    }
-    query += ' AND h.hostgroup_id IN (?)';
-    params.push(allowedGroups);
+  if (user.role !== 'admin') {
+    query += ` AND h.hostgroup_id IN (
+        SELECT DISTINCT pgh.hostgroup_id 
+        FROM user_to_user_groups uug
+        JOIN ug_permission_groups upg ON uug.ug_id = upg.ug_id
+        JOIN pg_hostgroups pgh ON upg.pg_id = pgh.pg_id
+        WHERE uug.user_id = ?
+    )`;
+    params.push(user.id);
   }
 
   query += ' ORDER BY i.actiondate DESC LIMIT 100';
