@@ -2,43 +2,93 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Highcharts from 'highcharts';
-import { Plus, FileText, Trash2, Edit2, Clock, X, Search, ChevronDown, ChevronRight, ArrowUp, ArrowDown, Heading1, Server, BarChart3, Loader2, Calendar, Layout, GripVertical, Monitor } from 'lucide-react';
+import { Plus, FileText, Trash2, Edit2, Clock, X, Search, ChevronDown, ChevronRight, ArrowUp, ArrowDown, Heading1, Server, BarChart3, Loader2, Calendar, Layout, GripVertical, Monitor, PlusCircle } from 'lucide-react';
 import Modal from '@/components/common/Modal';
-import { useQuery } from '@tanstack/react-query';
+import ConfirmModal from '@/components/common/ConfirmModal';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { ReportPayload } from '@/types/report';
 import SarChart from '@/components/charts/SarChart';
 import { getChartOptions } from '@/components/charts/chartUtils';
+import { useToast } from '@/components/common/Toast';
+import { useSession } from 'next-auth/react';
+import { checkPermission } from '@/lib/permissions';
+import FloatingInput from '@/components/common/FloatingInput';
 
 interface Template {
   id: number;
   name: string;
   reportTitle: string;
   lastUpdated: string;
-  hosts: { id: string; name: string; group: string }[];
+  hosts: { id: string; name: string; group: string; mem: number }[];
   charts: { id: string; label: string; enabled: boolean }[];
 }
 
 const ReportTemplatesPage = () => {
-  const [templates, setTemplates] = useState<Template[]>([]);
+  const { data: session } = useSession();
+  const user = session?.user as any;
+  console.log('Current user session:', user);
+  const { showToast } = useToast();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const saved = localStorage.getItem('report_templates');
-    if (saved) {
-        setTemplates(JSON.parse(saved));
-    } else {
-        setTemplates([]);
-    }
-  }, []);
+  const { data: templates = [], isLoading: isLoadingTemplates } = useQuery<Template[]>({
+    queryKey: ['report_templates'],
+    queryFn: async () => {
+      console.log('Fetching templates...');
+      const res = await axios.get('/api/report-templates');
+      console.log('Templates received:', res.data);
+      return res.data.map((t: any) => {
+        try {
+          const config = typeof t.config === 'string' ? JSON.parse(t.config) : t.config;
+          return {
+            id: t.id,
+            name: t.name,
+            reportTitle: config.reportTitle || '',
+            hosts: config.hosts || config.selectedHostnames || [],
+            charts: config.charts || config.activeReports || [],
+            lastUpdated: new Date(t.updated_at || t.created_at).toLocaleString('en-GB')
+          };
+        } catch (e) {
+          console.error('Error parsing template config:', t.config, e);
+          return null;
+        }
+      }).filter((t: any) => t !== null);
+    },
+    enabled: !!user
+  });
 
-  useEffect(() => {
-    if (templates.length > 0) {
-        localStorage.setItem('report_templates', JSON.stringify(templates));
+  const saveTemplateMutation = useMutation({
+    mutationFn: (data: any) => {
+      console.log('Saving template:', data);
+      return editingTemplateId 
+        ? axios.put(`/api/report-templates/${editingTemplateId}`, data) 
+        : axios.post('/api/report-templates', data);
+    },
+    onSuccess: () => {
+      console.log('Template saved successfully, invalidating query...');
+      queryClient.invalidateQueries({ queryKey: ['report_templates'] });
+      setIsModalOpen(false);
+      showToast(editingTemplateId ? "Template updated" : "Template created", 'success');
+    },
+    onError: (err: any) => {
+      console.error('Failed to save template:', err);
+      showToast(err.response?.data?.error || "Failed to save template", 'error');
     }
-  }, [templates]);
+  });
+
+  const deleteTemplateMutation = useMutation({
+    mutationFn: (id: number) => axios.delete(`/api/report-templates/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['report_templates'] });
+      showToast("Template deleted", 'success');
+    },
+    onError: (err: any) => showToast(err.response?.data?.error || "Failed to delete template", 'error')
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGenerationModalOpen, setIsGenerationModalOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [templateToDelete, setTemplateToDelete] = useState<number | null>(null);
   const [generatingTemplate, setGeneratingTemplate] = useState<Template | null>(null);
   const [editingTemplateId, setEditingTemplateId] = useState<number | null>(null);
 
@@ -115,7 +165,7 @@ const ReportTemplatesPage = () => {
             return acc;
           }, {})
         )
-          .sort((a: any, b: any) => a.name.localeCompare(b.name)) // Sort A-Z
+          .sort((a: any, b: any) => a.name.localeCompare(b.name))
           .map(async (group: any) => {
             const hostsWithStats = await Promise.all(
               group.hosts.map(async (host: any) => {
@@ -125,7 +175,6 @@ const ReportTemplatesPage = () => {
                   month: String(month),
                   year: String(year),
                 };
-                console.log('Sending API Request with:', apiParams);
                 const summaryRes = await axios.get('/api/metrics/summary', { params: apiParams });
                 const { cpuStats, memStats } = summaryRes.data;
 
@@ -191,13 +240,17 @@ const ReportTemplatesPage = () => {
 
       const payload: ReportPayload = {
         reportMonth: new Date(parseInt(year), parseInt(month) - 1).toLocaleString('en-US', { month: 'long', year: 'numeric' }),
+        reportTitle: generatingTemplate?.reportTitle || reportTitle,
         targetMonth: parseInt(month), targetYear: parseInt(year), generatedDate: new Date().toLocaleDateString(),
         hostgroups: finalHostgroups as any
       };
 
       const response = await axios.post('/api/export-pdf', payload, { responseType: 'blob' });
       setPdfUrl(window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' })));
-    } catch (e: any) { alert('Error: ' + e.message); }
+    } catch (e: any) { 
+        setIsGenerationModalOpen(false);
+        showToast('Error: ' + e.message, 'error'); 
+    }
     finally { setIsFetchingPDF(false); setExportStatus(''); setRenderCharts(false); setHiddenChartsData([]); }
   };
 
@@ -225,7 +278,7 @@ const ReportTemplatesPage = () => {
   const filteredGroups = useMemo(() => {
     if (!hostGroupsRaw) return [];
     return hostGroupsRaw
-        .filter((g: any) => g.hostgroup) // Filter out items without a group name
+        .filter((g: any) => g.hostgroup)
         .map((g: any) => ({ ...g, hostnames: g.hostnames.filter((h: any) => h.hostname.toLowerCase().includes(searchTerm.toLowerCase())) }))
         .filter((g: any) => g.hostnames.length > 0 || g.hostgroup.toLowerCase().includes(searchTerm.toLowerCase()))
         .sort((a: any, b: any) => a.hostgroup.toLowerCase().localeCompare(b.hostgroup.toLowerCase()));
@@ -247,7 +300,6 @@ const ReportTemplatesPage = () => {
   };
 
   const toggleHostname = (h: any) => {
-    // Find the group name if it's not provided or to ensure it's correct
     let groupName = h.group;
     if (!groupName && hostGroupsRaw) {
         const foundGroup = hostGroupsRaw.find((g: any) => g.hostnames.some((hn: any) => String(hn.hostname_id) === String(h.hostname_id)));
@@ -265,11 +317,18 @@ const ReportTemplatesPage = () => {
   };
 
   const handleDeleteTemplate = (id: number) => {
-    if(confirm('Are you sure you want to delete this template?')) {
-        const updatedTemplates = templates.filter(t => t.id !== id);
-        setTemplates(updatedTemplates);
-        localStorage.setItem('report_templates', JSON.stringify(updatedTemplates));
-    }
+    setTemplateToDelete(id);
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!templateToDelete) return;
+    deleteTemplateMutation.mutate(templateToDelete, {
+      onSuccess: () => {
+        setTemplateToDelete(null);
+        setIsConfirmOpen(false);
+      }
+    });
   };
 
   const handleEditTemplate = (template: any) => {
@@ -289,13 +348,12 @@ const ReportTemplatesPage = () => {
   };
 
   const handleSaveTemplate = () => {
-    const timestamp = new Date().toLocaleString('en-GB'); 
-    if (editingTemplateId) {
-        setTemplates(templates.map(t => t.id === editingTemplateId ? { ...t, name: templateName, reportTitle, lastUpdated: timestamp, hosts: selectedHostnames, charts: activeReports.filter(r => r.enabled) } : t));
-    } else {
-        setTemplates([...templates, { id: Date.now(), name: templateName || 'Untitled', reportTitle, lastUpdated: timestamp, hosts: selectedHostnames, charts: activeReports.filter(r => r.enabled) }]);
-    }
-    setIsModalOpen(false);
+    const config = { 
+      reportTitle, 
+      hosts: selectedHostnames, 
+      charts: activeReports.filter(r => r.enabled) 
+    };
+    saveTemplateMutation.mutate({ name: templateName || 'Untitled', config });
   };
 
   return (
@@ -311,7 +369,9 @@ const ReportTemplatesPage = () => {
       </div>
 
       <div className="grid gap-3">
-        {templates.map((template) => (
+        {isLoadingTemplates ? (
+          <div className="py-10 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600" /></div>
+        ) : templates.length > 0 ? templates.map((template) => (
           <div key={template.id} className="grid grid-cols-[300px_1fr_auto] items-center bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:border-blue-100 transition-all group">
             
             <div className="flex items-center gap-4">
@@ -335,26 +395,39 @@ const ReportTemplatesPage = () => {
             </div>
 
             <div className="flex items-center gap-1">
-                <button onClick={() => handleGenerateReport(template)} className="text-gray-400 hover:text-blue-600 p-2 rounded-lg hover:bg-blue-50 transition-all"><FileText className="w-4 h-4" /></button>
-                <button onClick={() => handleEditTemplate(template)} className="text-gray-400 hover:text-blue-600 p-2 rounded-lg hover:bg-blue-50 transition-all"><Edit2 className="w-4 h-4" /></button>
-                <button onClick={() => handleDeleteTemplate(template.id)} className="text-gray-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-all"><Trash2 className="w-4 h-4" /></button>
+                <button onClick={() => handleGenerateReport(template)} className="text-gray-400 hover:text-blue-600 p-2 rounded-lg hover:bg-blue-50 transition-all" title="Generate Report"><FileText className="w-4 h-4" /></button>
+                <button onClick={() => handleEditTemplate(template)} className="text-gray-400 hover:text-blue-600 p-2 rounded-lg hover:bg-blue-50 transition-all" title="Edit Template"><Edit2 className="w-4 h-4" /></button>
+                <button onClick={() => handleDeleteTemplate(template.id)} className="text-gray-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-all" title="Delete Template"><Trash2 className="w-4 h-4" /></button>
             </div>
           </div>
-        ))}
+        )) : (
+          <div className="py-20 text-center bg-white rounded-2xl border border-dashed border-gray-200">
+            <FileText className="w-12 h-12 text-gray-200 mx-auto mb-3" />
+            <p className="text-gray-400 font-bold text-sm italic">No templates found. Create your first one!</p>
+          </div>
+        )}
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingTemplateId ? "Edit Template" : "Add New Template"} maxWidth="max-w-3xl">
         <div className="space-y-6 p-2">
             <div className="flex gap-1 bg-gray-100 p-1 rounded-xl">
-                <button onClick={() => setStep(1)} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${step === 1 ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}>1. Details</button>
-                <button onClick={() => setStep(2)} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${step === 2 ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}>2. Select Hosts</button>
-                <button onClick={() => setStep(3)} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${step === 3 ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}>3. Chart Order</button>
+                <button onClick={() => setStep(1)} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${step === 1 ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}>Details</button>
+                <button onClick={() => setStep(2)} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${step === 2 ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}>Select Hosts</button>
+                <button onClick={() => setStep(3)} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${step === 3 ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}>Chart Order</button>
             </div>
             
             {step === 1 && (
-                <div className="space-y-4">
-                    <input value={templateName} onChange={(e) => setTemplateName(e.target.value)} className="w-full bg-white border border-gray-200 p-3 rounded-lg font-bold text-sm shadow-sm focus:ring-2 focus:ring-blue-500/20 outline-none" placeholder="Template Name" />
-                    <input value={reportTitle} onChange={(e) => setReportTitle(e.target.value)} className="w-full bg-white border border-gray-200 p-3 rounded-lg font-bold text-sm shadow-sm focus:ring-2 focus:ring-blue-500/20 outline-none" placeholder="Report Heading" />
+                <div className="space-y-4 pt-2">
+                    <FloatingInput 
+                        label="Template Name"
+                        value={templateName} 
+                        onChange={(e) => setTemplateName(e.target.value)} 
+                    />
+                    <FloatingInput 
+                        label="Report Heading"
+                        value={reportTitle} 
+                        onChange={(e) => setReportTitle(e.target.value)} 
+                    />
                 </div>
             )}
 
@@ -366,51 +439,83 @@ const ReportTemplatesPage = () => {
                     </div>
                     <div className="h-[250px] overflow-y-auto space-y-1 pr-1 custom-scrollbar">
                         {(() => {
-                            const sortedGroups = [...filteredGroups].sort((a, b) => a.hostgroup.toLowerCase().localeCompare(b.hostgroup.toLowerCase()));
-                            console.log('Sorted groups for UI:', sortedGroups.map(g => g.hostgroup));
-                            return sortedGroups.map((g: any) => (
-                            <div key={g.hostgroup} className="border border-gray-100 rounded-lg bg-white overflow-hidden">
-                                <div className={`flex items-center justify-between p-2 cursor-pointer ${selectedGroups.includes(g.hostgroup) ? 'bg-blue-50' : ''}`} onClick={() => toggleGroup(g.hostgroup)}>
-                                    <div className="flex items-center gap-2">
-                                        <button onClick={(e) => { e.stopPropagation(); toggleExpand(g.hostgroup); }}>{expandedGroups.includes(g.hostgroup) ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}</button>
-                                        <span className="font-bold uppercase text-[10px]">{g.hostgroup}</span>
-                                    </div>
-                                </div>
-                                {expandedGroups.includes(g.hostgroup) && (
-                                    <div className="p-1 space-y-0.5 bg-gray-50/50">{g.hostnames.map((h: any) => <button key={h.hostname_id} onClick={() => toggleHostname(h)} className={`w-full flex items-center gap-3 p-2.5 ml-4 border-l border-gray-200 rounded-lg text-[10px] font-medium transition-all ${selectedHostnames.find(s => s.id === String(h.hostname_id)) ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>{h.hostname}</button>)}</div>
-                                )}
+                        const sortedGroups = [...filteredGroups].sort((a, b) => a.hostgroup.toLowerCase().localeCompare(b.hostgroup.toLowerCase()));
+                        return sortedGroups.map((g: any) => (
+                        <div key={g.hostgroup} className="border border-gray-100 rounded-lg bg-white overflow-hidden">
+                        <div 
+                            className={`flex items-center justify-between p-2 cursor-pointer transition-colors ${selectedGroups.includes(g.hostgroup) ? 'bg-blue-300 text-white' : 'hover:bg-gray-50'}`}
+                            onClick={() => toggleGroup(g.hostgroup)}
+                        >
+                            <div className="flex items-center gap-2">
+                                <button onClick={(e) => { e.stopPropagation(); toggleExpand(g.hostgroup); }}>
+                                    {expandedGroups.includes(g.hostgroup) ? <ChevronDown className={selectedGroups.includes(g.hostgroup) ? 'text-white' : 'text-blue-600'} /> : <ChevronRight className="w-3 h-3 text-gray-400" />}
+                                </button>
+                                <span className={`text-[10px] font-black uppercase tracking-tight ${selectedGroups.includes(g.hostgroup) ? 'text-white' : 'text-gray-700'}`}>{g.hostgroup}</span>
                             </div>
+                        </div>
+                        {expandedGroups.includes(g.hostgroup) && (
+                            <div className="p-1 space-y-0.5 bg-gray-50/50">
+                                {g.hostnames.map((h: any) => (
+                                    <button 
+                                        key={h.hostname_id}
+                                        onClick={(e) => { e.stopPropagation(); toggleHostname({ id: String(h.hostname_id), name: h.hostname, group: g.hostgroup, mem: h.mem }); }}
+                                        className={`w-full flex items-center gap-3 p-2.5 ml-4 border-l border-gray-200 rounded-lg text-[10px] font-medium transition-all ${selectedHostnames.find(s => s.id === String(h.hostname_id)) ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+                                    >
+                                        {h.hostname}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                        </div>
                         ));
                         })()}
+
                     </div>
                 </div>
             ) : step === 3 ? (
-                <div className="grid grid-cols-2 gap-4 h-[300px]">
-                    <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50 flex flex-col">
-                        <p className="font-bold text-[10px] text-gray-400 uppercase mb-3">Available</p>
-                        <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar">
-                            {availableCharts.map(r => <button key={r.id} onClick={() => toggleReport(r.id)} className="w-full flex items-center gap-2 p-2.5 bg-white rounded-lg border border-gray-100 text-[11px] font-bold hover:border-blue-200">{r.label}</button>)}
+                <div className="grid grid-cols-2 gap-4 h-[400px]">
+                    <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50 flex flex-col overflow-hidden">
+                        <p className="font-bold text-[10px] text-gray-400 uppercase mb-3 px-1 tracking-widest">Available Charts</p>
+                        <div className="flex-1 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar">
+                            {availableCharts.map(r => (
+                                <button 
+                                    key={r.id} 
+                                    onClick={() => toggleReport(r.id)} 
+                                    className="w-full flex items-start gap-2.5 p-3 bg-white rounded-xl border border-gray-100 text-[11px] font-bold hover:border-blue-200 hover:bg-blue-50/10 transition-all text-left shadow-sm group"
+                                >
+                                    <PlusCircle className="w-3.5 h-3.5 text-blue-600 mt-0.5 flex-shrink-0" />
+                                    <span className="leading-tight">{r.label}</span>
+                                </button>
+                            ))}
                         </div>
                     </div>
-                    <div className="border border-blue-100 rounded-xl p-4 bg-blue-50/20 flex flex-col">
-                        <p className="font-bold text-[10px] text-blue-600 uppercase mb-3">Selected</p>
-                        <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar">
+                    <div className="border border-blue-100 rounded-xl p-4 bg-blue-50/20 flex flex-col overflow-hidden">
+                        <p className="font-bold text-[10px] text-blue-600 uppercase mb-3 px-1 tracking-widest">Selected Order</p>
+                        <div className="flex-1 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar">
                             {selectedCharts.map((r, i) => (
-                                <div key={r.id} className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-blue-100 shadow-sm">
-                                    <div className="flex items-center gap-2 text-[11px] font-bold truncate">{r.label}</div>
-                                    <div className="flex items-center gap-0.5">
-                                        <button onClick={() => moveChart(r.id, 'up')} disabled={i === 0} className="p-1 hover:bg-gray-100 rounded"><ArrowUp className="w-3 h-3" /></button>
-                                        <button onClick={() => moveChart(r.id, 'down')} disabled={i === selectedCharts.length - 1} className="p-1 hover:bg-gray-100 rounded"><ArrowDown className="w-3 h-3" /></button>
-                                        <button onClick={() => toggleReport(r.id)} className="p-1 hover:bg-red-50 text-red-500 rounded"><X className="w-3 h-3" /></button>
+                                <div key={r.id} className="flex items-center justify-between p-3 bg-white rounded-xl border border-blue-100 shadow-sm animate-in slide-in-from-right-2 duration-200">
+                                    <div className="flex items-start gap-2.5 text-[11px] font-bold text-gray-700">
+                                        <GripVertical className="w-3.5 h-3.5 text-gray-300 mt-0.5 flex-shrink-0" />
+                                        <span className="leading-tight">{r.label}</span>
+                                    </div>
+                                    <div className="flex items-center gap-0.5 ml-2">
+                                        <button onClick={() => moveChart(r.id, 'up')} disabled={i === 0} className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-blue-600 disabled:opacity-20 transition-colors"><ArrowUp className="w-3.5 h-3.5" /></button>
+                                        <button onClick={() => moveChart(r.id, 'down')} disabled={i === selectedCharts.length - 1} className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-blue-600 disabled:opacity-20 transition-colors"><ArrowDown className="w-3.5 h-3.5" /></button>
+                                        <button onClick={() => toggleReport(r.id)} className="p-1 hover:bg-red-50 text-red-400 hover:text-red-600 rounded transition-colors ml-1"><X className="w-3.5 h-3.5" /></button>
                                     </div>
                                 </div>
                             ))}
+                            {selectedCharts.length === 0 && (
+                                <div className="h-full flex items-center justify-center text-center p-4">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase italic">No charts selected</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             ) : null}
 
-            <div className="flex justify-between pt-4 border-t border-gray-100">
+            <div className="flex justify-between pt-6 mt-2 border-t border-gray-100">
                 <button onClick={() => setIsModalOpen(false)} className="px-6 py-2.5 rounded-lg font-bold text-xs text-gray-500 hover:bg-gray-100">Cancel</button>
                 <div className="flex gap-2">
                     {step > 1 && <button onClick={() => setStep(step - 1)} className="px-6 py-2.5 rounded-lg font-bold text-xs bg-gray-100 text-gray-700 hover:bg-gray-200">Back</button>}
@@ -523,6 +628,14 @@ const ReportTemplatesPage = () => {
       }}>
           {pdfUrl && <iframe src={pdfUrl} className="w-full h-[80vh] rounded-2xl border border-gray-100 shadow-inner" title="PDF Viewer" />}
       </Modal>
+
+      <ConfirmModal 
+        isOpen={isConfirmOpen} 
+        onClose={() => setIsConfirmOpen(false)} 
+        onConfirm={handleConfirmDelete} 
+        title="Delete Template" 
+        message="Are you sure you want to delete this template? This action cannot be undone."
+      />
     </div>
   );
 };

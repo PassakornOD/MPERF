@@ -6,8 +6,8 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = req.nextUrl;
 
-  // 1. Allow access to login page and authentication APIs
-  if (pathname === '/login' || pathname.startsWith('/api/auth')) {
+  // 1. Allow access to login page, authentication APIs, and static assets
+  if (pathname === '/login' || pathname.startsWith('/api/auth') || pathname.startsWith('/logo') || pathname.startsWith('/icons')) {
     return NextResponse.next();
   }
 
@@ -22,7 +22,6 @@ export async function middleware(req: NextRequest) {
 
   // 3. Define Group 2 Routes (Restricted to admin and sysadmin)
   const group2Prefixes = [
-    '/report/templates',
     '/inventory/manage',
     '/admin'
   ];
@@ -30,8 +29,10 @@ export async function middleware(req: NextRequest) {
   const isGroup2Route = group2Prefixes.some(prefix => pathname.startsWith(prefix));
 
   if (isGroup2Route) {
-    // Only allow if role is admin or sysadmin
-    if (userRole !== 'admin' && userRole !== 'sysadmin') {
+    console.log(`[Middleware Check] Path: ${pathname}, Role: ${userRole}`);
+    // Only allow if role is admin, sysadmin or operation
+    if (userRole !== 'admin' && userRole !== 'sysadmin' && userRole !== 'operation') {
+      console.log(`[Middleware Block] Access denied for role: ${userRole}`);
       const url = req.nextUrl.clone();
       url.pathname = '/'; // Redirect to dashboard if unauthorized
       return NextResponse.redirect(url);
@@ -43,5 +44,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|logo|icons|file.svg|globe.svg|next.svg|vercel.svg|window.svg).*)'],
 };

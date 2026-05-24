@@ -9,9 +9,7 @@ export default function ReportLayout({ children }: { children: React.ReactNode }
 
   const tabs = [
     { name: 'Generate Report', href: '/report', iconKey: 'BarChart3' },
-    ...(userRole === 'admin' || userRole === 'sysadmin' 
-      ? [{ name: 'Templates', href: '/report/templates', iconKey: 'List' }] 
-      : []),
+    { name: 'Templates', href: '/report/templates', iconKey: 'List' },
   ];
   
   return (

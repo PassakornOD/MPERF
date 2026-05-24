@@ -5,8 +5,10 @@ import axios from 'axios';
 import Block from '@/components/common/Block';
 import { Loader2, Save, ShieldCheck } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { useToast } from '@/components/common/Toast';
 
 const AdminRolesPage = () => {
+  const { showToast } = useToast();
   const { data: session, status } = useSession();
   const [roles, setRoles] = useState<any[]>([]);
   const [hostgroups, setHostgroups] = useState<any[]>([]);
@@ -61,10 +63,10 @@ const AdminRolesPage = () => {
         role_id: selectedRole,
         hostgroup_ids: selectedHostgroups
       });
-      alert('Updated successfully!');
+      showToast('Updated successfully!', 'success');
       fetchData();
     } catch (err) {
-      alert('Update failed');
+      showToast('Update failed', 'error');
     }
   };
 
@@ -74,7 +76,7 @@ const AdminRolesPage = () => {
     <Block title="Role Permission Management" subtitle="Assign hostgroup access to roles">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="bg-white p-6 rounded-xl border shadow-sm">
-          <h3 className="font-bold mb-4">Roles</h3>
+          <h3 className="font-bold mb-4 text-xs">Roles</h3>
           <div className="space-y-1">
           {roles.map(r => (
             <button 
@@ -89,7 +91,7 @@ const AdminRolesPage = () => {
         </div>
 
         <div className="lg:col-span-2 bg-white p-6 rounded-xl border shadow-sm">
-          <h3 className="font-bold mb-4 flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> Allowed Hostgroups</h3>
+          <h3 className="font-bold mb-4 text-xs flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> Allowed Hostgroups</h3>
           <div className="grid grid-cols-2 gap-3 mb-6">
             {hostgroups.map(hg => (
               <label key={hg.hostgroup_id} className="flex items-center gap-2 p-2 border rounded hover:bg-gray-50 cursor-pointer text-sm">

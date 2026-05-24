@@ -20,14 +20,15 @@ export class MetricService {
     if (role !== 'admin') {
       query += `
         WHERE hg.hostgroup_id IN (
-          SELECT pgh.hostgroup_id 
-          FROM user_to_user_groups uug 
-          JOIN ug_permission_groups upg ON uug.ug_id = upg.ug_id 
-          JOIN pg_hostgroups pgh ON upg.pg_id = pgh.pg_id 
-          WHERE uug.user_id = ?
+            SELECT pgh.hostgroup_id 
+            FROM pg_hostgroups pgh
+            JOIN permission_groups pg ON pgh.pg_id = pg.pg_id
+            LEFT JOIN ug_permission_groups upg ON pg.pg_id = upg.pg_id 
+            LEFT JOIN user_to_user_groups uug ON upg.ug_id = uug.ug_id
+            WHERE uug.user_id = ? OR pg.created_by = ?
         )
       `;
-      params.push(userId);
+      params.push(userId, userId);
     }
 
     query += ' ORDER BY hg.hostgroup ASC';
@@ -57,16 +58,17 @@ export class MetricService {
       if (role === 'admin') return true;
       
       const [rows]: any = await pool.query(
-          `SELECT 1 FROM user_to_user_groups uug 
-           JOIN ug_permission_groups upg ON uug.ug_id = upg.ug_id 
-           JOIN pg_hostgroups pgh ON upg.pg_id = pgh.pg_id
-           JOIN hostgroup hg ON pgh.hostgroup_id = hg.hostgroup_id 
-           WHERE uug.user_id = ? AND hg.hostgroup = ?`,
-          [userId, hostgroup]
+          `SELECT 1 FROM hostgroup hg
+           LEFT JOIN pg_hostgroups pgh ON hg.hostgroup_id = pgh.hostgroup_id
+           LEFT JOIN permission_groups pg ON pgh.pg_id = pg.pg_id
+           LEFT JOIN ug_permission_groups upg ON pg.pg_id = upg.pg_id 
+           LEFT JOIN user_to_user_groups uug ON upg.ug_id = uug.ug_id
+           WHERE hg.hostgroup = ? AND (pg.created_by = ? OR uug.user_id = ?)`,
+          [hostgroup, userId, userId]
       );
       return rows.length > 0;
   }
-
+  // ... rest of the methods remain unchanged ...
   static async getCpuDaily(userId: number, role: string, hostgroup: string, hostnameId: number, type: 'Peak' | 'Normal' | 'Average', startDate: string, endDate: string): Promise<any[]> {
     if (!(await this.canAccessHostgroup(userId, role, hostgroup))) return [];
     const osType = await this.getOsType(hostnameId);

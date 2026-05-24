@@ -46,18 +46,18 @@ const Modal = ({
     : 'items-center justify-center p-6';
 
   return (
-    <div className={`fixed inset-0 z-[99999] flex bg-gray-950/20 backdrop-blur-sm ${positionClasses}`}>
+    <div className={`fixed inset-0 z-[99999] flex bg-gray-950/40 backdrop-blur-sm ${positionClasses}`}>
       <div className={`bg-white rounded-[32px] w-full ${maxWidth} flex flex-col shadow-[0_30px_60px_-12px_rgba(0,0,0,0.2)] overflow-hidden animate-in fade-in zoom-in duration-300`}>
-        <div className="flex justify-between items-center px-8 py-7 border-b border-gray-100">
-          <h2 className="font-black text-2xl text-gray-950 tracking-tight">{title}</h2>
-          <div className="flex items-center gap-2">
+        <div className="flex justify-between items-center px-6 py-3 border-b border-gray-100">
+          <h2 className="font-black text-sm text-gray-950 tracking-tight">{title}</h2>
+          <div className="flex items-center gap-1">
             {onDownload && (
-              <button onClick={onDownload} className="p-3 hover:bg-gray-100 rounded-2xl transition-all" title="Download PDF">
-                <Download className="w-5 h-5 text-blue-600" />
+              <button onClick={onDownload} className="p-1.5 hover:bg-gray-100 rounded-lg transition-all" title="Download PDF">
+                <Download className="w-4 h-4 text-blue-600" />
               </button>
             )}
-            <button onClick={onClose} className="p-3 hover:bg-gray-100 rounded-2xl transition-all text-gray-400 hover:text-gray-950">
-              <X className="w-6 h-6" />
+            <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg transition-all text-gray-400 hover:text-gray-950">
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>

@@ -56,6 +56,13 @@ export async function POST(req: Request) {
   }
   
   const { pg_name, hostgroup_ids = [] } = await req.json();
+
+  // Check for duplicate permission group name
+  const [existing]: any = await pool.query('SELECT 1 FROM permission_groups WHERE pg_name = ?', [pg_name]);
+  if (existing.length > 0) {
+      return NextResponse.json({ error: 'Permission group name already exists' }, { status: 400 });
+  }
+
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();

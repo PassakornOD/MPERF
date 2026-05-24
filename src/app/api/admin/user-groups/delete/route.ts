@@ -3,8 +3,6 @@ import pool from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
-const PROTECTED_GROUPS = ['admin', 'sysadmin', 'operation'];
-
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   const user = session?.user as any;
@@ -16,13 +14,19 @@ export async function POST(req: Request) {
     const { ug_id } = await req.json();
     const connection = await pool.getConnection();
 
-    // Check if group is protected
+    // 1. Check group existence
     const [group]: any = await connection.query('SELECT ug_name FROM user_groups WHERE ug_id = ?', [ug_id]);
-    if (group.length > 0) {
-        if (user.role !== 'admin' && PROTECTED_GROUPS.includes(group[0].ug_name.toLowerCase())) {
-            connection.release();
-            return NextResponse.json({ error: 'Forbidden: Cannot delete protected groups' }, { status: 403 });
-        }
+    if (group.length === 0) {
+        connection.release();
+        return NextResponse.json({ error: 'Group not found' }, { status: 404 });
+    }
+
+    const groupName = group[0].ug_name;
+
+    // 2. Self-deletion prevention: Cannot delete group that matches own username
+    if (groupName.toLowerCase() === user.name.toLowerCase()) {
+        connection.release();
+        return NextResponse.json({ error: 'Forbidden: Cannot delete your own personal group' }, { status: 403 });
     }
 
     try {

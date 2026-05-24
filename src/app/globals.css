@@ -24,3 +24,12 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.admin-container {
+  font-size: 0.75rem; /* text-xs */
+}
+
+.admin-container h1, .admin-container h2, .admin-container h3, .admin-container h4 {
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 700;
+}

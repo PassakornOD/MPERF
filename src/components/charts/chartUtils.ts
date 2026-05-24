@@ -27,7 +27,11 @@ export const getChartOptions = (metrics: any[], report: any, hostname: string, t
       chart: { type: 'line', backgroundColor: '#ffffff' },
       title: { text: `${report.type.includes('cpu') ? 'CPU' : 'Memory'} Monthly Usage`, style: { fontSize: '14px', fontWeight: 'bold' } },
       subtitle: { text: `Hostname : ${hostname} Month : ${mMonthLabel}/${targetYear}`, style: { fontSize: '12px' } },
-      xAxis: { categories, tickInterval: Math.max(1, Math.floor(categories.length / 10)), labels: { rotation: -45, align: 'right', style: { fontSize: '8px' } } },
+      xAxis: { 
+        categories, 
+        tickInterval: 1, // Change from Math.max(1, Math.floor(categories.length / 10)) to always show every label
+        labels: { rotation: -45, align: 'right', style: { fontSize: '7px' } } // Reduced font size to fit more labels
+      },
       yAxis: { title: { text: report.type.includes('cpu') ? 'Percent' : `Memory (${totalMem || '?'} GB)` }, min: 0, max: report.type.includes('cpu') ? 100 : (totalMem || undefined), labels: { style: { fontSize: '8px' } } },
       series, 
       plotOptions: { line: { lineWidth: 1, marker: { enabled: false } } }, 
@@ -37,10 +41,16 @@ export const getChartOptions = (metrics: any[], report: any, hostname: string, t
   }
 
   const categories = metrics.map((m: any) => {
-    if (!m.time) return 'N/A';
-    if (type === 'Average' || type === 'Peak') return String(m.time).split('T')[0];
+    if (!m.time) return '';
+    // If it's already a Date string like "YYYY-MM-DD", return it
+    if (typeof m.time === 'string' && /^\d{4}-\d{2}-\d{2}/.test(m.time)) return m.time.split('T')[0];
+    
+    // Attempt to parse if it's a standard timestamp string
     const d = new Date(m.time);
-    return isNaN(d.getTime()) ? String(m.time) : String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    if (!isNaN(d.getTime())) {
+        return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    }
+    return String(m.time);
   });
   const tickInterval = Math.max(1, Math.floor(metrics.length / 15));
   let series: any[] = [];

@@ -1,0 +1,201 @@
+147:        tabs={[
+148-            { label: 'General', content: (
+149-                <div className="space-y-4 pt-2">
+150-                    <FloatingInput 
+151-                        label="Group Name"
+152-                        value={editFields.ug_name} 
+153-                        onChange={e => setEditFields({...editFields, ug_name: e.target.value})} 
+154-                    />
+155-                    <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+156-                        <button onClick={() => saveUpdates()} className="bg-blue-600 text-white px-6 py-2 rounded-lg text-[10px] font-bold shadow-sm hover:bg-blue-700 transition-all capitalize">Save Changes</button>
+157-                    </div>
+158-                </div>
+159-            ) },
+160-            { label: 'Members', content: (
+161-                <div className="space-y-4 pt-4">
+162-                    <div className="flex justify-end">
+163-                        <button onClick={() => setIsAddingUser(true)} className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-bold text-[9px] capitalize tracking-wide">
+164-                            <Plus className="w-3 h-3" /> Add Member
+165-                        </button>
+166-                    </div>
+167-
+168-                    <div className="relative border-2 border-gray-100 rounded-2xl p-5 pt-7 bg-white shadow-sm">
+169-                        <span className="absolute -top-3 left-4 bg-white px-3 py-1 text-[10px] font-bold capitalize tracking-wide text-blue-600 border-2 border-gray-100 rounded-full shadow-sm flex items-center gap-1.5">
+170-                            <Users className="w-3 h-3" /> Group Members
+171-                        </span>
+172-
+173-                        {editFields.member_ids.length > 0 ? (
+174-                            <div className="grid grid-cols-2 gap-3">
+175-                                {editFields.member_ids.map(uId => {
+176-                                    const user = data.users.find((u: any) => u.user_id === uId);
+177-                                    return user ? (
+178-                                        <div key={uId} className="flex items-center justify-between p-2.5 bg-gray-50 border border-gray-100 rounded-xl group/item hover:border-blue-200 transition-all overflow-hidden">
+179-                                            <div className="flex items-center gap-2.5 overflow-hidden">
+180-                                                <div className="bg-white p-2 rounded-lg shadow-sm group-hover/item:scale-110 transition-transform flex-shrink-0"><User className="w-3.5 h-3.5 text-blue-600" /></div>
+181-                                                <span className="text-xs font-bold text-gray-700 truncate">{user.username}</span>
+182-                                            </div>
+183-                                            <button onClick={async () => { 
+184-                                                const nextMembers = editFields.member_ids.filter(i => i !== uId);
+185-                                                setEditFields({...editFields, member_ids: nextMembers});
+186-                                                await axios.post('/api/admin/user-groups/update', { ug_id: editingGroup.ug_id, ...editFields, member_ids: nextMembers });
+187-                                                fetchData();
+188-                                            }} className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-all flex-shrink-0"><X className="w-3.5 h-3.5" /></button>
+189-                                        </div>
+190-                                    ) : null;
+191-                                })}
+192-                            </div>
+193-                        ) : (
+194-                            <div className="text-center py-6">
+195-                                <p className="text-xs text-gray-400 font-bold italic">No members in this group.</p>
+196-                            </div>
+197-                        )}
+198-                    </div>
+199-
+200-                    {isAddingUser && (
+201-                        <div className="relative border-2 border-dashed border-blue-100 rounded-2xl p-5 pt-7 bg-blue-50/10 mt-6 animate-in fade-in slide-in-from-top-2 duration-200">
+202-                            <span className="absolute -top-3 left-4 bg-white px-3 py-1 text-[10px] font-bold capitalize tracking-wide text-blue-600 border-2 border-blue-50 rounded-full shadow-sm flex items-center gap-1.5">
+203-                                <UserCircle className="w-3 h-3" /> Available Users
+204-                            </span>
+205-                            <button onClick={() => setIsAddingUser(false)} className="absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-600 transition-colors"><X className="w-4 h-4" /></button>
+206-                            
+207-                            {data.users.filter((u: any) => !editFields.member_ids.includes(u.user_id)).length > 0 ? (
+208-                                <div className="grid grid-cols-2 gap-3">
+209-                                    {data.users.map((u: any) => !editFields.member_ids.includes(u.user_id) && (
+210-                                        <button key={u.user_id} onClick={async () => { 
+211-                                            const nextMembers = [...editFields.member_ids, u.user_id];
+212-                                            setEditFields({...editFields, member_ids: nextMembers});
+213-                                            await axios.post('/api/admin/user-groups/update', { ug_id: editingGroup.ug_id, ...editFields, member_ids: nextMembers });
+214-                                            fetchData();
+215-                                            setIsAddingUser(false); 
+216-                                        }} className="flex items-center gap-2.5 p-2.5 bg-white hover:bg-blue-600 hover:text-white border border-gray-100 rounded-xl transition-all shadow-sm group/btn overflow-hidden text-left">
+217-                                            <div className="bg-blue-50 p-1.5 rounded-lg group-hover/btn:bg-blue-500 transition-colors"><User className="w-3.5 h-3.5 text-blue-600 group-hover/btn:text-white" /></div>
+218-                                            <span className="text-[10px] font-bold capitalize tracking-tight truncate">{u.username}</span>
+219-                                        </button>
+220-                                    ))}
+221-                                </div>
+222-                            ) : (
+223-                                <p className="text-center py-2 text-xs text-gray-400 font-bold italic">All users already members.</p>
+224-                            )}
+225-                        </div>
+226-                    )}
+227-                </div>
+228-            ) },
+229-            { label: 'Associate', content: (
+230-                <div className="space-y-4 pt-4">
+231-                    <div className="flex justify-end">
+232-                        <button onClick={() => setIsAddingPg(true)} className="flex items-center gap-1.5 text-green-600 hover:text-green-700 font-bold text-[9px] capitalize tracking-wide">
+233-                            <Plus className="w-3 h-3" /> Add Permission Group
+234-                        </button>
+235-                    </div>
+236-
+237-                    <div className="relative border-2 border-gray-100 rounded-2xl p-5 pt-7 bg-white shadow-sm">
+238-                        <span className="absolute -top-3 left-4 bg-white px-3 py-1 text-[10px] font-bold capitalize tracking-wide text-green-600 border-2 border-gray-100 rounded-full shadow-sm flex items-center gap-1.5">
+239-                            <ShieldCheck className="w-3 h-3" /> Permission Groups
+240-                        </span>
+241-
+242-                        {editFields.member_ids.length > 0 ? (
+243-                            <div className="grid grid-cols-2 gap-3">
+244-                                {editFields.member_ids.map(uId => {
+245-                                    const user = data.users.find((u: any) => u.user_id === uId);
+246-                                    return user ? (
+247-                                        <div key={uId} className="flex items-center justify-between p-2.5 bg-gray-50 border border-gray-100 rounded-xl group/item hover:border-blue-200 transition-all overflow-hidden">
+248-                                            <div className="flex items-center gap-2.5 overflow-hidden">
+249-                                                <div className="bg-white p-2 rounded-lg shadow-sm group-hover/item:scale-110 transition-transform flex-shrink-0"><User className="w-3.5 h-3.5 text-blue-600" /></div>
+250-                                                <span className="text-xs font-bold text-gray-700 truncate">{user.username}</span>
+251-                                            </div>
+252-                                            <button onClick={async () => { 
+253-                                                const nextMembers = editFields.member_ids.filter(i => i !== uId);
+254-                                                setEditFields({...editFields, member_ids: nextMembers});
+255-                                                await axios.post('/api/admin/user-groups/update', { ug_id: editingGroup.ug_id, ...editFields, member_ids: nextMembers });
+256-                                                fetchData();
+257-                                            }} className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-all flex-shrink-0"><X className="w-3.5 h-3.5" /></button>
+258-                                        </div>
+259-                                    ) : null;
+260-                                })}
+261-                            </div>
+262-                        ) : (
+263-                            <div className="text-center py-6">
+264-                                <p className="text-xs text-gray-400 font-bold italic">No members in this group.</p>
+265-                            </div>
+266-                        )}
+267-                    </div>
+268-
+269-                    {isAddingUser && (
+270-                        <div className="relative border-2 border-dashed border-blue-100 rounded-2xl p-5 pt-7 bg-blue-50/10 mt-6 animate-in fade-in slide-in-from-top-2 duration-200">
+271-                            <span className="absolute -top-3 left-4 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-widest text-blue-600 border-2 border-blue-50 rounded-full shadow-sm flex items-center gap-1.5">
+272-                                <UserCircle className="w-3 h-3" /> Available Users
+273-                            </span>
+274-                            <button onClick={() => setIsAddingUser(false)} className="absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-600 transition-colors"><X className="w-4 h-4" /></button>
+275-                            
+276-                            {data.users.filter((u: any) => !editFields.member_ids.includes(u.user_id)).length > 0 ? (
+277-                                <div className="grid grid-cols-2 gap-3">
+278-                                    {data.users.map((u: any) => !editFields.member_ids.includes(u.user_id) && (
+279-                                        <button key={u.user_id} onClick={async () => { 
+280-                                            const nextMembers = [...editFields.member_ids, u.user_id];
+281-                                            setEditFields({...editFields, member_ids: nextMembers});
+282-                                            await axios.post('/api/admin/user-groups/update', { ug_id: editingGroup.ug_id, ...editFields, member_ids: nextMembers });
+283-                                            fetchData();
+284-                                            setIsAddingUser(false); 
+285-                                        }} className="flex items-center gap-2.5 p-2.5 bg-white hover:bg-blue-600 hover:text-white border border-gray-100 rounded-xl transition-all shadow-sm group/btn overflow-hidden text-left">
+286-                                            <div className="bg-blue-50 p-1.5 rounded-lg group-hover/btn:bg-blue-500 transition-colors"><User className="w-3.5 h-3.5 text-blue-600 group-hover/btn:text-white" /></div>
+287-                                            <span className="text-[10px] font-black uppercase tracking-tight truncate">{u.username}</span>
+288-                                        </button>
+289-                                    ))}
+290-                                </div>
+291-                            ) : (
+292-                                <p className="text-center py-2 text-xs text-gray-400 font-bold italic">All users already members.</p>
+293-                            )}
+294-                        </div>
+295-                    )}
+296-                </div>
+297-            ) },
+298-            { label: 'Members', content: (
+299-                <div className="space-y-4 pt-4">
+300-                    <div className="flex justify-end">
+301-                        <button onClick={() => setIsAddingUser(true)} className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-bold text-[9px] capitalize tracking-wide">
+302-                            <Plus className="w-3 h-3" /> Add Member
+303-                        </button>
+304-                    </div>
+305-
+306-                    <div className="relative border-2 border-gray-100 rounded-2xl p-5 pt-7 bg-white shadow-sm">
+307-                        <span className="absolute -top-3 left-4 bg-white px-3 py-1 text-[10px] font-bold capitalize tracking-wide text-blue-600 border-2 border-gray-100 rounded-full shadow-sm flex items-center gap-1.5">
+308-                            <Users className="w-3 h-3" /> Group Members
+309-                        </span>
+310-
+311-                        {editFields.member_ids.length > 0 ? (
+312-                            <div className="grid grid-cols-2 gap-3">
+313-                                {editFields.member_ids.map(uId => {
+314-                                    const user = data.users.find((u: any) => u.user_id === uId);
+315-                                    return user ? (
+316-                                        <div key={uId} className="flex items-center justify-between p-2.5 bg-gray-50 border border-gray-100 rounded-xl group/item hover:border-blue-200 transition-all overflow-hidden">
+317-                                            <div className="flex items-center gap-2.5 overflow-hidden">
+318-                                                <div className="bg-white p-2 rounded-lg shadow-sm group-hover/item:scale-110 transition-transform flex-shrink-0"><User className="w-3.5 h-3.5 text-blue-600" /></div>
+319-                                                <span className="text-xs font-bold text-gray-700 truncate">{user.username}</span>
+320-                                            </div>
+321-                                            <button onClick={async () => { 
+322-                                                const nextMembers = editFields.member_ids.filter(i => i !== uId);
+323-                                                setEditFields({...editFields, member_ids: nextMembers});
+324-                                                await axios.post('/api/admin/user-groups/update', { ug_id: editingGroup.ug_id, ...editFields, member_ids: nextMembers });
+325-                                                fetchData();
+326-                                            }} className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-all flex-shrink-0"><X className="w-3.5 h-3.5" /></button>
+327-                                        </div>
+328-                                    ) : null;
+329-                                })}
+330-                            </div>
+331-                        ) : (
+332-                            <div className="text-center py-6">
+333-                                <p className="text-xs text-gray-400 font-bold italic">No members in this group.</p>
+334-                            </div>
+335-                        )}
+336-                    </div>
+337-
+338-                    {isAddingUser && (
+339-                        <div className="relative border-2 border-dashed border-blue-100 rounded-2xl p-5 pt-7 bg-blue-50/10 mt-6 animate-in fade-in slide-in-from-top-2 duration-200">
+340-                            <span className="absolute -top-3 left-4 bg-white px-3 py-1 text-[10px] font-bold capitalize tracking-wide text-blue-600 border-2 border-blue-50 rounded-full shadow-sm flex items-center gap-1.5">
+341-                                <UserCircle className="w-3 h-3" /> Available Users
+342-                            </span>
+343-                            <button onClick={() => setIsAddingUser(false)} className="absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-600 transition-colors"><X className="w-4 h-4" /></button>
+344-                            
+345-                            {data.users.filter((u: any) => !editFields.member_ids.includes(u.user_id)).length > 0 ? (
+346-                                <div className="grid grid-cols-2 gap-3">
+347-                                    {data.users.map((u: any) => !editFields.member_ids.includes(u.user_id) && (

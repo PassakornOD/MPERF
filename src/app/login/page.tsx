@@ -4,8 +4,12 @@
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/common/Toast';
+import Image from 'next/image';
+import logoImage from '../../../public/logo/weblogo2.png';
 
 export default function LoginPage() {
+  const { showToast } = useToast();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
@@ -19,7 +23,7 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      alert('Invalid username or password');
+      showToast('Invalid username or password', 'error');
     } else {
       router.push('/');
     }
@@ -29,16 +33,15 @@ export default function LoginPage() {
     <div className="flex flex-col justify-center items-center min-h-screen bg-slate-900">
       <form onSubmit={handleSubmit} className="bg-white p-10 rounded-2xl shadow-2xl w-96 flex flex-col items-center">
         <div className="mb-8 bg-white p-2 rounded-lg">
-          <img 
-            src="/logo/weblogo2.png" 
+          <Image 
+            src={logoImage}
             alt="Metrisar Logo" 
+            width={192}
+            height={64}
             className="w-48 h-auto object-contain"
-            onError={(e) => {
-              console.error('Image failed to load:', e);
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
           />
         </div>
+
 
 
         <p className="text-gray-500 mb-8 font-medium">Sign in to your dashboard</p>

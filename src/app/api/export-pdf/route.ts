@@ -22,14 +22,10 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
   const offset = firstGroupPage > 0 ? firstGroupPage - 1 : 0;
 
   const getFooter = (id: string) => {
-    if (!pageMap[id] || totalLogicalPages === 0) return '';
-    const logicalPage = pageMap[id] - offset;
-    return `
-      <div class="footer">
-        Page ${logicalPage} of ${totalLogicalPages}
-      </div>
-    `;
+    return '';
   };
+
+  const title = payload.reportTitle || "MFEC Performance Report";
 
   return `
     <html>
@@ -61,16 +57,16 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
           th { background: #f8f9fa; font-weight: bold; color: #636e72; }
           td.hostname-cell { text-align: left; padding-left: 10px; }
           
-          .chart-container { height: 90mm; margin: 10px 0; display: flex; align-items: center; justify-content: center; }
+          .chart-container { height: 110mm; margin: 5px 0; display: flex; align-items: center; justify-content: center; }
           img { max-width: 100%; max-height: 100%; object-fit: contain; }
           
-          .footer { position: absolute; bottom: 0; width: 100%; text-align: center; font-size: 7pt; color: #b2bec3; border-top: 0.5px solid #dfe6e9; padding-top: 5px; }
+          .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 7pt; color: #b2bec3; border-top: 0.5px solid #dfe6e9; padding-top: 5px; }
         </style>
       </head>
       <body>
         <div class="cover page-break">
           ${logoBase64 ? `<img src="${logoBase64}" style="width: 150px; margin-bottom: 30px;" />` : ''}
-          <h1>MFEC Performance Report</h1>
+          <h1>${title}</h1>
           <p style="font-size: 14pt; font-weight: bold;">${payload.reportMonth}</p>
           <p>Generated: ${payload.generatedDate}</p>
         </div>
@@ -100,7 +96,7 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
           </div>
           
           <div id="group-stats-${gi}" class="page-break">
-            <div class="header"><span>MFEC Performance Report</span><span>${g.name}</span></div>
+            <div class="header"><span>${title}</span><span>${g.name}</span></div>
             <div class="section-title">${g.name}</div>
             <h3>CPU Utilization (Last 12 Months)</h3>
             <table>
@@ -128,7 +124,7 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
               const pageId = `host-${gi}-${hi}${pi === 0 ? '' : '-p' + pi}`;
               return `
                 <div id="${pageId}" class="page-break">
-                  <div class="header"><span>MFEC Performance Report</span><span>${g.name} - ${h.name}</span></div>
+                  <div class="header"><span>${title}</span><span>${g.name} - ${h.name}</span></div>
                   ${pi === 0 ? `<div class="section-title">${h.name}</div>` : ''}
                   ${pair.map(chart => `
                     <h3>${h.name} - ${chart.label}</h3>
@@ -152,6 +148,14 @@ export async function POST(req: NextRequest) {
   try {
     const payload: ReportPayload = await req.json();
     if (!payload || !payload.hostgroups) throw new Error('Invalid payload');
+
+    // Sort hostgroups and hosts alphabetically A-Z
+    payload.hostgroups.sort((a, b) => a.name.localeCompare(b.name));
+    payload.hostgroups.forEach(group => {
+      if (group.hosts) {
+        group.hosts.sort((a, b) => a.name.localeCompare(b.name));
+      }
+    });
 
     let logoBase64 = '';
     const logoPath = path.join(process.cwd(), 'public/logo/mfec1.png');
@@ -189,7 +193,11 @@ export async function POST(req: NextRequest) {
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
-      margin: { top: '15mm', bottom: '15mm', left: '10mm', right: '10mm' }
+      displayHeaderFooter: true,
+      // Increased padding and adjusted templates for visual balance
+      footerTemplate: `<div style="font-size: 8px; text-align: center; width: 100%; color: #636e72; padding: 5px 10mm 15mm 10mm; border-top: 0.5px solid #dfe6e9;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>`,
+      headerTemplate: `<div style="font-size: 8px; text-align: center; width: 100%; color: #636e72; padding: 15mm 10mm 0 10mm;"></div>`,
+      margin: { top: '20mm', bottom: '20mm', left: '10mm', right: '10mm' }
     });
 
     return new NextResponse(Buffer.from(pdfBuffer), {

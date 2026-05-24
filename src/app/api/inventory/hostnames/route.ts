@@ -3,6 +3,7 @@ import pool from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { checkPermission } from '@/lib/permissions';
+import { logSecurityEvent } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -76,9 +77,16 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Required fields missing' }, { status: 400 });
     }
 
+    // Check for duplicate hostname
+    const [existing]: any = await connection.query('SELECT 1 FROM hostname WHERE hostname = ?', [hostname]);
+    if (existing.length > 0) {
+        connection.release();
+        return NextResponse.json({ error: 'Hostname already exists' }, { status: 400 });
+    }
+
     await connection.beginTransaction();
     const [result]: any = await connection.query(
-      `INSERT INTO hostname (hostname, hostgroup_id, System, Location, IP, Model, CPU, Disk, OS, Serial, MA, mem, Pagesize, Time) 
+      `INSERT INTO hostname (hostname, hostgroup_id, \`System\`, Location, IP, Model, CPU, Disk, OS, Serial, MA, mem, Pagesize, Time) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
       [hostname, Number(hostgroup_id), System || '', Location || '', IP || '', Model || '', CPU || '', Disk || '', OS, Serial || '', MA || '', Number(mem), Number(Pagesize)]
     );
@@ -97,10 +105,12 @@ export async function POST(req: NextRequest) {
     await connection.query("CREATE TABLE `" + memTable + "` (`time` datetime NOT NULL, `mem` float NOT NULL, `hostname_id` int NOT NULL, PRIMARY KEY (`time`, `hostname_id`)) ENGINE=InnoDB");
 
     await connection.commit();
+    logSecurityEvent(`Hostname created: ${hostname}`, { by: user.name, id: hostnameId });
     return NextResponse.json({ message: 'Created', id: hostnameId });
   } catch (error) {
+    console.error('Hostname creation error:', error);
     await connection.rollback();
-    return NextResponse.json({ error: 'Failed' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed', details: error }, { status: 500 });
   } finally {
     connection.release();
   }
@@ -113,7 +123,7 @@ export async function PUT(req: NextRequest) {
 
     try {
         const data = await req.json();
-        const { hostname_id, hostgroup_id } = data;
+        const { hostname_id, hostgroup_id, hostname } = data;
         
         if (user.role !== 'admin') {
             const [access]: any = await pool.query(`
@@ -127,11 +137,12 @@ export async function PUT(req: NextRequest) {
         }
 
         await pool.query(
-          `UPDATE hostname SET hostname = ?, hostgroup_id = ?, System = ?, Location = ?, IP = ?, Model = ?, CPU = ?, Disk = ?, OS = ?, Serial = ?, MA = ?, mem = ?, Pagesize = ? 
+          `UPDATE hostname SET hostname = ?, hostgroup_id = ?, \`System\` = ?, Location = ?, IP = ?, Model = ?, CPU = ?, Disk = ?, OS = ?, Serial = ?, MA = ?, mem = ?, Pagesize = ? 
            WHERE hostname_id = ?`,
-          [data.hostname, Number(hostgroup_id), data.System || '', data.Location || '', data.IP || '', data.Model || '', data.CPU || '', data.Disk || '', data.OS, data.Serial || '', data.MA || '', Number(data.mem), Number(data.Pagesize), hostname_id]
+          [hostname, Number(hostgroup_id), data.System || '', data.Location || '', data.IP || '', data.Model || '', data.CPU || '', data.Disk || '', data.OS, data.Serial || '', data.MA || '', Number(data.mem), Number(data.Pagesize), hostname_id]
         );
     
+        logSecurityEvent(`Hostname updated: ${hostname}`, { by: user.name, id: hostname_id });
         return NextResponse.json({ message: 'Hostname updated' });
       } catch (error) {
         return NextResponse.json({ error: 'Failed to update hostname' }, { status: 500 });
@@ -171,6 +182,7 @@ export async function DELETE(req: NextRequest) {
         await connection.query(`DROP TABLE IF EXISTS \`` + memTable + `\``);
     
         await connection.commit();
+        logSecurityEvent(`Hostname deleted: ${h[0].hostname}`, { by: user.name, id: id });
         return NextResponse.json({ message: 'Deleted' });
       } catch (error) {
         await connection.rollback();

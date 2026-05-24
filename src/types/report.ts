@@ -26,6 +26,7 @@ export interface HostGroupData {
 
 export interface ReportPayload {
   reportMonth: string;
+  reportTitle?: string;
   targetMonth?: number;
   targetYear?: number;
   generatedDate: string;

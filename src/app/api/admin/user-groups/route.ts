@@ -3,8 +3,6 @@ import pool from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
-const PROTECTED_GROUPS = ['admin', 'sysadmin', 'operation'];
-
 export async function GET() {
   const session = await getServerSession(authOptions);
   const user = session?.user as any;
@@ -13,21 +11,22 @@ export async function GET() {
   }
 
   try {
-    let query = 'SELECT * FROM user_groups';
+    // Logic: Exclude groups that have the same name as any username
+    let query = `
+      SELECT ug.* FROM user_groups ug
+      WHERE ug.ug_name NOT IN (SELECT username FROM user)
+    `;
     const params: any[] = [];
     
-    // Logic: admin sees all, sysadmin only sees groups they are member of (excluding protected groups)
+    // Additional Logic for sysadmin: only see groups they are member of (still excluding personal groups)
     if (user.role === 'sysadmin') {
       query = `
         SELECT ug.* FROM user_groups ug
         JOIN user_to_user_groups uug ON ug.ug_id = uug.ug_id
-        WHERE uug.user_id = ? 
-        AND LOWER(ug.ug_name) NOT IN ('${PROTECTED_GROUPS.join("','")}')
+        WHERE uug.user_id = ?
+        AND ug.ug_name NOT IN (SELECT username FROM user)
       `;
       params.push(user.id);
-    } else if (user.role !== 'admin') {
-      // Default fallback for other non-admin roles (though only sysadmin/admin currently allowed)
-      query += ` WHERE LOWER(ug_name) NOT IN ('${PROTECTED_GROUPS.join("','")}')`;
     }
 
     const [groups]: any = await pool.query(query, params);
@@ -45,12 +44,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  try {
+    try {
     const { ug_name } = await req.json();
 
-    // Restriction: Non-admins cannot create groups with protected names
-    if (user.role !== 'admin' && PROTECTED_GROUPS.includes(ug_name.toLowerCase())) {
-        return NextResponse.json({ error: 'Forbidden: Cannot create protected groups' }, { status: 403 });
+    // 1. Prevent group name same as any username
+    const [users]: any = await pool.query('SELECT username FROM user');
+    const usernames = users.map((u: any) => u.username.toLowerCase());
+    if (usernames.includes(ug_name.toLowerCase())) {
+        return NextResponse.json({ error: 'Group name cannot be the same as a username' }, { status: 400 });
+    }
+
+    // Check for duplicate group name
+    const [existing]: any = await pool.query('SELECT 1 FROM user_groups WHERE ug_name = ?', [ug_name]);
+    if (existing.length > 0) {
+        return NextResponse.json({ error: 'Group name already exists' }, { status: 400 });
     }
 
     const connection = await pool.getConnection();

@@ -22,9 +22,11 @@ import {
   User,
   X,
   PlusCircle,
-  GripVertical
+  GripVertical,
+  Type
 } from 'lucide-react';
 import { ReportPayload } from '@/types/report';
+import FloatingInput from '@/components/common/FloatingInput';
 
 const SarChart = dynamic(() => import('@/components/charts/SarChart'), { ssr: false });
 const Highcharts = typeof window !== 'undefined' ? require('highcharts') : null;
@@ -39,6 +41,7 @@ const ReportExportPage = () => {
   const [exportStatus, setExportStatus] = useState('');
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [reportTitle, setReportTitle] = useState('Monthly Performance Report');
 
   const [renderCharts, setRenderCharts] = useState(false);
   const [hiddenChartsData, setHiddenChartsData] = useState<any[]>([]);
@@ -162,6 +165,7 @@ const ReportExportPage = () => {
 
       const payload: ReportPayload = {
         reportMonth: new Date(parseInt(year), parseInt(month) - 1).toLocaleString('en-US', { month: 'long', year: 'numeric' }),
+        reportTitle: reportTitle,
         targetMonth: parseInt(month), targetYear: parseInt(year), generatedDate: new Date().toLocaleDateString(),
         hostgroups: finalHostgroups as any
       };
@@ -236,14 +240,14 @@ const ReportExportPage = () => {
                         return (
                             <div key={g.hostgroup} className="border border-gray-100 rounded-xl bg-white overflow-hidden mb-1">
                                 <div 
-                                    className={`flex items-center justify-between p-2 cursor-pointer transition-colors ${selectedGroups.includes(g.hostgroup) ? 'bg-blue-50' : 'hover:bg-gray-50'}`}
+                                    className={`flex items-center justify-between p-2 cursor-pointer transition-colors ${selectedGroups.includes(g.hostgroup) ? 'bg-blue-300 text-white' : 'hover:bg-gray-50'}`}
                                     onClick={() => toggleGroup(g.hostgroup)}
                                 >
                                     <div className="flex items-center gap-2">
                                         <button onClick={(e) => { e.stopPropagation(); toggleExpand(g.hostgroup); }}>
-                                            {isExpanded ? <ChevronDown className="w-3 h-3 text-blue-600" /> : <ChevronRight className="w-3 h-3 text-gray-400" />}
+                                            {isExpanded ? <ChevronDown className={`w-3 h-3 ${selectedGroups.includes(g.hostgroup) ? 'text-white' : 'text-blue-600'}`} /> : <ChevronRight className="w-3 h-3 text-gray-400" />}
                                         </button>
-                                        <span className="text-[10px] font-black uppercase tracking-tight text-gray-700">{g.hostgroup}</span>
+                                        <span className={`text-[10px] font-black uppercase tracking-tight ${selectedGroups.includes(g.hostgroup) ? 'text-white' : 'text-gray-700'}`}>{g.hostgroup}</span>
                                     </div>
                                 </div>
                                 {isExpanded && (
@@ -274,6 +278,19 @@ const ReportExportPage = () => {
                     <span className="absolute -top-4 left-8 bg-white px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 border border-gray-100 rounded-full shadow-sm flex items-center gap-2">
                         <Calendar className="w-3.5 h-3.5" /> Configurations
                     </span>
+                    
+                    <div className="mb-8 space-y-4">
+                        <div className="flex items-center gap-3 text-blue-600 border-b border-gray-50 pb-2">
+                            <Type className="w-4 h-4" />
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.1em]">Report Metadata</h4>
+                        </div>
+                        <FloatingInput 
+                            label="Report Title"
+                            value={reportTitle}
+                            onChange={e => setReportTitle(e.target.value)}
+                        />
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div className="space-y-5">
                             <div className="flex items-center gap-3 text-blue-600 border-b border-gray-50 pb-2">
