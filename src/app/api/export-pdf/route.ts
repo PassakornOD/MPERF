@@ -167,8 +167,12 @@ export async function POST(req: NextRequest) {
         '--disable-dev-shm-usage',
         '--disable-gpu',
         '--no-zygote',
-        '--single-process'
-      ]
+        '--single-process',
+        '--disable-extensions',
+        '--memory-pressure-off',
+        '--ignore-certificate-errors' // เพิ่มตัวนี้เพื่อข้ามปัญหา SSL
+      ],
+      ignoreHTTPSErrors: true // เพิ่มตัวนี้เพื่อข้าม SSL ใน Puppeteer
     });
 
     const page = await browser.newPage();
@@ -182,7 +186,7 @@ export async function POST(req: NextRequest) {
         });
     }));
 
-    await page.setContent(generateHTML(payload, {}, logoBase64), { waitUntil: 'load' });
+    await page.setContent(generateHTML(payload, {}, logoBase64), { waitUntil: 'load', timeout: 60000 });
 
     const result = await page.evaluate(() => {
       const map: Record<string, number> = {};
@@ -200,12 +204,12 @@ export async function POST(req: NextRequest) {
     });
 
     const offset = (result.map['group-0'] || 1) - 1;
-    await page.setContent(generateHTML(payload, result.map, logoBase64, result.totalPhysicalPages - offset), { waitUntil: 'load' });
+    await page.setContent(generateHTML(payload, result.map, logoBase64, result.totalPhysicalPages - offset), { waitUntil: 'load', timeout: 60000 });
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       displayHeaderFooter: true,
-      // Reduced top padding and adjusted margin to prevent footer from floating up
+      timeout: 60000,
       footerTemplate: `<div style="font-size: 8px; text-align: center; width: 100%; color: #636e72; padding-bottom: 10px;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>`,
       headerTemplate: `<div style="font-size: 8px; text-align: center; width: 100%; color: #636e72; padding-top: 10px;"></div>`,
       margin: { top: '15mm', bottom: '15mm', left: '10mm', right: '10mm' }
