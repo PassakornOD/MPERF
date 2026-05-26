@@ -21,10 +21,6 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
   const firstGroupPage = pageMap['group-0'] || 0;
   const offset = firstGroupPage > 0 ? firstGroupPage - 1 : 0;
 
-  const getFooter = (id: string) => {
-    return '';
-  };
-
   const title = payload.reportTitle || "MFEC Performance Report";
 
   return `
@@ -92,7 +88,6 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
         ${payload.hostgroups.map((g, gi) => `
           <div id="group-${gi}" class="section-divider page-break">
             ${g.name}
-            ${getFooter(`group-${gi}`)}
           </div>
           
           <div id="group-stats-${gi}" class="page-break">
@@ -114,7 +109,6 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
                   return `<td>${stat ? stat.value : '-'}</td>`;
                 }).join('')}</tr>`).join('')}</tbody>
             </table>
-            ${getFooter(`group-stats-${gi}`)}
           </div>
 
           ${g.hosts.map((h, hi) => {
@@ -132,7 +126,6 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
                       ${chart.data && chart.data.length > 100 ? `<img src="${chart.data}" />` : `<div style="color: #b2bec3; font-style: italic;">No data available</div>`}
                     </div>
                   `).join('')}
-                  ${getFooter(pageId)}
                 </div>
               `;
             }).join('');
