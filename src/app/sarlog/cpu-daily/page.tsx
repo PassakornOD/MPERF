@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 
-const SarChart = dynamic(() => import('@/components/charts/SarChart'), { 
+const SarChart = dynamic(() => import('@/components/charts/SarChart'), {
   ssr: false,
   loading: () => <div className="w-full h-[435px] bg-gray-50 animate-pulse flex items-center justify-center">Loading Chart...</div>
 });
@@ -22,16 +22,16 @@ const CpuDailyPage = () => {
   const [type, setType] = useState<'Peak' | 'Normal' | 'Average'>('Normal');
   const chartRef = useRef<any>(null);
   const [isExporting, setIsExporting] = useState(false);
-  
+
   const getPrevMonthDates = () => {
     const now = new Date();
     const firstDay = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const lastDay = new Date(now.getFullYear(), now.getMonth(), 0);
     const format = (d: Date) => {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${y}-${m}-${day}`;
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
     };
     return { start: format(firstDay), end: format(lastDay) };
   };
@@ -47,9 +47,9 @@ const CpuDailyPage = () => {
   const { data: hostGroups } = useQuery<HostGroup[]>({
     queryKey: ['hostGroups', user?.id],
     queryFn: async () => {
-        if (!user) return [];
-        const res = await axios.get('/api/host-groups');
-        return res.data;
+      if (!user) return [];
+      const res = await axios.get('/api/host-groups');
+      return res.data;
     },
     enabled: !!user
   });
@@ -73,9 +73,9 @@ const CpuDailyPage = () => {
     try {
       // Use chartOptions to override title and subtitle during SVG generation
       const svg = chartRef.current.getSVG({
-          chart: { backgroundColor: '#ffffff' },
-          title: { text: `Sar ${startDate} To ${endDate}` },
-          subtitle: { text: `Hostname : ${getHostnameLabel()} Type : ${type}` }
+        chart: { backgroundColor: '#ffffff' },
+        title: { text: `Sar ${startDate} To ${endDate}` },
+        subtitle: { text: `Hostname : ${getHostnameLabel()} Type : ${type}` }
       });
       const hostname = getHostnameLabel();
       const group = selectedGroup;
@@ -117,58 +117,58 @@ const CpuDailyPage = () => {
 
     // Define X-axis based on chart type
     let xAxis: Highcharts.XAxisOptions = {
-        labels: { rotation: -45, align: 'right', style: { font: 'normal 10px Verdana, sans-serif' } }
+      labels: { rotation: -45, align: 'right', style: { font: 'normal 10px Verdana, sans-serif' } }
     };
-    
+
     let series: any[] = [];
     let categories: string[] = [];
 
     if (type === 'Peak' || type === 'Average') {
-        categories = metrics.map((m: any) => {
-            const d = new Date(m.time);
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        });
-        xAxis.categories = categories;
-        xAxis.tickInterval = 1;
-        
-        if (type === 'Peak') {
-            series = [
-                { name: '%peak', data: metrics.map((m: any) => 100 - (Number(m.idle) || 0)), color: "#AA4643", type: 'spline', lineWidth: 2 },
-                { name: '%avg', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#92A8CD', type: 'area', lineWidth: 1 }
-            ];
-        } else {
-            series = [
-                { name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0), color: '#4572A7', type: 'area' },
-                { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#FFCC00', type: 'area' },
-                { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), color: '#00FF00', type: 'area' },
-                { name: '%wio', data: metrics.map((m: any) => Number(m.wio) || 0), color: '#FFFF99', type: 'area' }
-            ];
-        }
+      categories = metrics.map((m: any) => {
+        const d = new Date(m.time);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      });
+      xAxis.categories = categories;
+      xAxis.tickInterval = 1;
+
+      if (type === 'Peak') {
+        series = [
+          { name: '%peak', data: metrics.map((m: any) => 100 - (Number(m.idle) || 0)), color: "#AA4643", type: 'spline', lineWidth: 2 },
+          { name: '%avg', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#92A8CD', type: 'area', lineWidth: 1 }
+        ];
+      } else {
+        series = [
+          { name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0), color: '#4572A7', type: 'area' },
+          { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#FFCC00', type: 'area' },
+          { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), color: '#00FF00', type: 'area' },
+          { name: '%wio', data: metrics.map((m: any) => Number(m.wio) || 0), color: '#FFFF99', type: 'area' }
+        ];
+      }
     } else {
-        categories = metrics.map((m: any) => {
-            const d = new Date(m.time);
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`;
-        });
-        xAxis.categories = categories;
-        xAxis.tickInterval = Math.max(1, Math.floor(metrics.length / 20));
-        
-        if (hasNice) {
-            series = [
-                { name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0), type: 'area', color: '#4572A7' },
-                { name: '%wio', data: metrics.map((m: any) => Number(m.wio) || 0), type: 'area', color: '#FFFF99' },
-                { name: '%nice', data: metrics.map((m: any) => Number(m.nice) || 0), type: 'area', color: '#89A54E' },
-                { name: '%steal', data: metrics.map((m: any) => Number(m.steal) || 0), type: 'area', color: '#AA4643' },
-                { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), type: 'area', color: '#FFCC00' },
-                { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), type: 'area', color: '#00FF00' }
-            ];
-        } else {
-            series = [
-                { name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0), type: 'area', color: '#4572A7' },
-                { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), type: 'area', color: '#FFCC00' },
-                { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), type: 'area', color: '#00FF00' },
-                { name: '%wio', data: metrics.map((m: any) => Number(m.wio) || 0), type: 'area', color: '#FFFF99' }
-            ];
-        }
+      categories = metrics.map((m: any) => {
+        const d = new Date(m.time);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`;
+      });
+      xAxis.categories = categories;
+      xAxis.tickInterval = Math.max(1, Math.floor(metrics.length / 20));
+
+      if (hasNice) {
+        series = [
+          { name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0), type: 'area', color: '#4572A7' },
+          { name: '%wio', data: metrics.map((m: any) => Number(m.wio) || 0), type: 'area', color: '#FFFF99' },
+          { name: '%nice', data: metrics.map((m: any) => Number(m.nice) || 0), type: 'area', color: '#89A54E' },
+          { name: '%steal', data: metrics.map((m: any) => Number(m.steal) || 0), type: 'area', color: '#AA4643' },
+          { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), type: 'area', color: '#FFCC00' },
+          { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), type: 'area', color: '#00FF00' }
+        ];
+      } else {
+        series = [
+          { name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0), type: 'area', color: '#4572A7' },
+          { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), type: 'area', color: '#FFCC00' },
+          { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), type: 'area', color: '#00FF00' },
+          { name: '%wio', data: metrics.map((m: any) => Number(m.wio) || 0), type: 'area', color: '#FFFF99' }
+        ];
+      }
     }
 
     let options: any = {
@@ -176,7 +176,7 @@ const CpuDailyPage = () => {
       title: { text: `Sar ${startDate} To ${endDate}` },
       subtitle: { text: `Hostname : ${getHostnameLabel()} Type : ${type}` },
       legend: {
-        itemStyle: { fontSize: '10px' },
+        itemStyle: { fontSize: '8px' },
         borderWidth: 1,
         borderColor: '#e5e7eb',
         borderRadius: 8,
@@ -191,10 +191,10 @@ const CpuDailyPage = () => {
       },
       xAxis,
       yAxis: { title: { text: 'Percent' }, min: 0, max: 100 },
-      plotOptions: { 
-        area: { 
-          lineColor: '#000000', 
-          lineWidth: type === 'Normal' ? 0.5 : 0.1, 
+      plotOptions: {
+        area: {
+          lineColor: '#000000',
+          lineWidth: type === 'Normal' ? 0.5 : 0.1,
           marker: { enabled: false },
           stacking: (type === 'Normal' || type === 'Average') ? 'percent' : undefined
         },
@@ -247,9 +247,9 @@ const CpuDailyPage = () => {
 
       <div className="flex justify-end mb-4">
         {metrics && metrics.length > 0 && (
-            <button onClick={handleExport} className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700" disabled={isExporting}>
-                {isExporting ? 'Exporting...' : 'Export PDF'}
-            </button>
+          <button onClick={handleExport} className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700" disabled={isExporting}>
+            {isExporting ? 'Exporting...' : 'Export PDF'}
+          </button>
         )}
       </div>
 

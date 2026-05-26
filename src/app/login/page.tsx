@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/common/Toast';
 import Image from 'next/image';
-import logoImage from '../../../public/logo/weblogo2.png';
 
 export default function LoginPage() {
   const { showToast } = useToast();
@@ -34,7 +33,7 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit} className="bg-white p-10 rounded-2xl shadow-2xl w-96 flex flex-col items-center">
         <div className="mb-8 bg-white p-2 rounded-lg">
           <Image 
-            src={logoImage}
+            src="/logo/weblogo2.png"
             alt="Metrisar Logo" 
             width={192}
             height={64}

@@ -97,26 +97,26 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
             <table>
                 <thead><tr><th>Hostname</th>${months.map(m => `<th>${m.label}</th>`).join('')}</tr></thead>
                 <tbody>${g.hosts.map(h => `<tr><td class="hostname-cell">${h.name}</td>${months.map(m => {
-                  const stat = (h.cpuStats || []).find(s => s.month === m.month && s.year === m.year);
-                  return `<td>${stat ? stat.value : '-'}</td>`;
-                }).join('')}</tr>`).join('')}</tbody>
+    const stat = Array.isArray(h.cpuStats) ? h.cpuStats.find(s => s.month === m.month && s.year === m.year) : null;
+    return `<td>${stat ? stat.value : '-'}</td>`;
+  }).join('')}</tr>`).join('')}</tbody>
             </table>
             <h3>Memory Utilization (Last 12 Months)</h3>
             <table>
                 <thead><tr><th>Hostname</th>${months.map(m => `<th>${m.label}</th>`).join('')}</tr></thead>
                 <tbody>${g.hosts.map(h => `<tr><td class="hostname-cell">${h.name}</td>${months.map(m => {
-                  const stat = (h.memStats || []).find(s => s.month === m.month && s.year === m.year);
-                  return `<td>${stat ? stat.value : '-'}</td>`;
-                }).join('')}</tr>`).join('')}</tbody>
+    const stat = Array.isArray(h.memStats) ? h.memStats.find(s => s.month === m.month && s.year === m.year) : null;
+    return `<td>${stat ? stat.value : '-'}</td>`;
+  }).join('')}</tr>`).join('')}</tbody>
             </table>
           </div>
 
           ${g.hosts.map((h, hi) => {
-            const chartPairs: any[][] = [];
-            for (let i = 0; i < (h.charts || []).length; i += 2) chartPairs.push(h.charts.slice(i, i + 2));
-            return chartPairs.map((pair, pi) => {
-              const pageId = `host-${gi}-${hi}${pi === 0 ? '' : '-p' + pi}`;
-              return `
+    const chartPairs: any[][] = [];
+    for (let i = 0; i < (h.charts || []).length; i += 2) chartPairs.push(h.charts.slice(i, i + 2));
+    return chartPairs.map((pair, pi) => {
+      const pageId = `host-${gi}-${hi}${pi === 0 ? '' : '-p' + pi}`;
+      return `
                 <div id="${pageId}" class="page-break">
                   <div class="header"><span>${title}</span><span>${g.name} - ${h.name}</span></div>
                   ${pi === 0 ? `<div class="section-title">${h.name}</div>` : ''}
@@ -128,8 +128,8 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
                   `).join('')}
                 </div>
               `;
-            }).join('');
-          }).join('')}
+    }).join('');
+  }).join('')}
         `).join('')}
       </body>
     </html>
@@ -139,8 +139,10 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
 export async function POST(req: NextRequest) {
   let browser;
   try {
-    const payload: ReportPayload = await req.json();
-    if (!payload || !payload.hostgroups) throw new Error('Invalid payload');
+    const body = await req.text();
+    const payload: ReportPayload = JSON.parse(body);
+
+    if (!payload || !payload.hostgroups) throw new Error('Invalid payload structure');
 
     // Sort hostgroups and hosts alphabetically A-Z
     payload.hostgroups.sort((a, b) => a.name.localeCompare(b.name));
@@ -153,16 +155,33 @@ export async function POST(req: NextRequest) {
     let logoBase64 = '';
     const logoPath = path.join(process.cwd(), 'public/logo/mfec1.png');
     if (fs.existsSync(logoPath)) {
-        logoBase64 = `data:image/png;base64,${fs.readFileSync(logoPath).toString('base64')}`;
+      logoBase64 = `data:image/png;base64,${fs.readFileSync(logoPath).toString('base64')}`;
     }
 
     browser = await puppeteer.launch({
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: [
+        '--no-sandbox', 
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--no-zygote',
+        '--single-process'
+      ]
     });
 
     const page = await browser.newPage();
+    
+    // Log chart data availability
+    payload.hostgroups.forEach(g => g.hosts.forEach(h => {
+        (h.charts || []).forEach(c => {
+            if (!c.data || c.data.length < 100) {
+                console.warn(`[PDF Export Warning] Chart data for ${h.name} (${c.label}) is missing or too small.`);
+            }
+        });
+    }));
+
     await page.setContent(generateHTML(payload, {}, logoBase64), { waitUntil: 'load' });
 
     const result = await page.evaluate(() => {
@@ -182,22 +201,23 @@ export async function POST(req: NextRequest) {
 
     const offset = (result.map['group-0'] || 1) - 1;
     await page.setContent(generateHTML(payload, result.map, logoBase64, result.totalPhysicalPages - offset), { waitUntil: 'load' });
-
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       displayHeaderFooter: true,
-      // Increased padding and adjusted templates for visual balance
-      footerTemplate: `<div style="font-size: 8px; text-align: center; width: 100%; color: #636e72; padding: 5px 10mm 15mm 10mm; border-top: 0.5px solid #dfe6e9;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>`,
-      headerTemplate: `<div style="font-size: 8px; text-align: center; width: 100%; color: #636e72; padding: 15mm 10mm 0 10mm;"></div>`,
-      margin: { top: '20mm', bottom: '20mm', left: '10mm', right: '10mm' }
+      // Reduced top padding and adjusted margin to prevent footer from floating up
+      footerTemplate: `<div style="font-size: 8px; text-align: center; width: 100%; color: #636e72; padding-bottom: 10px;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>`,
+      headerTemplate: `<div style="font-size: 8px; text-align: center; width: 100%; color: #636e72; padding-top: 10px;"></div>`,
+      margin: { top: '15mm', bottom: '15mm', left: '10mm', right: '10mm' }
     });
+
 
     return new NextResponse(Buffer.from(pdfBuffer), {
       status: 200,
       headers: { 'Content-Type': 'application/pdf' }
     });
   } catch (error: any) {
+    console.error('[PDF Export Error]:', error);
     return new NextResponse(JSON.stringify({ error: error.message }), { status: 500 });
   } finally {
     if (browser) await browser.close();

@@ -71,12 +71,12 @@ const MemDailyPage = () => {
     setIsExporting(true);
     try {
       const svg = chartRef.current.getSVG({
-          chart: { backgroundColor: '#ffffff' },
-          title: { text: `Sar ${startDate} To ${endDate}` },
-          subtitle: { text: `Hostname : ${getHostnameLabel()} Type : ${type}` }
+        chart: { backgroundColor: '#ffffff' },
+        title: { text: `Sar ${startDate} To ${endDate}` },
+        subtitle: { text: `Hostname : ${getHostnameLabel()} Type : ${type}` }
       });
       const hostname = getHostnameLabel();
-      
+
       const payload = {
         reportMonth: `${startDate} to ${endDate}`,
         generatedDate: new Date().toLocaleDateString(),
@@ -117,35 +117,35 @@ const MemDailyPage = () => {
     const totalMem = (hostnameInfo as any)?.mem || 16;
 
     let xAxis: Highcharts.XAxisOptions = {
-        labels: { rotation: -45, align: 'right', style: { font: 'normal 10px Verdana, sans-serif' } }
+      labels: { rotation: -45, align: 'right', style: { font: 'normal 10px Verdana, sans-serif' } }
     };
     let series: any[] = [];
     let categories: string[] = [];
 
     if (type === 'Peak') {
-        categories = metrics.map((m: any) => {
-            const d = new Date(m.time);
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        });
-        xAxis.categories = categories;
-        xAxis.tickInterval = 1;
-        series = [
-            { name: 'mem peak', data: metrics.map((m: any) => m.mem || 0), color: "#92A8CD", type: 'spline' },
-            { name: 'mem avg', data: metrics.map((m: any) => m.avg_mem || 0), color: "#AA4643", type: 'area' }
-        ];
+      categories = metrics.map((m: any) => {
+        const d = new Date(m.time);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      });
+      xAxis.categories = categories;
+      xAxis.tickInterval = 1;
+      series = [
+        { name: 'mem peak', data: metrics.map((m: any) => m.mem || 0), color: "#92A8CD", type: 'spline' },
+        { name: 'mem avg', data: metrics.map((m: any) => m.avg_mem || 0), color: "#AA4643", type: 'area' }
+      ];
     } else {
-        categories = metrics.map((m: any) => {
-            const d = new Date(m.time);
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
-        });
-        xAxis.categories = categories;
-        xAxis.tickInterval = Math.max(1, Math.floor(metrics.length / 20));
-        series = [{
-            name: 'mem usage',
-            data: metrics.map((m: any) => Number(m.mem) || 0),
-            color: "#AA4643",
-            type: 'area'
-        }];
+      categories = metrics.map((m: any) => {
+        const d = new Date(m.time);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+      });
+      xAxis.categories = categories;
+      xAxis.tickInterval = Math.max(1, Math.floor(metrics.length / 20));
+      series = [{
+        name: 'mem usage',
+        data: metrics.map((m: any) => Number(m.mem) || 0),
+        color: "#AA4643",
+        type: 'area'
+      }];
     }
 
     let options: any = {
@@ -168,11 +168,11 @@ const MemDailyPage = () => {
         }
       },
       plotOptions: {
-        area: { 
-            lineColor: '#000000', 
-            lineWidth: type === 'Normal' ? 0.5 : 0.1, 
-            marker: { enabled: false },
-            stacking: undefined // Explicitly no stacking for memory
+        area: {
+          lineColor: '#000000',
+          lineWidth: type === 'Normal' ? 0.5 : 0.1,
+          marker: { enabled: false },
+          stacking: undefined // Explicitly no stacking for memory
         },
         spline: { marker: { enabled: true } }
       },
@@ -181,14 +181,15 @@ const MemDailyPage = () => {
 
     if (type === 'Normal') {
       options.chart.type = 'area';
+      const avgPercent = totalMem ? ((totalAvg / totalMem) * 100).toFixed(1) : 0;
       options.yAxis.plotLines = [{
-        value: totalMem,
+        value: totalAvg,
         color: 'white',
         dashStyle: 'Dash',
         width: 2,
         label: {
-          text: `AVG Memory Usage = ${totalAvg.toFixed(2)} GB`,
-          y: 15,
+          text: `AVG Memory Usage = ${totalAvg.toFixed(2)} GB = ${avgPercent}%`,
+          y: -30,
           style: { color: '#CC0000' },
           align: 'right'
         }
@@ -234,9 +235,9 @@ const MemDailyPage = () => {
 
       <div className="flex justify-end mb-4">
         {response?.data && response.data.length > 0 && (
-            <button onClick={handleExport} className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700" disabled={isExporting}>
-                {isExporting ? 'Exporting...' : 'Export PDF'}
-            </button>
+          <button onClick={handleExport} className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700" disabled={isExporting}>
+            {isExporting ? 'Exporting...' : 'Export PDF'}
+          </button>
         )}
       </div>
 

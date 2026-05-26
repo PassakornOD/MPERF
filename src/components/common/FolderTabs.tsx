@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { Cpu, MemoryStick, List, Settings, BarChart3 } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const IconMap: { [key: string]: any } = {
   Cpu: Cpu,
@@ -26,10 +26,26 @@ interface FolderTabsProps {
 export default function FolderTabs({ tabs, children }: FolderTabsProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [animateKey, setAnimateKey] = useState(0);
+
+  // Trigger animation whenever children (path) change
+  useEffect(() => {
+    setAnimateKey(prev => prev + 1);
+  }, [pathname]);
 
   return (
     <div className="w-full">
-      {/* Tab Container - Added px-4 to shift container inward */}
+      <style jsx global>{`
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-ease-in {
+          animation: slideDown 0.3s ease-in-out forwards;
+        }
+      `}</style>
+      
+      {/* Tab Container */}
       <div className="flex items-center gap-1.5 px-4">
         {tabs.map((tab) => {
           const normalizedPathname = pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
@@ -57,7 +73,10 @@ export default function FolderTabs({ tabs, children }: FolderTabsProps) {
       </div>
 
       {/* Content Area */}
-      <div className="relative bg-white p-8 rounded-b-3xl rounded-tr-3xl border border-gray-300 shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
+      <div 
+        key={animateKey}
+        className="relative bg-white p-8 rounded-b-3xl rounded-tr-3xl border border-gray-300 shadow-[0_4px_20px_rgba(0,0,0,0.08)] animate-ease-in"
+      >
         {children}
       </div>
     </div>

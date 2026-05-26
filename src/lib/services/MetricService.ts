@@ -96,12 +96,23 @@ export class MetricService {
     try { const [rows] = await pool.query(query, [hostnameId, month, year]); return rows as any[]; } catch (e) { return []; }
   }
 
+  static async tableExists(tableName: string): Promise<boolean> {
+      try {
+          const [rows]: any = await pool.query(`SHOW TABLES LIKE ?`, [tableName]);
+          return rows.length > 0;
+      } catch (e) {
+          return false;
+      }
+  }
+
   static async getMemDaily(userId: number, role: string, hostgroup: string, hostnameId: number, type: 'Peak' | 'Normal', startDate: string, endDate: string): Promise<any> {
       if (!(await this.canAccessHostgroup(userId, role, hostgroup))) {
           console.warn(`Access denied for user ${userId} to hostgroup ${hostgroup}`);
           return { data: [], totalAvg: 0 };
       }
       const tableName = `${hostgroup}:r`;
+      if (!(await this.tableExists(tableName))) return { data: [], totalAvg: 0 };
+      
       const start = `${startDate} 00:00:00`;
       const end = `${endDate} 23:59:59`;
       
@@ -124,6 +135,8 @@ export class MetricService {
   static async getMemMonthly(userId: number, role: string, hostgroup: string, hostnameId: number, month: string, year: string): Promise<any[]> {
       if (!(await this.canAccessHostgroup(userId, role, hostgroup))) return [];
       const tableName = `${hostgroup}:r`;
+      if (!(await this.tableExists(tableName))) return [];
+      
       const query = `SELECT TIME_FORMAT(time,'%H:%i') as time_label, DAY(time) as day, mem as val FROM \`${tableName}\` WHERE hostname_id = ? AND MONTH(time) = ? AND YEAR(time) = ? ORDER BY time ASC`;
       try { const [rows] = await pool.query(query, [hostnameId, month, year]); return rows as any[]; } catch (e) { return []; }
   }

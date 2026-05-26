@@ -59,6 +59,9 @@ COPY . .
 
 # Build
 RUN npm run build
+RUN mkdir -p .next/standalone/.next/static
+RUN cp -r .next/static/* .next/standalone/.next/static/
+RUN cp -r public .next/standalone/public
 
 # Start app
-CMD ["npm", "start"]
+CMD ["node", ".next/standalone/server.js"]
