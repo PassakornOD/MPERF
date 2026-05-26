@@ -1,8 +1,16 @@
-
-node_modules
-.next
+# Dockerignore to prevent scanning and bundling large files
 .git
-.env
-Dockerfile
-docker-compose.yml
-README.md
+.next
+node_modules
+*.sql
+*.pdf
+data_RedHat
+data_Solaris
+offline_bundle
+public/logo
+public/favicon.ico
+
+# Exclude test files
+**/*.test.ts
+**/*.test.tsx
+**/__tests__

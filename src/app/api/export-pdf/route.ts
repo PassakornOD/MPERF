@@ -161,6 +161,7 @@ export async function POST(req: NextRequest) {
     browser = await puppeteer.launch({
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       headless: true,
+      ignoreHTTPSErrors: true,
       args: [
         '--no-sandbox', 
         '--disable-setuid-sandbox',
@@ -170,11 +171,9 @@ export async function POST(req: NextRequest) {
         '--single-process',
         '--disable-extensions',
         '--memory-pressure-off',
-        '--ignore-certificate-errors' // เพิ่มตัวนี้เพื่อข้ามปัญหา SSL
-      ],
-      ignoreHTTPSErrors: true // เพิ่มตัวนี้เพื่อข้าม SSL ใน Puppeteer
-    });
-
+        '--ignore-certificate-errors'
+      ]
+    } as any);
     const page = await browser.newPage();
     
     // Log chart data availability
