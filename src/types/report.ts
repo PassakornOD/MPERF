@@ -9,6 +9,13 @@ export interface ChartData {
   data: string; // base64 image data
 }
 
+export interface RawChartData {
+  label: string;
+  metrics: any[];
+  report: any;
+  totalAvg?: number;
+}
+
 export interface HostData {
   id: string;
   name: string;
@@ -16,6 +23,7 @@ export interface HostData {
   cpuStats: MonthlyStat[];
   memStats: MonthlyStat[];
   charts: ChartData[];
+  rawCharts?: RawChartData[];
 }
 
 export interface HostGroupData {

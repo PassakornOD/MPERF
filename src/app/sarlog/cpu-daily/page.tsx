@@ -113,66 +113,99 @@ const CpuDailyPage = () => {
   const getChartOptions = (): Highcharts.Options => {
     if (!metrics || metrics.length === 0) return { title: { text: 'No Data Found' } };
 
-    const categories = metrics.map((m: any) => {
-        if (!m.time) return 'N/A';
-        // Use string split to robustly extract date or time part avoiding timezone shifts
-        if (type === 'Average' || type === 'Peak') {
-            return String(m.time).split('T')[0].split(' ')[0];
-        }
-        const d = new Date(m.time);
-        if (isNaN(d.getTime())) return String(m.time);
-        return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
-    });
-    
-    const tickInterval = (type === 'Average' || type === 'Peak') ? 1 : Math.max(1, Math.floor(metrics.length / 20));
     const hasNice = metrics[0]?.hasOwnProperty('nice');
 
+    // Define X-axis based on chart type
+    let xAxis: Highcharts.XAxisOptions = {
+        labels: { rotation: -45, align: 'right', style: { font: 'normal 10px Verdana, sans-serif' } }
+    };
+    
+    let series: any[] = [];
+    let categories: string[] = [];
+
+    if (type === 'Peak' || type === 'Average') {
+        categories = metrics.map((m: any) => {
+            const d = new Date(m.time);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        });
+        xAxis.categories = categories;
+        xAxis.tickInterval = 1;
+        
+        if (type === 'Peak') {
+            series = [
+                { name: '%peak', data: metrics.map((m: any) => 100 - (Number(m.idle) || 0)), color: "#AA4643", type: 'spline', lineWidth: 2 },
+                { name: '%avg', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#92A8CD', type: 'area', lineWidth: 1 }
+            ];
+        } else {
+            series = [
+                { name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0), color: '#4572A7', type: 'area' },
+                { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#FFCC00', type: 'area' },
+                { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), color: '#00FF00', type: 'area' },
+                { name: '%wio', data: metrics.map((m: any) => Number(m.wio) || 0), color: '#FFFF99', type: 'area' }
+            ];
+        }
+    } else {
+        categories = metrics.map((m: any) => {
+            const d = new Date(m.time);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`;
+        });
+        xAxis.categories = categories;
+        xAxis.tickInterval = Math.max(1, Math.floor(metrics.length / 20));
+        
+        if (hasNice) {
+            series = [
+                { name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0), type: 'area', color: '#4572A7' },
+                { name: '%wio', data: metrics.map((m: any) => Number(m.wio) || 0), type: 'area', color: '#FFFF99' },
+                { name: '%nice', data: metrics.map((m: any) => Number(m.nice) || 0), type: 'area', color: '#89A54E' },
+                { name: '%steal', data: metrics.map((m: any) => Number(m.steal) || 0), type: 'area', color: '#AA4643' },
+                { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), type: 'area', color: '#FFCC00' },
+                { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), type: 'area', color: '#00FF00' }
+            ];
+        } else {
+            series = [
+                { name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0), type: 'area', color: '#4572A7' },
+                { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), type: 'area', color: '#FFCC00' },
+                { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), type: 'area', color: '#00FF00' },
+                { name: '%wio', data: metrics.map((m: any) => Number(m.wio) || 0), type: 'area', color: '#FFFF99' }
+            ];
+        }
+    }
+
     let options: any = {
-      chart: { type: 'area', shadow: false },
+      chart: { type: 'area', shadow: false, backgroundColor: undefined },
       title: { text: `Sar ${startDate} To ${endDate}` },
       subtitle: { text: `Hostname : ${getHostnameLabel()} Type : ${type}` },
-      xAxis: { 
-        categories: categories,
-        tickInterval: tickInterval,
-        labels: { rotation: -45, align: 'right', style: { font: 'normal 10px Verdana, sans-serif' } }
+      legend: {
+        itemStyle: { fontSize: '10px' },
+        borderWidth: 1,
+        borderColor: '#e5e7eb',
+        borderRadius: 8,
+        padding: 10,
+        margin: 15
       },
+      tooltip: {
+        shared: true,
+        backgroundColor: '#ffffff',
+        borderColor: '#e5e7eb',
+        borderRadius: 8
+      },
+      xAxis,
       yAxis: { title: { text: 'Percent' }, min: 0, max: 100 },
       plotOptions: { 
         area: { 
           lineColor: '#000000', 
-          lineWidth: 0.1, 
+          lineWidth: type === 'Normal' ? 0.5 : 0.1, 
           marker: { enabled: false },
-          stacking: (type === 'Normal' || type === 'Average') ? 'percent' : null
-        } 
-      }
+          stacking: (type === 'Normal' || type === 'Average') ? 'percent' : undefined
+        },
+        spline: {
+          type: 'spline',
+          marker: { enabled: true }
+        }
+      },
+      series
     };
 
-    if (type === 'Peak') {
-      options.series = [
-        { name: '%peak', data: metrics.map((m: any) => 100 - (Number(m.idle) || 0)), color: "#AA4643", type: 'spline' },
-        { name: '%avg', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#92A8CD' }
-      ];
-    } else {
-      if (hasNice) {
-          // Red Hat order: idle, wio, nice, steal, usr, sys
-          options.series = [
-            { name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0) },
-            { name: '%wio', data: metrics.map((m: any) => Number(m.wio) || 0), color: '#FFFF99' },
-            { name: '%nice', data: metrics.map((m: any) => Number(m.nice) || 0) },
-            { name: '%steal', data: metrics.map((m: any) => Number(m.steal) || 0) },
-            { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#FFCC00' },
-            { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), color: '#00FF00' }
-          ];
-      } else {
-          // Non-Red Hat (Solaris/AIX) order: idle, usr, sys, wio
-          options.series = [
-            { name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0) },
-            { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#FFCC00' },
-            { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), color: '#00FF00' },
-            { name: '%wio', data: metrics.map((m: any) => Number(m.wio) || 0), color: '#FFFF99' }
-          ];
-      }
-    }
     return options;
   };
 

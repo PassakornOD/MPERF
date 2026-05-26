@@ -109,9 +109,14 @@ const Navbar = () => {
                 </div>
                 <div className="space-y-1">
                   {(userRole === 'admin' || userRole === 'sysadmin') && (
-                    <Link href="/admin/dashboard" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-700 rounded-2xl transition-all font-bold text-xs">
-                      <Settings className="w-4 h-4" /> Admin Panel
-                    </Link>
+                    <>
+                      <Link href="/admin/sar-management" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-700 rounded-2xl transition-all font-bold text-xs">
+                        <Database className="w-4 h-4" /> SAR Management
+                      </Link>
+                      <Link href="/admin/dashboard" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-700 rounded-2xl transition-all font-bold text-xs">
+                        <Settings className="w-4 h-4" /> Admin Panel
+                      </Link>
+                    </>
                   )}
                   <button
                     onClick={() => signOut({ callbackUrl: '/login' })}

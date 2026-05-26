@@ -29,7 +29,6 @@ Highcharts.setOptions({
   },
   plotOptions: {
     area: {
-      stacking: 'percent',
       lineColor: '#000000',
       lineWidth: 0.1,
       shadow: false,
@@ -60,16 +59,16 @@ const SarChart = forwardRef(({ options }: SarChartProps, ref) => {
   }, []);
 
   if (!isClient) {
-    return <div className="w-full h-[435px] bg-gray-50 animate-pulse flex items-center justify-center border border-gray-100 rounded text-gray-400">Loading Chart Components...</div>;
+    return <div data-testid="highcharts-mock" className="w-full h-[435px] bg-gray-50 animate-pulse flex items-center justify-center border border-gray-100 rounded text-gray-400">Loading Chart Components...</div>;
   }
 
   return (
-    <div className="w-full h-[435px]">
-      <HighchartsReact
-        highcharts={Highcharts}
-        options={options}
-        ref={chartComponentRef}
-      />
+    <div className="w-full h-[435px]" data-testid="sar-chart-container">
+        <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+            ref={chartComponentRef}
+        />
     </div>
   );
 });

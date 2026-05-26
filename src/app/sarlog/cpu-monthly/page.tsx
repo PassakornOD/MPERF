@@ -83,6 +83,14 @@ const CpuMonthlyPage = () => {
       chart: { shadow: false },
       title: { text: 'CPU Monthly Usage' },
       subtitle: { text: `Hostname : ${getHostnameLabel()} Month : ${mMonthLabel}/${year}` },
+      legend: {
+        itemStyle: { fontSize: '10px' },
+        borderWidth: 1,
+        borderColor: '#e5e7eb',
+        borderRadius: 8,
+        padding: 10,
+        margin: 15
+      },
       xAxis: { 
         categories: categories,
         tickInterval: 10,

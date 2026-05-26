@@ -9,8 +9,6 @@ const tabs = [
 
 export default function CpuUtilizationPage() {
   return (
-    <FolderTabs tabs={tabs}>
-      <UtilizationStats type="CPU" />
-    </FolderTabs>
+    <UtilizationStats type="CPU" />
   );
 }

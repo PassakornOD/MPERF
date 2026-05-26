@@ -19,56 +19,92 @@ export const getChartOptions = (metrics: any[], report: any, hostname: string, t
       daySeriesMap[m.day][String(m.time_label)] = val as number;
     });
     const series = Object.keys(daySeriesMap).sort((a,b) => Number(a)-Number(b)).map(day => ({
-        name: report.type.includes('cpu') ? String(day) : `Day ${day}`,
+        name: String(day),
         data: categories.map((cat: string) => daySeriesMap[Number(day)][cat] ?? null),
-        type: 'line' as const
+        type: 'line' as const,
+        lineWidth: 1
     }));
     return {
-      chart: { type: 'line', backgroundColor: '#ffffff' },
+      chart: { type: 'line', backgroundColor: '#ffffff', shadow: false },
       title: { text: `${report.type.includes('cpu') ? 'CPU' : 'Memory'} Monthly Usage`, style: { fontSize: '14px', fontWeight: 'bold' } },
       subtitle: { text: `Hostname : ${hostname} Month : ${mMonthLabel}/${targetYear}`, style: { fontSize: '12px' } },
       xAxis: { 
         categories, 
-        tickInterval: 1, // Change from Math.max(1, Math.floor(categories.length / 10)) to always show every label
-        labels: { rotation: -45, align: 'right', style: { fontSize: '7px' } } // Reduced font size to fit more labels
+        tickInterval: 10, 
+        labels: { rotation: -45, align: 'right', style: { fontSize: '8px' } } 
       },
       yAxis: { title: { text: report.type.includes('cpu') ? 'Percent' : `Memory (${totalMem || '?'} GB)` }, min: 0, max: report.type.includes('cpu') ? 100 : (totalMem || undefined), labels: { style: { fontSize: '8px' } } },
       series, 
-      plotOptions: { line: { lineWidth: 1, marker: { enabled: false } } }, 
+      plotOptions: { line: { marker: { enabled: false } } }, 
       credits: { enabled: false },
       legend: { itemStyle: { fontSize: '8px' } }
     };
   }
 
+  const isMultiDay = startDate !== endDate || type === 'Average' || type === 'Peak';
   const categories = metrics.map((m: any) => {
     if (!m.time) return '';
-    // If it's already a Date string like "YYYY-MM-DD", return it
-    if (typeof m.time === 'string' && /^\d{4}-\d{2}-\d{2}/.test(m.time)) return m.time.split('T')[0];
-    
-    // Attempt to parse if it's a standard timestamp string
     const d = new Date(m.time);
     if (!isNaN(d.getTime())) {
-        return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+        const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        if (type === 'Average' || type === 'Peak') return dateStr;
+        
+        const timeStr = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
+        if (isMultiDay) return `${dateStr} ${timeStr}`;
+        return timeStr;
     }
     return String(m.time);
   });
-  const tickInterval = Math.max(1, Math.floor(metrics.length / 15));
+
+  const tickInterval = type === 'Normal' ? Math.max(1, Math.floor(metrics.length / 20)) : 1;
   let series: any[] = [];
   if (report.type === 'cpu-daily') {
-    if (type === 'Peak') series = [{ name: '%peak', data: metrics.map((m: any) => 100 - (Number(m.idle) || 0)), color: "#AA4643", type: 'spline' }, { name: '%avg', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#92A8CD' }];
-    else series = [{ name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0) }, { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#FFCC00' }, { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), color: '#00FF00' }];
+    if (type === 'Peak') {
+        series = [
+            { name: '%peak', data: metrics.map((m: any) => 100 - (Number(m.idle) || 0)), color: "#AA4643", type: 'spline', lineWidth: 2 },
+            { name: '%avg', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#92A8CD', type: 'area', lineWidth: 1 }
+        ];
+    } else {
+        // Classic SAR order: usr, sys, wio, idle (stacked to 100%)
+        series = [
+            { name: '%idle', data: metrics.map((m: any) => Number(m.idle) || 0), color: '#4572A7', type: 'area' },
+            { name: '%usr', data: metrics.map((m: any) => Number(m.usr) || 0), color: '#FFCC00', type: 'area' },
+            { name: '%sys', data: metrics.map((m: any) => Number(m.sys) || 0), color: '#00FF00', type: 'area' },
+            { name: '%wio', data: metrics.map((m: any) => Number(m.wio) || 0), color: '#FFFF99', type: 'area' }
+        ];
+    }
   } else {
-    if (type === 'Normal') series = [{ name: 'mem usage', data: metrics.map((m: any) => Number(m.mem) || 0), color: '#AA4643' }];
-    else series = [{ name: 'mem peak', data: metrics.map((m: any) => Number(m.mem) || 0), color: "#92A8CD", type: 'spline' }, { name: 'mem avg', data: metrics.map((m: any) => Number(m.avg_mem) || 0), color: "#AA4643", type: 'area' }];
+    if (type === 'Normal') {
+        series = [{ name: 'mem usage', data: metrics.map((m: any) => Number(m.mem) || 0), color: '#AA4643', type: 'area' }];
+    } else {
+        series = [
+            { name: 'mem peak', data: metrics.map((m: any) => Number(m.mem) || 0), color: "#92A8CD", type: 'spline' },
+            { name: 'mem avg', data: metrics.map((m: any) => Number(m.avg_mem) || 0), color: "#AA4643", type: 'area' }
+        ];
+    }
   }
+
   return {
-    chart: { type: 'area', backgroundColor: '#ffffff' },
+    chart: { type: 'area', backgroundColor: '#ffffff', shadow: false },
     title: { text: `Sar ${startDate} To ${endDate}`, style: { fontSize: '14px', fontWeight: 'bold' } },
     subtitle: { text: `Hostname : ${hostname} Type : ${type}`, style: { fontSize: '12px' } },
     xAxis: { categories, tickInterval, labels: { rotation: -45, align: 'right', style: { fontSize: '8px' } } },
-    yAxis: { title: { text: report.type.includes('cpu') ? 'Percent' : `Memory (${totalMem || '?'} GB)` }, min: 0, max: report.type.includes('cpu') ? 100 : (totalMem || undefined), labels: { style: { fontSize: '8px' } } },
+    yAxis: { 
+        title: { text: report.type.includes('cpu') ? 'Percent' : `Memory (${totalMem || '?'} GB)` }, 
+        min: 0, 
+        max: report.type.includes('cpu') ? 100 : (totalMem || undefined), 
+        labels: { style: { fontSize: '8px' } } 
+    },
     series, 
-    plotOptions: { area: { stacking: (report.type.includes('cpu') && type !== 'Peak') ? 'percent' : undefined, marker: { enabled: false } } }, 
+    plotOptions: { 
+        area: { 
+            stacking: (report.type.includes('cpu') && type !== 'Peak') ? 'percent' : undefined, 
+            lineColor: '#000000',
+            lineWidth: type === 'Normal' ? 0.5 : 0.1,
+            marker: { enabled: false } 
+        },
+        spline: { marker: { enabled: true, radius: 2 } }
+    }, 
     credits: { enabled: false },
     legend: { itemStyle: { fontSize: '8px' } }
   };

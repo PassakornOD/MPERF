@@ -18,7 +18,7 @@ export default function DashboardWrapper({ children }: { children: React.ReactNo
   const mainClass = "p-8 flex-1 overflow-y-auto max-w-7xl mx-auto w-full";
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50/50">
       {!isModalOpen && <Navbar />}
       <main className={mainClass}>
         {children}

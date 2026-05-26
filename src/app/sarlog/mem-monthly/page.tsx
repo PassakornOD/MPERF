@@ -63,25 +63,38 @@ const MemMonthlyPage = () => {
     const hostnameInfo = hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.find(h => String(h.hostname_id) === selectedHostnameId);
     const totalMem = (hostnameInfo as any)?.mem || 16; 
 
-    const seriesData: Record<number, { hour: number, val: number }[]> = {};
+    // Extract unique times for X-axis labels
+    const timeLabels = Array.from(new Set(metrics.map((m: any) => m.time_label))).sort();
+    
+    // Map data to series by day
+    const daySeriesMap: Record<number, any[]> = {};
     metrics.forEach((m: any) => {
-      if (!seriesData[m.day]) seriesData[m.day] = [];
-      seriesData[m.day].push({ hour: m.hour, val: m.val });
+        if (!daySeriesMap[m.day]) daySeriesMap[m.day] = new Array(timeLabels.length).fill(null);
+        const idx = timeLabels.indexOf(m.time_label);
+        if (idx !== -1) daySeriesMap[m.day][idx] = Number(m.val);
     });
 
-    const hours = Array.from({ length: 24 }, (_, i) => i);
-
     return {
-      chart: { type: 'line' },
-      title: { text: `Memory Monthly Usage - ${months.find(m => m.value === month)?.label}/${year}` },
-      xAxis: { title: { text: 'Hour' }, categories: hours.map(h => `${h}:00`) },
+      chart: { type: 'line', shadow: false, backgroundColor: undefined },
+      title: { text: 'Memory Monthly Usage', style: { fontSize: '14px' } },
+      subtitle: { text: `Hostname : ${hostnameInfo?.hostname || ''} Month : ${months.find(m => m.value === month)?.label}/${year}`, style: { fontSize: '12px' } },
+      xAxis: { 
+        categories: timeLabels as string[],
+        tickInterval: 5,
+        labels: { rotation: -45, align: 'right', style: { fontSize: '8px' } }
+      },
       yAxis: { 
         title: { text: `Memory (${totalMem} GB)` },
-        labels: { formatter: function() { return (this.value as number).toFixed(1) + ' GB'; } }
+        min: 0,
+        max: totalMem,
+        labels: { formatter: function() { return (this.value as number).toFixed(1); } }
       },
-      series: Object.keys(seriesData).map(day => ({
+      plotOptions: {
+        line: { lineWidth: 1, marker: { enabled: false, radius: 2 } }
+      },
+      series: Object.keys(daySeriesMap).sort((a,b) => Number(a)-Number(b)).map(day => ({
         name: `Day ${day}`,
-        data: hours.map(h => seriesData[Number(day)].find((p: any) => p.hour === h)?.val || null),
+        data: daySeriesMap[Number(day)],
         type: 'line'
       }))
     };
@@ -128,3 +141,4 @@ const MemMonthlyPage = () => {
 };
 
 export default MemMonthlyPage;
+

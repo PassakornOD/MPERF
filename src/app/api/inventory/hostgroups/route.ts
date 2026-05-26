@@ -29,8 +29,23 @@ export async function GET() {
   query += ' ORDER BY hostgroup ASC';
 
   try {
-    const [rows] = await pool.query(query, params);
-    return NextResponse.json(rows);
+    const [rows]: any = await pool.query(query, params);
+    
+    // Fetch hostnames for all these hostgroups
+    const hostgroupIds = rows.map((r: any) => r.hostgroup_id);
+    let hostnames: any[] = [];
+    if (hostgroupIds.length > 0) {
+        const [hnRows] = await pool.query('SELECT * FROM hostname WHERE hostgroup_id IN (?)', [hostgroupIds]) as any;
+        hostnames = hnRows;
+    }
+
+    // Map hostnames to hostgroups
+    const result = rows.map((hg: any) => ({
+        ...hg,
+        hostnames: hostnames.filter((hn: any) => hn.hostgroup_id === hg.hostgroup_id)
+    }));
+
+    return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch hostgroups' }, { status: 500 });
   }

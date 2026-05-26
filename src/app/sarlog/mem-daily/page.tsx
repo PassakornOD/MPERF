@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
@@ -27,6 +27,8 @@ const MemDailyPage = () => {
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [selectedHostnameId, setSelectedHostnameId] = useState<string>('');
   const [type, setType] = useState<'Peak' | 'Normal'>('Normal');
+  const chartRef = useRef<any>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const getPrevMonthDates = () => {
     const now = new Date();
@@ -64,6 +66,47 @@ const MemDailyPage = () => {
 
   const getHostnameLabel = () => hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.find(h => String(h.hostname_id) === selectedHostnameId)?.hostname || selectedHostnameId;
 
+  const handleExport = async () => {
+    if (!chartRef.current) return;
+    setIsExporting(true);
+    try {
+      const svg = chartRef.current.getSVG({
+          chart: { backgroundColor: '#ffffff' },
+          title: { text: `Sar ${startDate} To ${endDate}` },
+          subtitle: { text: `Hostname : ${getHostnameLabel()} Type : ${type}` }
+      });
+      const hostname = getHostnameLabel();
+      
+      const payload = {
+        reportMonth: `${startDate} to ${endDate}`,
+        generatedDate: new Date().toLocaleDateString(),
+        hostgroups: [{
+          name: selectedGroup,
+          hosts: [{
+            name: hostname,
+            cpuStats: [],
+            memStats: [],
+            charts: [{ label: `Memory Daily (${type})`, data: svg }]
+          }]
+        }]
+      };
+
+      const res = await axios.post('/api/export-pdf', payload, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Mem_Daily_${hostname}_${startDate}_${endDate}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (e) {
+      console.error('Export failed:', e);
+      alert('PDF Export failed.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const getChartOptions = (): Highcharts.Options => {
     const metrics = response?.data;
     const totalAvg = response?.totalAvg || 0;
@@ -73,26 +116,43 @@ const MemDailyPage = () => {
     const hostnameInfo = hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.find(h => String(h.hostname_id) === selectedHostnameId);
     const totalMem = (hostnameInfo as any)?.mem || 16;
 
-    const categories = metrics.map((m: any) => {
-      const d = new Date(m.time);
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      const time = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
-      return `${year}-${month}-${day} ${time}`;
-    });
+    let xAxis: Highcharts.XAxisOptions = {
+        labels: { rotation: -45, align: 'right', style: { font: 'normal 10px Verdana, sans-serif' } }
+    };
+    let series: any[] = [];
+    let categories: string[] = [];
 
-    const tickInterval = type === 'Normal' ? Math.max(1, Math.floor(metrics.length / 20)) : 1;
+    if (type === 'Peak') {
+        categories = metrics.map((m: any) => {
+            const d = new Date(m.time);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        });
+        xAxis.categories = categories;
+        xAxis.tickInterval = 1;
+        series = [
+            { name: 'mem peak', data: metrics.map((m: any) => m.mem || 0), color: "#92A8CD", type: 'spline' },
+            { name: 'mem avg', data: metrics.map((m: any) => m.avg_mem || 0), color: "#AA4643", type: 'area' }
+        ];
+    } else {
+        categories = metrics.map((m: any) => {
+            const d = new Date(m.time);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+        });
+        xAxis.categories = categories;
+        xAxis.tickInterval = Math.max(1, Math.floor(metrics.length / 20));
+        series = [{
+            name: 'mem usage',
+            data: metrics.map((m: any) => Number(m.mem) || 0),
+            color: "#AA4643",
+            type: 'area'
+        }];
+    }
 
     let options: any = {
       chart: { shadow: false },
       title: { text: `Sar ${startDate} To ${endDate}` },
       subtitle: { text: `Hostname : ${getHostnameLabel()} Type : ${type}` },
-      xAxis: {
-        categories,
-        tickInterval,
-        labels: { rotation: -45, align: 'right', style: { font: 'normal 10px Verdana, sans-serif' } }
-      },
+      xAxis,
       yAxis: {
         title: { text: `Memory (${totalMem} GB)` },
         min: 0,
@@ -102,49 +162,37 @@ const MemDailyPage = () => {
         labels: {
           formatter: function () {
             const val = (this as any).value as number;
-            const percent = (val * 100 / totalMem).toFixed(2);
-            return val + ' GB ';
+            const percent = ((val / totalMem) * 100).toFixed(1);
+            return `${val} GB (${percent}%)`;
           }
         }
       },
       plotOptions: {
-        area: { lineColor: '#000000', lineWidth: 0.1, marker: { enabled: false } },
+        area: { 
+            lineColor: '#000000', 
+            lineWidth: type === 'Normal' ? 0.5 : 0.1, 
+            marker: { enabled: false },
+            stacking: undefined // Explicitly no stacking for memory
+        },
         spline: { marker: { enabled: true } }
-      }
+      },
+      series
     };
 
     if (type === 'Normal') {
       options.chart.type = 'area';
-      options.plotOptions.area = {
-        stacking: undefined,
-        lineColor: '#000000',
-        lineWidth: 0.5,
-        shadow: false,
-        marker: { enabled: false }
-      };
       options.yAxis.plotLines = [{
         value: totalMem,
         color: 'white',
         dashStyle: 'Dash',
         width: 2,
         label: {
-          text: `AVG Memory Usage = ${totalAvg.toFixed(2)} GB = ${((totalAvg / totalMem) * 100).toFixed(2)} %`,
+          text: `AVG Memory Usage = ${totalAvg.toFixed(2)} GB`,
           y: 15,
           style: { color: '#CC0000' },
           align: 'right'
         }
       }];
-      options.series = [{
-        name: 'mem usage',
-        data: metrics.map((m: any) => Number(m.mem) || 0),
-        color: "#AA4643",
-        type: 'area'
-      }];
-    } else {
-      options.series = [
-        { name: 'mem peak', data: metrics.map((m: any) => m.mem || 0), color: "#92A8CD", type: 'spline' },
-        { name: 'mem avg', data: metrics.map((m: any) => m.avg_mem || 0), color: "#AA4643", type: 'area' }
-      ];
     }
     return options;
   };
@@ -184,9 +232,17 @@ const MemDailyPage = () => {
         <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 h-[30px]" disabled={!selectedGroup || !selectedHostnameId}>Query</button>
       </div>
 
+      <div className="flex justify-end mb-4">
+        {response?.data && response.data.length > 0 && (
+            <button onClick={handleExport} className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700" disabled={isExporting}>
+                {isExporting ? 'Exporting...' : 'Export PDF'}
+            </button>
+        )}
+      </div>
+
       <div id="container" className="min-h-[435px]">
-        {isFetching ? <div className="text-center py-20">Loading...</div> : queryEnabled ? (
-          response?.data && response.data.length > 0 ? <SarChart options={getChartOptions()} /> : <div className="text-center py-20 bg-gray-50 rounded">No records found.</div>
+        {isFetching ? <div className="text-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div><p className="mt-4 text-gray-500">Loading...</p></div> : queryEnabled ? (
+          response?.data && response.data.length > 0 ? <SarChart ref={chartRef} options={getChartOptions()} /> : <div className="text-center py-20 bg-gray-50 rounded">No records found.</div>
         ) : <div className="text-gray-400 italic text-center">Please select filters and click Query.</div>}
       </div>
     </Block>

@@ -1,9 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import pool from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { checkPermission } from '@/lib/permissions';
 import { logSecurityEvent } from '@/lib/logger';
+import fs from 'fs';
+import path from 'path';
+
 
 export const dynamic = 'force-dynamic';
 
@@ -106,6 +109,44 @@ export async function POST(req: NextRequest) {
 
     await connection.commit();
     logSecurityEvent(`Hostname created: ${hostname}`, { by: user.name, id: hostnameId });
+
+    // --- Automatic Directory Creation ---
+    try {
+        const [hgRows]: any = await pool.query('SELECT hostgroup FROM hostgroup WHERE hostgroup_id = ?', [hostgroup_id]);
+        if (hgRows.length > 0) {
+            const hgName = hgRows[0].hostgroup;
+            const osRoot = isRedHat ? 'data_RedHat' : 'data_Solaris';
+            
+            // Try different possible parent directory locations (Docker vs Local)
+            const possibleBasePaths = [
+                path.join(process.cwd(), '..', osRoot),
+                path.join(process.cwd(), osRoot),
+                path.join('/app', osRoot)
+            ];
+
+            let basePath = '';
+            for (const p of possibleBasePaths) {
+                // We use the first one that exists or we'll default to the one in /app if in docker
+                if (fs.existsSync(p)) {
+                    basePath = p;
+                    break;
+                }
+            }
+            if (!basePath) basePath = path.join(process.cwd(), osRoot);
+
+            const cpuDirPath = path.join(basePath, hgName, hostname, 'sar-u');
+            const memDirPath = path.join(basePath, hgName, hostname, 'sar-r');
+
+            fs.mkdirSync(cpuDirPath, { recursive: true });
+            fs.mkdirSync(memDirPath, { recursive: true });
+            console.log(`Directories created for ${hostname}: ${cpuDirPath}, ${memDirPath}`);
+        }
+    } catch (fsError) {
+        console.error('Failed to create directories:', fsError);
+        // We don't fail the whole request if only directory creation fails, but we log it
+    }
+    // ------------------------------------
+
     return NextResponse.json({ message: 'Created', id: hostnameId });
   } catch (error) {
     console.error('Hostname creation error:', error);

@@ -9,8 +9,6 @@ const tabs = [
 
 export default function MemUtilizationPage() {
   return (
-    <FolderTabs tabs={tabs}>
-      <UtilizationStats type="Mem" />
-    </FolderTabs>
+    <UtilizationStats type="Mem" />
   );
 }
