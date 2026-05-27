@@ -61,6 +61,7 @@ COPY . .
 RUN npm run build
 RUN mkdir -p .next/standalone/.next/static
 RUN cp -r .next/static/* .next/standalone/.next/static/
+# Explicitly copy public folder to standalone directory
 RUN cp -r public .next/standalone/public
 
 # Start app
