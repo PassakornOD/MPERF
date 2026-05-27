@@ -48,3 +48,4 @@ next-env.d.ts
 /data_Solaris/
 
 /src/generated/prisma
+mperf_db_dump.sql
