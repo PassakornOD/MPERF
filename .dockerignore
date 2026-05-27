@@ -7,7 +7,6 @@ node_modules
 data_RedHat
 data_Solaris
 offline_bundle
-public/logo
 public/favicon.ico
 
 # Exclude test files

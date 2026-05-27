@@ -1,5 +1,8 @@
 FROM node:22-bookworm-slim
 
+ENV http_proxy=http://10.4.178.1:3128
+ENV https_proxy=http://10.4.178.1:3128
+
 # Install system dependencies for Puppeteer
 RUN apt-get update && apt-get install -y \
     wget \
@@ -54,6 +57,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+# Copy โฟลเดอร์ public เข้าไปใน Image
+COPY public ./public
+
 # Copy application code
 COPY . .
 
@@ -61,6 +67,7 @@ COPY . .
 RUN npm run build
 RUN mkdir -p .next/standalone/.next/static
 RUN cp -r .next/static/* .next/standalone/.next/static/
+# Explicitly copy public folder to standalone directory
 RUN cp -r public .next/standalone/public
 
 # Start app

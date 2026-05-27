@@ -1,6 +1,7 @@
 services:
   mperf-db:
     image: mysql:8.0
+    platform: linux/amd64
     container_name: mperf-db
     restart: always
     networks:
@@ -12,24 +13,28 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ../sarlog.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - ../data_user_hg_hn.sql:/docker-entrypoint-initdb.d/02-data_users.sql
-      - ../data_bss.sql:/docker-entrypoint-initdb.d/03-data_bss.sql
-      - ../data_tux.sql:/docker-entrypoint-initdb.d/04-data_tux.sql
+      - ../mperf_db.sql:/docker-entrypoint-initdb.d/01-schema.sql
 
   mperf-app:
     build:
       context: .
       dockerfile: Dockerfile
+    platform: linux/amd64
+    hostname: mperf-app
     restart: always
     networks:
       - mperf-net
     deploy:
       replicas: 2
+      resources:
+        limits:
+          memory: 4G
+    shm_size: '4gb'
+
     environment:
       - DATABASE_URL=mysql://root:password@mperf-db:3306/sarlog
       - NEXTAUTH_SECRET=y0ur_sup3r_s3cr3t_s3ssi0n_k3y
-      - NEXTAUTH_URL=http://mperf-app:3000
+      - NEXTAUTH_URL=http://10.4.179.130
     depends_on:
       - mperf-db
     volumes:
@@ -48,6 +53,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/certs:/etc/nginx/certs:ro
+      - ./public:/usr/share/nginx/html:ro
     depends_on:
       - mperf-app
 
