@@ -49,3 +49,4 @@ next-env.d.ts
 
 /src/generated/prisma
 mperf_db_dump.sql
+mperf_db_dump.sql
