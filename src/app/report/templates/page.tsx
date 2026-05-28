@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Highcharts from 'highcharts';
-import { Plus, FileText, Trash2, Edit2, Clock, X, Search, ChevronDown, ChevronRight, ArrowUp, ArrowDown, Heading1, Server, BarChart3, Loader2, Calendar, Layout, GripVertical, Monitor, PlusCircle } from 'lucide-react';
+import { Plus, FileText, Trash2, Edit2, Clock, X, Search, ChevronDown, ChevronRight, ArrowUp, ArrowDown, Heading1, Server, BarChart3, Loader2, Calendar, Layout, GripVertical, Monitor, PlusCircle, Zap } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -105,6 +105,8 @@ const ReportTemplatesPage = () => {
   const [endDate, setEndDate] = useState(datesObj.end);
   const [month, setMonth] = useState<string>(datesObj.month);
   const [year, setYear] = useState<string>(datesObj.year);
+  const [selectedAutomationGroups, setSelectedAutomationGroups] = useState<string[]>([]);
+  const [selectedAutomationHosts, setSelectedAutomationHosts] = useState<Record<string, string[]>>({});
 
   const [templateName, setTemplateName] = useState('');
   const [reportTitle, setReportTitle] = useState('');
@@ -636,6 +638,66 @@ const ReportTemplatesPage = () => {
         title="Delete Template" 
         message="Are you sure you want to delete this template? This action cannot be undone."
       />
+
+      {/* Server-Side Automation Section */}
+      <div className="border border-gray-100 rounded-3xl p-8 bg-white shadow-sm space-y-6 mt-8">
+          <h3 className="text-xl font-black text-gray-900 flex items-center gap-2"><Zap className="text-yellow-500" /> Server-Side Report Automation</h3>
+          
+          <div className="flex gap-4">
+              <FloatingInput label="Month" value={month} onChange={e => setMonth(e.target.value)} type="number" />
+              <FloatingInput label="Year" value={year} onChange={e => setYear(e.target.value)} type="number" />
+          </div>
+
+          <div className="space-y-4">
+              <p className="text-xs font-bold text-gray-700 uppercase">Select Hostgroups & Hosts</p>
+              <div className="grid grid-cols-2 gap-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                {hostGroupsRaw?.map((g: any) => (
+                    <div key={g.hostgroup} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                        <label className="flex items-center gap-2 text-xs font-bold text-gray-800 mb-2">
+                            <input 
+                                type="checkbox" 
+                                checked={selectedAutomationGroups.includes(g.hostgroup)}
+                                onChange={(e) => {
+                                    if (e.target.checked) setSelectedAutomationGroups([...selectedAutomationGroups, g.hostgroup]);
+                                    else setSelectedAutomationGroups(selectedAutomationGroups.filter(x => x !== g.hostgroup));
+                                }}
+                            />
+                            {g.hostgroup}
+                        </label>
+                        <div className="pl-6 space-y-1">
+                            {g.hostnames.map((h: any) => (
+                                <label key={h.hostname_id} className="flex items-center gap-2 text-[10px] text-gray-600">
+                                    <input 
+                                        type="checkbox"
+                                        checked={(selectedAutomationHosts[g.hostgroup] || []).includes(h.hostname)}
+                                        onChange={(e) => {
+                                            const groupHosts = selectedAutomationHosts[g.hostgroup] || [];
+                                            setSelectedAutomationHosts({
+                                                ...selectedAutomationHosts,
+                                                [g.hostgroup]: e.target.checked ? [...groupHosts, h.hostname] : groupHosts.filter(x => x !== h.hostname)
+                                            });
+                                        }}
+                                    />
+                                    {h.hostname}
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+              </div>
+          </div>
+
+          <button 
+              onClick={async () => {
+                  const filterString = selectedAutomationGroups.map(g => `${g}:${(selectedAutomationHosts[g] || []).join(',')}`).join('|');
+                  alert('Triggering background report...');
+                  await axios.post('/api/run-report', { month, year, filters: filterString });
+              }} 
+              className="w-full px-6 py-4 bg-slate-900 text-white font-bold rounded-xl text-xs uppercase hover:bg-slate-800 shadow-sm"
+          >
+              Trigger Background Run
+          </button>
+      </div>
     </div>
   );
 };

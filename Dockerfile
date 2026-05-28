@@ -61,6 +61,18 @@ RUN apt-get update && apt-get install -y \
     chromium \
     && rm -rf /var/lib/apt/lists/*
 
+# Install tsconfig-paths globally to support script execution
+RUN npm install -g tsconfig-paths
+
+# Create directory for reports and set permissive permissions for RHEL/Linux compatibility
+RUN mkdir -p /app/public/reports && chmod -R 777 /app/public/reports
+
+# Create script for report generation
+RUN echo '#!/bin/bash\n\
+export NODE_PATH=/usr/local/lib/node_modules\n\
+npx ts-node -r tsconfig-paths/register --transpile-only --project /app/tsconfig.scripts.json /app/scripts/generate_monthly_reports.ts "$@"' > /usr/local/bin/reportlargepdf && \
+    chmod +x /usr/local/bin/reportlargepdf
+
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 ENV NODE_ENV=production
@@ -71,6 +83,13 @@ WORKDIR /app
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
+# Need to ensure scripts and tsconfig are available for the CLI tool
+COPY --from=builder /app/scripts /app/scripts
+COPY --from=builder /app/src /app/src
+COPY --from=builder /app/tsconfig.json /app/tsconfig.json
+COPY --from=builder /app/tsconfig.scripts.json /app/tsconfig.scripts.json
+COPY --from=builder /app/package.json /app/package.json
+COPY --from=builder /app/node_modules /app/node_modules
 
 # Start app
 CMD ["node", "server.js"]

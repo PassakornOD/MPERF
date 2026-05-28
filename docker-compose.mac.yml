@@ -32,6 +32,7 @@ services:
     volumes:
       - ./data_RedHat:/app/data_RedHat
       - ./data_Solaris:/app/data_Solaris
+      - mperf_reports:/app/public/reports
 
   nginx:
     image: nginx:alpine
@@ -55,3 +56,4 @@ networks:
 
 volumes:
   mysql_data:
+  mperf_reports:

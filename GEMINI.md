@@ -12,10 +12,14 @@ MPERF is a professional performance reporting application designed to visualize 
 - **Containerization:** Docker & Docker Compose for orchestration.
 
 ### Architecture Highlights
-- **PDF Export Engine:** Located in `src/app/api/export-pdf/route.ts`. It uses a **two-pass rendering strategy**:
+- **PDF Export Engine:** Located in `src/app/api/export-pdf/route.ts` (now powered by `PdfGeneratorService.ts`). It uses a **two-pass rendering strategy**:
     1. **Mock Pass:** Renders the HTML to calculate DOM-based page numbers for the Table of Contents.
     2. **Final Pass:** Re-renders the HTML with accurate page numbers and generates the final PDF buffer.
-- **Database Connectivity:** Centralized in `src/lib/db.ts`. In Docker environments, it defaults to the `mperf-db` hostname.
+- **Batch Automation System:** 
+    - **Service:** `src/lib/services/AutomationService.ts` handles global report generation by processing Hostgroups in batches and merging them using `pdf-lib`.
+    - **CLI Trigger:** `scripts/generate_monthly_reports.ts` allows manual or scheduled triggering.
+    - **Usage:** `npm run generate-monthly-report -- --month=5 --year=2026`
+    - **Scheduling:** Recommended to use Cron: `0 2 1 * * docker exec mperf-app npm run generate-monthly-report`- **Database Connectivity:** Centralized in `src/lib/db.ts`. In Docker environments, it defaults to the `mperf-db` hostname.
 
 ---
 
