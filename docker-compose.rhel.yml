@@ -1,0 +1,64 @@
+services:
+  mperf-db:
+    image: mysql:8.0
+    platform: linux/amd64
+    container_name: mperf-db
+    restart: always
+    networks:
+      - mperf-net
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-sarlog}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ../mperf_db.sql:/docker-entrypoint-initdb.d/01-schema.sql
+
+  mperf-app:
+    image: mperf-app:latest
+    platform: linux/amd64
+    hostname: mperf-app
+    restart: always
+    networks:
+      - mperf-net
+    deploy:
+      replicas: ${REPLICAS:-2}
+      resources:
+        reservations:
+          memory: ${MEM_RESERVATION:-1G}
+        limits:
+          memory: ${MEM_LIMIT:-4G}
+    shm_size: ${SHM_SIZE:-4gb}
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+    depends_on:
+      - mperf-db
+    volumes:
+      - ./data_RedHat:/app/data_RedHat
+      - ./data_Solaris:/app/data_Solaris
+
+  nginx:
+    image: nginx:alpine
+    container_name: mperf-nginx
+    restart: always
+    networks:
+      - mperf-net
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./public/logo:/usr/share/nginx/html/logo:ro
+    depends_on:
+      - mperf-app
+
+networks:
+  mperf-net:
+    driver: bridge
+
+volumes:
+  mysql_data:

@@ -1,12 +1,28 @@
-FROM node:22-bookworm-slim
+# Stage 1: Build dependencies and the application
+FROM node:22-bookworm-slim AS builder
 
-
-# Install system dependencies for Puppeteer
+# Install system dependencies for build
 RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    tar \
-    unzip \
+    wget gnupg tar unzip ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install app dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy application code
+COPY . .
+
+# Build for standalone
+RUN npm run build
+
+# Stage 2: Runtime environment (Universal: Mac/RHEL)
+FROM node:22-bookworm-slim AS runner
+
+# Install runtime dependencies for Chromium (Works on both ARM64 and AMD64)
+RUN apt-get update && apt-get install -y \
     ca-certificates \
     fonts-liberation \
     libasound2 \
@@ -41,32 +57,20 @@ RUN apt-get update && apt-get install -y \
     libxss1 \
     libxtst6 \
     lsb-release \
-    wget \
     xdg-utils \
     chromium \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+ENV NODE_ENV=production
 
 WORKDIR /app
 
-# Install app dependencies
-COPY package*.json ./
-RUN npm install
-
-# Copy โฟลเดอร์ public เข้าไปใน Image
-COPY public ./public
-
-# Copy application code
-COPY . .
-
-# Build
-RUN npm run build
-RUN mkdir -p .next/standalone/.next/static
-RUN cp -r .next/static/* .next/standalone/.next/static/
-# Explicitly copy public folder to standalone directory
-RUN cp -r public .next/standalone/public
+# Copy standalone build and assets from builder
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
 # Start app
-CMD ["node", ".next/standalone/server.js"]
+CMD ["node", "server.js"]
