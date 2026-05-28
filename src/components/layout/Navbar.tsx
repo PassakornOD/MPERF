@@ -119,7 +119,10 @@ const Navbar = () => {
                     </>
                   )}
                   <button
-                    onClick={() => signOut({ callbackUrl: '/login' })}
+                    onClick={async () => {
+                      await signOut({ redirect: false });
+                      window.location.href = '/login';
+                    }}
                     className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-2xl transition-all font-bold text-xs"
                   >
                     <LogOut className="w-4 h-4" /> Sign Out

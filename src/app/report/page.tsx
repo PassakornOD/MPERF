@@ -43,9 +43,6 @@ const ReportExportPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [reportTitle, setReportTitle] = useState('Monthly Performance Report');
 
-  const [renderCharts, setRenderCharts] = useState(false);
-  const [hiddenChartsData, setHiddenChartsData] = useState<any[]>([]);
-
   const getPrevMonthDates = () => {
     const now = new Date();
     const firstDay = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -107,23 +104,13 @@ const ReportExportPage = () => {
 
   const handlePreviewPDF = async () => {
     if (isExporting || selectedHostnames.length === 0) return;
-    setIsFetchingPDF(true); setExportStatus('Preparing report...');
+    setIsFetchingPDF(true); 
+    setExportStatus('Preparing report...');
     const selectedReportsList = activeReports.filter(r => r.enabled);
-
-    const getChartSVG = (id: string) => {
-      const el = document.getElementById(id);
-      if (!el) return "";
-      const chart = (Highcharts as any).charts.find((c: any) => c && (c.renderTo === el?.querySelector('.highcharts-container')?.parentElement || el?.contains(c.renderTo)));
-      if (!chart) return "";
-      try {
-        const svg = chart.getSVG({ chart: { backgroundColor: '#ffffff', style: { fontFamily: 'sans-serif' } } });
-        return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
-      } catch (e) { return ""; }
-    };
 
     try {
       setExportStatus('Fetching performance metrics...');
-      const chartsData: any[] = [];
+      
       const hostgroupsWithData = await Promise.all(Object.values(selectedHostnames.reduce((acc: any, host) => {
         if (!acc[host.group]) acc[host.group] = { name: host.group, hosts: [] };
         acc[host.group].hosts.push(host);
@@ -140,40 +127,53 @@ const ReportExportPage = () => {
             else if (report.type === 'cpu-monthly') { endpoint = '/api/metrics/monthly'; params.month = month; params.year = year; }
             else if (report.type === 'mem-daily') { endpoint = '/api/metrics/mem-daily'; params.type = report.mode; params.startDate = startDate; params.endDate = endDate; }
             else if (report.type === 'mem-monthly') { endpoint = '/api/metrics/monthly'; params.month = month; params.year = year; params.type = 'r'; }
+            
             const res = await axios.get(endpoint, { params });
             const metrics = res.data.data || res.data;
-            chartsData.push({ hostId: host.id, reportId: report.id, hostname: host.name, hostMem: host.mem, metrics, report, totalAvg: res.data.totalAvg });
-            return { label: report.label, metrics };
+            
+            // Return raw data for server-side rendering
+            return { 
+                label: report.label, 
+                metrics: metrics,
+                report: report,
+                totalAvg: res.data.totalAvg,
+                hostname: host.name,
+                hostMem: host.mem,
+                startDate,
+                endDate,
+                month,
+                year
+            };
           }));
-          return { id: host.id, name: host.name, mem: host.mem, cpuStats, memStats, hostCharts };
+          return { id: host.id, name: host.name, mem: host.mem, cpuStats, memStats, charts: hostCharts };
         }));
         return { id: group.name, name: group.name, hosts: hostsWithStats };
       }));
 
-      setExportStatus('Rendering chart visualisations...');
-      setHiddenChartsData(chartsData); setRenderCharts(true);
-      await new Promise(r => setTimeout(r, 5000));
-
-      setExportStatus('Compiling PDF document...');
-      const finalHostgroups = hostgroupsWithData.map((group: any) => ({
-        ...group,
-        hosts: group.hosts.map((host: any) => ({
-          ...host,
-          charts: selectedReportsList.map(report => ({ label: report.label, data: getChartSVG(`host-item-${host.id}-${report.id}`) }))
-        }))
-      }));
+      setExportStatus('Compiling PDF on server...');
 
       const payload: ReportPayload = {
         reportMonth: new Date(parseInt(year), parseInt(month) - 1).toLocaleString('en-US', { month: 'long', year: 'numeric' }),
         reportTitle: reportTitle,
-        targetMonth: parseInt(month), targetYear: parseInt(year), generatedDate: new Date().toLocaleDateString(),
-        hostgroups: finalHostgroups as any
+        targetMonth: parseInt(month), 
+        targetYear: parseInt(year), 
+        generatedDate: new Date().toLocaleDateString(),
+        hostgroups: hostgroupsWithData as any
       };
 
-      const response = await axios.post('/api/export-pdf', payload, { responseType: 'blob' });
+      const response = await axios.post('/api/export-pdf', payload, { 
+          responseType: 'blob',
+          timeout: 300000 // 5 minute timeout for large reports
+      });
+      
       setPdfUrl(window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' })));
-    } catch (e: any) { alert('Error: ' + e.message); }
-    finally { setIsFetchingPDF(false); setExportStatus(''); setRenderCharts(false); setHiddenChartsData([]); }
+    } catch (e: any) { 
+        console.error(e); 
+        alert('Error: ' + (e.response?.data?.error || e.message)); 
+    } finally { 
+        setIsFetchingPDF(false); 
+        setExportStatus(''); 
+    }
   };
 
   const availableCharts = useMemo(() => activeReports.filter(r => !r.enabled), [activeReports]);
@@ -393,16 +393,6 @@ const ReportExportPage = () => {
               {isExporting ? <Loader2 className="w-6 h-6 animate-spin" /> : <FileText className="w-7 h-7" />}
               {isExporting ? exportStatus : 'GENERATE REPORT'}
           </button>
-        </div>
-      )}
-
-      {renderCharts && (
-        <div style={{ position: 'absolute', left: '-9999px', top: 0, zIndex: -1 }}>
-          {hiddenChartsData.map((item, idx) => (
-            <div key={`${item.hostId}-${item.reportId}-${idx}`} id={`host-item-${item.hostId}-${item.reportId}`} style={{ width: '800px', height: '400px' }}>
-              <SarChart options={getChartOptions(item.metrics, item.report, item.hostname, item.hostMem, startDate, endDate, month, year, item.totalAvg)} />
-            </div>
-          ))}
         </div>
       )}
 

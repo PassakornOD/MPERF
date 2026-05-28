@@ -6,14 +6,16 @@ export interface MonthlyStat {
 
 export interface ChartData {
   label: string;
-  data: string; // base64 image data
-}
-
-export interface RawChartData {
-  label: string;
-  metrics: any[];
-  report: any;
+  data?: string; // base64 image data (optional for SSR)
+  metrics?: any[];
+  report?: any;
   totalAvg?: number;
+  hostname?: string;
+  hostMem?: number;
+  startDate?: string;
+  endDate?: string;
+  month?: string;
+  year?: string;
 }
 
 export interface HostData {
@@ -23,7 +25,6 @@ export interface HostData {
   cpuStats: MonthlyStat[];
   memStats: MonthlyStat[];
   charts: ChartData[];
-  rawCharts?: RawChartData[];
 }
 
 export interface HostGroupData {
