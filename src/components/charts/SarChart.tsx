@@ -19,6 +19,7 @@ if (typeof window !== 'undefined' && typeof Highcharts === 'object') {
 
 // Global legacy styling from sar4
 Highcharts.setOptions({
+  accessibility: { enabled: false },
   credits: { enabled: false },
   chart: {
     shadow: false,

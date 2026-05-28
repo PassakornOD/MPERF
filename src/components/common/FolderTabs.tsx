@@ -35,16 +35,6 @@ export default function FolderTabs({ tabs, children }: FolderTabsProps) {
 
   return (
     <div className="w-full">
-      <style jsx global>{`
-        @keyframes slideDown {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-ease-in {
-          animation: slideDown 0.3s ease-in-out forwards;
-        }
-      `}</style>
-      
       {/* Tab Container */}
       <div className="flex items-center gap-1.5 px-4">
         {tabs.map((tab) => {

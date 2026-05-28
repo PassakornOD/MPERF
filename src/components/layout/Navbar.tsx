@@ -45,7 +45,7 @@ const Navbar = () => {
     { name: 'Utilization', href: '/utilization/cpu', icon: Database },
     { name: 'Inventory', href: '/inventory/list', icon: Package },
     { name: 'Reports', href: '/report', icon: FileBarChart },
-    ...(userRole === 'admin' ? [{ name: 'FAQ', href: '/faq', icon: HelpCircle }] : []),
+    ...(userRole === 'admin' ? [{ name: 'Manual', href: '/faq', icon: HelpCircle }] : []),
   ];
 
   return (

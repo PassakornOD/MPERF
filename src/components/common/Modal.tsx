@@ -1,7 +1,9 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Download } from 'lucide-react';
 import { useModal } from '@/components/context/ModalContext';
+import Draggable from 'react-draggable';
 
 interface ModalProps {
   isOpen: boolean;
@@ -23,8 +25,11 @@ const Modal = ({
   position = 'center' 
 }: ModalProps) => {
   const { setModalOpen } = useModal();
+  const [mounted, setMounted] = useState(false);
+  const nodeRef = useRef(null);
 
   useEffect(() => {
+    setMounted(true);
     setModalOpen(isOpen);
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -39,35 +44,41 @@ const Modal = ({
     };
   }, [isOpen, onClose, setModalOpen]);
 
-  if (!isOpen) return null;
+  if (!mounted || !isOpen) return null;
 
   const positionClasses = position === 'top-right' 
     ? 'items-start justify-end p-6 pt-20' 
     : 'items-center justify-center p-6';
 
-  return (
-    <div className={`fixed inset-0 z-[99999] flex bg-gray-950/40 backdrop-blur-sm ${positionClasses}`}>
-      <div className={`bg-white rounded-[32px] w-full ${maxWidth} flex flex-col shadow-[0_30px_60px_-12px_rgba(0,0,0,0.2)] overflow-hidden animate-in fade-in zoom-in duration-300`}>
-        <div className="flex justify-between items-center px-6 py-3 border-b border-gray-100">
-          <h2 className="font-black text-sm text-gray-950 tracking-tight">{title}</h2>
-          <div className="flex items-center gap-1">
-            {onDownload && (
-              <button onClick={onDownload} className="p-1.5 hover:bg-gray-100 rounded-lg transition-all" title="Download PDF">
-                <Download className="w-4 h-4 text-blue-600" />
+  const modalContent = (
+    <div className={`fixed inset-0 z-[99999] flex bg-gray-950/40 ${positionClasses} pointer-events-auto`}>
+      <Draggable nodeRef={nodeRef} handle=".modal-handle" bounds="parent">
+        <div 
+          ref={nodeRef} 
+          className={`bg-white rounded-[32px] w-full ${maxWidth} flex flex-col shadow-[0_30px_60px_-12px_rgba(0,0,0,0.2)] overflow-hidden animate-in fade-in zoom-in duration-300 self-center will-change-transform`}
+        >
+          <div className="flex justify-between items-center px-6 py-3 border-b border-gray-100 modal-handle cursor-move bg-gray-50/50">
+            <h2 className="font-black text-sm text-gray-950 tracking-tight">{title}</h2>
+            <div className="flex items-center gap-1">
+              {onDownload && (
+                <button onClick={onDownload} className="p-1.5 hover:bg-gray-100 rounded-lg transition-all" title="Download PDF">
+                  <Download className="w-4 h-4 text-blue-600" />
+                </button>
+              )}
+              <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg transition-all text-gray-400 hover:text-gray-950">
+                <X className="w-4 h-4" />
               </button>
-            )}
-            <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg transition-all text-gray-400 hover:text-gray-950">
-              <X className="w-4 h-4" />
-            </button>
+            </div>
+          </div>
+          <div className="px-8 py-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
+            {children}
           </div>
         </div>
-        <div className="px-8 py-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
-          {children}
-        </div>
-      </div>
+      </Draggable>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default Modal;
-

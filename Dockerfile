@@ -1,7 +1,5 @@
 FROM node:22-bookworm-slim
 
-ENV http_proxy=http://10.4.178.1:3128
-ENV https_proxy=http://10.4.178.1:3128
 
 # Install system dependencies for Puppeteer
 RUN apt-get update && apt-get install -y \

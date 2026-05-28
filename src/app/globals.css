@@ -33,3 +33,12 @@ body {
   font-size: 0.75rem; /* text-xs */
   font-weight: 700;
 }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-ease-in {
+  animation: slideDown 0.3s ease-in-out forwards;
+}

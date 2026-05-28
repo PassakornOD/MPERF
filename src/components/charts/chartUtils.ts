@@ -1,4 +1,4 @@
-import { width } from "highcharts";
+import Highcharts from 'highcharts';
 
 export const getChartOptions = (metrics: any[], report: any, hostname: string, totalMem: number, startDate: string, endDate: string, targetMonth: string, targetYear: string, totalAvg?: number): any => {
   if (!metrics || metrics.length === 0) return { title: { text: 'No Data Found' } };

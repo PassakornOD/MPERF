@@ -4,7 +4,24 @@ import { ReportPayload } from '@/types/report';
 import fs from 'fs';
 import path from 'path';
 
+// Cache logo to avoid repeated disk I/O
+let cachedLogoBase64: string | null = null;
+const getLogoBase64 = () => {
+  if (cachedLogoBase64) return cachedLogoBase64;
+  try {
+    const logoPath = path.join(process.cwd(), 'public/logo/mfec1.png');
+    if (fs.existsSync(logoPath)) {
+      cachedLogoBase64 = `data:image/png;base64,${fs.readFileSync(logoPath).toString('base64')}`;
+      return cachedLogoBase64;
+    }
+  } catch (e) {
+    console.error('Failed to read logo:', e);
+  }
+  return '';
+};
+
 const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = {}, logoBase64: string = '', totalLogicalPages: number = 0): string => {
+  // ... (generateHTML content remains the same for consistency, but we could optimize it later if needed)
   const months = Array.from({ length: 12 }, (_, i) => {
     const d = new Date();
     if (payload.targetYear && payload.targetMonth) {
@@ -32,7 +49,7 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
           .page-break { page-break-after: always; position: relative; min-height: 250mm; display: flex; flex-direction: column; }
           .content-wrapper { width: 100%; }
           a { text-decoration: none; color: inherit; }
-          
+
           .cover { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 260mm; text-align: center; }
           .cover h1 { font-size: 24pt; color: #0984e3; margin-bottom: 10px; }
           .cover p { font-size: 12pt; margin: 5px 0; color: #636e72; }
@@ -47,15 +64,15 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
           .section-title { font-size: 14pt; font-weight: bold; color: #0984e3; margin-bottom: 15px; }
           h3 { font-size: 11pt; font-weight: bold; margin: 15px 0 8px 0; color: #2d3436; }
           .section-divider { font-size: 24pt; font-weight: bold; text-align: center; color: #0984e3; display: flex; align-items: center; justify-content: center; }
-          
+
           table { width: 100%; border-collapse: collapse; margin: 10px 0 20px 0; }
           th, td { border: 1px solid #dfe6e9; padding: 4px; text-align: center; font-size: 7pt; }
           th { background: #f8f9fa; font-weight: bold; color: #636e72; }
           td.hostname-cell { text-align: left; padding-left: 10px; }
-          
+
           .chart-container { height: 110mm; margin: 5px 0; display: flex; align-items: center; justify-content: center; }
           img { max-width: 100%; max-height: 100%; object-fit: contain; }
-          
+
           .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 7pt; color: #b2bec3; border-top: 0.5px solid #dfe6e9; padding-top: 5px; }
         </style>
       </head>
@@ -89,7 +106,7 @@ const generateHTML = (payload: ReportPayload, pageMap: Record<string, number> = 
           <div id="group-${gi}" class="section-divider page-break">
             ${g.name}
           </div>
-          
+
           <div id="group-stats-${gi}" class="page-break">
             <div class="header"><span>${title}</span><span>${g.name}</span></div>
             <div class="section-title">${g.name}</div>
@@ -151,41 +168,33 @@ export async function POST(req: NextRequest) {
         group.hosts.sort((a, b) => a.name.localeCompare(b.name));
       }
     });
+const logoBase64 = getLogoBase64();
+const payloadSize = JSON.stringify(payload).length;
+console.log(`[PDF Export] Payload size: ${(payloadSize / 1024 / 1024).toFixed(2)} MB`);
+browser = await puppeteer.launch({
+  executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+  headless: true,
+  ignoreHTTPSErrors: true,
+  args: [
+    '--no-sandbox', 
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu',
+    '--disable-software-rasterizer',
+    '--no-zygote',
+    '--disable-extensions',
+    '--memory-pressure-off',
+    '--ignore-certificate-errors',
+    '--font-render-hinting=none'
+  ]
+} as any);
 
-    let logoBase64 = '';
-    const logoPath = path.join(process.cwd(), 'public/logo/mfec1.png');
-    if (fs.existsSync(logoPath)) {
-      logoBase64 = `data:image/png;base64,${fs.readFileSync(logoPath).toString('base64')}`;
-    }
 
-    browser = await puppeteer.launch({
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-      headless: true,
-      ignoreHTTPSErrors: true,
-      args: [
-        '--no-sandbox', 
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--no-zygote',
-        '--single-process',
-        '--disable-extensions',
-        '--memory-pressure-off',
-        '--ignore-certificate-errors'
-      ]
-    } as any);
+
     const page = await browser.newPage();
-    
-    // Log chart data availability
-    payload.hostgroups.forEach(g => g.hosts.forEach(h => {
-        (h.charts || []).forEach(c => {
-            if (!c.data || c.data.length < 100) {
-                console.warn(`[PDF Export Warning] Chart data for ${h.name} (${c.label}) is missing or too small.`);
-            }
-        });
-    }));
 
-    await page.setContent(generateHTML(payload, {}, logoBase64), { waitUntil: 'load', timeout: 60000 });
+    // First pass to calculate TOC page numbers - use domcontentloaded for speed
+    await page.setContent(generateHTML(payload, {}, logoBase64), { waitUntil: 'domcontentloaded', timeout: 60000 });
 
     const result = await page.evaluate(() => {
       const map: Record<string, number> = {};
@@ -202,8 +211,10 @@ export async function POST(req: NextRequest) {
       return { map, totalPhysicalPages: pageBreaks.length };
     });
 
+    // Final pass - use load here to ensure base64 images are ready if needed, or domcontentloaded if confident
     const offset = (result.map['group-0'] || 1) - 1;
-    await page.setContent(generateHTML(payload, result.map, logoBase64, result.totalPhysicalPages - offset), { waitUntil: 'load', timeout: 60000 });
+    await page.setContent(generateHTML(payload, result.map, logoBase64, result.totalPhysicalPages - offset), { waitUntil: 'domcontentloaded', timeout: 60000 });
+
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
@@ -226,3 +237,4 @@ export async function POST(req: NextRequest) {
     if (browser) await browser.close();
   }
 }
+

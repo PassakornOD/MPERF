@@ -17,7 +17,7 @@ export default function FaqLayout({ children }: { children: React.ReactNode }) {
   const isAuthorized = username && ['sysreport', 'mfadmin'].includes(username.toLowerCase());
 
   const tabs = [
-    { name: 'FAQ', href: '/faq/info', icon: HelpCircle },
+    { name: 'Manual', href: '/faq/info', icon: HelpCircle },
     { name: 'Operations', href: '/faq/operations', icon: Server },
     ...(isAuthorized ? [
         { name: 'Ingestion DB', href: '/faq/ingestion', icon: BookOpen },
