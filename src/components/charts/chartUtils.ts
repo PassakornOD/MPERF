@@ -1,6 +1,7 @@
 import Highcharts from 'highcharts';
 
 export const getChartOptions = (metrics: any[], report: any, hostname: string, totalMem: number, startDate: string, endDate: string, targetMonth: string, targetYear: string, totalAvg?: number): any => {
+  console.log(`[Chart] getChartOptions called for ${hostname}, totalMem=${totalMem}, report.type=${report.type}`);
   if (!metrics || metrics.length === 0) return { title: { text: 'No Data Found' } };
 
   const isMonthly = report.type.includes('monthly');
@@ -55,7 +56,7 @@ export const getChartOptions = (metrics: any[], report: any, hostname: string, t
           formatter: function (this: Highcharts.AxisLabelsFormatterContextObject) {
             if (report.type.includes('mem')) {
               const val = this.value as number;
-              const percent = totalMem ? ((val / totalMem) * 100).toFixed(1) : 0;
+              const percent = (totalMem && totalMem > 0) ? ((val / totalMem) * 100).toFixed(1) : 0;
               return `${val} GB (${percent}%)`;
             }
             return String(this.value);
@@ -160,9 +161,9 @@ export const getChartOptions = (metrics: any[], report: any, hostname: string, t
       labels: {
         style: { fontSize: '8px' },
         formatter: function (this: Highcharts.AxisLabelsFormatterContextObject) {
-          if (report.type.includes('mem') && totalMem) {
+          if (report.type.includes('mem')) {
             const val = this.value as number;
-            const percent = ((val / totalMem) * 100).toFixed(1);
+            const percent = (totalMem && totalMem > 0) ? ((val / totalMem) * 100).toFixed(1) : 0;
             return `${val} GB (${percent}%)`;
           }
           return String(this.value);
@@ -189,7 +190,7 @@ export const getChartOptions = (metrics: any[], report: any, hostname: string, t
     }
   };
   if (report.type.includes('mem') && type === 'Normal' && totalAvg !== undefined) {
-    const avgPercent = totalMem ? ((totalAvg / totalMem) * 100).toFixed(1) : 0;
+    const avgPercent = (totalMem && totalMem > 0) ? ((totalAvg / totalMem) * 100).toFixed(1) : 0;
     options.yAxis.plotLines = [{
       value: totalAvg,
       color: '#CC0000',
@@ -208,4 +209,3 @@ export const getChartOptions = (metrics: any[], report: any, hostname: string, t
 
   return options;
 };
-

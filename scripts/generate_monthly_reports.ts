@@ -7,11 +7,15 @@ async function run() {
     const args: string[] = process.argv.slice(2);
     let month: number = 0;
     let year: number = 0;
+    let jobId: string = '';
+    let templateId: number = 0;
 
     args.forEach((arg: string) => {
         const [key, value] = arg.split('=');
         if (key === '--month') month = parseInt(value, 10);
         if (key === '--year') year = parseInt(value, 10);
+        if (key === '--jobId') jobId = value;
+        if (key === '--templateId') templateId = parseInt(value, 10);
     });
 
     // If month/year not provided, default to previous month
@@ -22,11 +26,11 @@ async function run() {
         year = year || d.getFullYear();
     }
 
-    console.log(`[CLI] Starting monthly report generation for: ${month}/${year}`);
+    console.log(`[CLI] Starting monthly report generation for: ${month}/${year}${jobId ? ` (Job: ${jobId})` : ''}${templateId ? ` (Template: ${templateId})` : ''}`);
     
     try {
         const startTime: number = Date.now();
-        const finalPath: string = await AutomationService.generateFullMonthlyReport(month, year);
+        const finalPath: string = await AutomationService.generateFullMonthlyReport(month, year, templateId, jobId);
         const duration: string = (((Date.now() - startTime) / 1000) / 60).toFixed(2);
         
         console.log('--------------------------------------------------');

@@ -35,7 +35,7 @@ export class PdfGeneratorService {
     }
   }
 
-  static generateHTML(payload: ReportPayload, pageMap: Record<string, number> = {}, logoBase64: string = '', totalLogicalPages: number = 0): { html: string, chartsToRender: any[] } {
+  static generateHTML(payload: ReportPayload, pageMap: Record<string, number> = {}, logoBase64: string = '', totalLogicalPages: number = 0, options: { skipCover?: boolean, skipTOC?: boolean, skipGroupCover?: boolean, pageOffset?: number, totalFullPages?: number } = {}): { html: string, chartsToRender: any[] } {
     const months = Array.from({ length: 12 }, (_, i) => {
       const d = new Date();
       if (payload.targetYear && payload.targetMonth) {
@@ -50,7 +50,7 @@ export class PdfGeneratorService {
     });
 
     const firstGroupPage = pageMap['group-0'] || 0;
-    const offset = firstGroupPage > 0 ? firstGroupPage - 1 : 0;
+    const offset = options.pageOffset !== undefined ? -options.pageOffset + 1 : (firstGroupPage > 0 ? firstGroupPage - 1 : 0);
     const title = payload.reportTitle || "MFEC Performance Report";
 
     const sortedHostgroups = [...payload.hostgroups].sort((a, b) => a.name.localeCompare(b.name));
@@ -59,8 +59,8 @@ export class PdfGeneratorService {
       if (!pageMap[id]) return '';
       const logicalPage = pageMap[id] - offset;
       if (logicalPage <= 0 && isReportingPage) return '';
-      const displayPage = logicalPage <= 0 ? pageMap[id] : logicalPage;
-      const totalDisplay = logicalPage <= 0 ? totalLogicalPages + offset : totalLogicalPages;
+      const displayPage = logicalPage;
+      const totalDisplay = options.totalFullPages || totalLogicalPages;
       return `<div class="footer">Page ${displayPage} of ${totalDisplay}</div>`;
     };
 
@@ -101,12 +101,15 @@ export class PdfGeneratorService {
           </style>
         </head>
         <body>
+          ${!options.skipCover ? `
           <div id="cover" class="cover page-break">
             ${logoBase64 ? `<img src="${logoBase64}" style="width: 150px; margin-bottom: 30px;" />` : ''}
             <h1>${title}</h1>
             <p style="font-size: 14pt; font-weight: bold;">${payload.reportMonth}</p>
             <p>Generated: ${payload.generatedDate}</p>
-          </div>
+          </div>` : ''}
+          
+          ${!options.skipTOC ? `
           <div id="toc" class="toc page-break">
             <div class="toc-content">
               <h1>Table of Contents</h1>
@@ -114,22 +117,24 @@ export class PdfGeneratorService {
                 <div class="toc-item">
                   <a href="#group-${gi}">${g.name}</a>
                   <span class="dots"></span>
-                  <span class="toc-page">${pageMap[`group-${gi}`] ? pageMap[`group-${gi}`] - offset : ''}</span>
+                  <span class="toc-page">${pageMap[`group-${gi}`] ? pageMap[`group-${gi}`] + (options.pageOffset || 0) : ''}</span>
                 </div>
                 ${g.hosts.map((h, hi) => `
                   <div class="toc-hostname">
                     <a href="#host-${gi}-${hi}">${h.name}</a>
                     <span class="dots"></span>
-                    <span class="toc-page">${pageMap[`host-${gi}-${hi}`] ? pageMap[`host-${gi}-${hi}`] - offset : ''}</span>
+                    <span class="toc-page">${pageMap[`host-${gi}-${hi}`] ? pageMap[`host-${gi}-${hi}`] + (options.pageOffset || 0) : ''}</span>
                   </div>
                 `).join('')}
               `).join('')}
             </div>
-          </div>
-          ${sortedHostgroups.map((g, gi) => `
+          </div>` : ''}
+
+          ${(options.skipCover && options.skipTOC) || (!options.skipCover && !options.skipTOC) ? sortedHostgroups.map((g, gi) => `
+            ${!options.skipGroupCover ? `
             <div id="group-${gi}" class="section-divider page-break">
               ${g.name}
-            </div>
+            </div>` : ''}
             <div id="group-stats-${gi}" class="page-break">
               ${getLogicalFooter(`group-stats-${gi}`, true)}
               <div class="header"><span>${title}</span><span>${g.name}</span></div>
@@ -164,6 +169,25 @@ export class PdfGeneratorService {
                     ${pi === 0 ? `<div class="section-title">${h.name}</div>` : ''}
                     ${pair.map((chart, ci) => {
           const chartId = `chart-${gi}-${hi}-${ci}-${pi}`;
+          
+          if (chart.data) {
+            return `
+              <h3>${h.name} - ${chart.label}</h3>
+              <div class="chart-container">
+                <img src="${chart.data}" style="width: 100%; height: auto; max-height: 100mm; object-fit: contain;" />
+              </div>
+            `;
+          }
+
+          if (chart.data) {
+            return `
+              <h3>${h.name} - ${chart.label}</h3>
+              <div class="chart-container">
+                <img src="${chart.data}" style="width: 100%; height: auto; max-height: 100mm; object-fit: contain;" />
+              </div>
+            `;
+          }
+
           chartsToRender.push({ id: chartId, ...chart });
           return `
                         <h3>${h.name} - ${chart.label}</h3>
@@ -176,12 +200,12 @@ export class PdfGeneratorService {
                 `;
       }).join('');
     }).join('')}
-          `).join('')}
+          `).join('') : ''}
           <script>
             window.getChartOptions = function(metrics, report, hostname, totalMem, startDate, endDate, targetMonth, targetYear, totalAvg) {
                 if (!metrics || metrics.length === 0) return { title: { text: 'No Data Found' } };
-                const isMonthly = report.type.includes('monthly');
-                const type = report.mode;
+                const isMonthly = report.type?.includes('monthly') || report.id?.includes('monthly');
+                const type = report.mode || 'Normal';
                 const baseOptions = {
                   chart: { backgroundColor: '#ffffff', shadow: false, animation: false },
                   title: { style: { fontSize: '14px', fontWeight: 'bold' } },
@@ -200,11 +224,11 @@ export class PdfGeneratorService {
                     const idx = timeLabels.indexOf(m.time_label);
                     if (idx !== -1) {
                       const rawVal = Number(m.val !== undefined ? m.val : m.mem);
-                      daySeriesMap[m.day][idx] = report.type.includes('cpu') ? (100 - rawVal) : rawVal;
+                      daySeriesMap[m.day][idx] = (report.type?.includes('cpu') || report.id?.includes('cpu')) ? (100 - rawVal) : rawVal;
                     }
                   });
                   const series = Object.keys(daySeriesMap).sort(function(a, b) { return Number(a) - Number(b); }).map(function(day) { return { name: day, data: daySeriesMap[Number(day)], type: 'line' }; });
-                  return Object.assign({}, baseOptions, { chart: Object.assign({}, baseOptions.chart, { type: 'line' }), title: { text: (report.type.includes('cpu') ? 'CPU' : 'Memory') + ' Monthly Usage' }, subtitle: { text: 'Hostname : ' + hostname + ' Month : ' + targetMonth + '/' + targetYear }, xAxis: Object.assign({}, baseOptions.xAxis, { categories: timeLabels, tickInterval: 10 }), yAxis: { title: { text: report.type.includes('cpu') ? 'Percent' : 'Memory (' + totalMem + ' GB)', style: { fontSize: '10px' } }, min: 0, max: report.type.includes('cpu') ? 100 : totalMem, labels: { style: { fontSize: '8px' } } }, series: series, plotOptions: { line: { marker: { enabled: false } } } });
+                  return Object.assign({}, baseOptions, { chart: Object.assign({}, baseOptions.chart, { type: 'line' }), title: { text: ((report.type?.includes('cpu') || report.id?.includes('cpu')) ? 'CPU' : 'Memory') + ' Monthly Usage' }, subtitle: { text: 'Hostname : ' + hostname + ' Month : ' + targetMonth + '/' + targetYear }, xAxis: Object.assign({}, baseOptions.xAxis, { categories: timeLabels, tickInterval: 10 }), yAxis: { title: { text: (report.type?.includes('cpu') || report.id?.includes('cpu')) ? 'Percent' : 'Memory (' + totalMem + ' GB)', style: { fontSize: '10px' } }, min: 0, max: (report.type?.includes('cpu') || report.id?.includes('cpu')) ? 100 : totalMem, labels: { style: { fontSize: '8px' } } }, series: series, plotOptions: { line: { marker: { enabled: false } } } });
                 }
                 const categories = metrics.map(function(m) {
                     const d = new Date(m.time);
@@ -217,15 +241,15 @@ export class PdfGeneratorService {
                     return String(m.time);
                 });
                 let series = []; let stacking = undefined;
-                if (report.type === 'cpu-daily') {
+                if (report.type === 'cpu-daily' || report.id?.includes('cpu-daily')) {
                   if (type === 'Peak') { series = [{ name: '%peak', data: metrics.map(function(m) { return 100 - (Number(m.idle) || 0); }), color: COLORS.steal, type: 'spline', lineWidth: 2 }, { name: '%avg', data: metrics.map(function(m) { return Number(m.usr) || 0; }), color: COLORS.memPeak, type: 'area', lineWidth: 1 }]; }
                   else { stacking = 'percent'; const first = metrics[0] || {}; const map = [{ key: 'idle', name: '%idle', color: COLORS.idle }, { key: 'wio', name: '%wio', color: COLORS.wio }, { key: 'nice', name: '%nice', color: COLORS.nice }, { key: 'steal', name: '%steal', color: COLORS.steal }, { key: 'usr', name: '%usr', color: COLORS.usr }, { key: 'sys', name: '%sys', color: COLORS.sys }]; series = map.filter(function(m) { return first.hasOwnProperty(m.key); }).map(function(m) { return { name: m.name, data: metrics.map(function(data) { return Number(data[m.key] || 0); }), color: m.color, type: 'area' }; }); }
                 } else {
                   if (type === 'Normal') { series = [{ name: 'mem usage', data: metrics.map(function(m) { return Number(m.mem) || 0; }), color: COLORS.memUsage, type: 'area' }]; }
                   else { series = [{ name: 'mem peak', data: metrics.map(function(m) { return Number(m.mem) || 0; }), color: COLORS.memPeak, type: 'spline' }, { name: 'mem avg', data: metrics.map(function(m) { return Number(m.avg_mem) || 0; }), color: COLORS.memAvg, type: 'area' }]; }
                 }
-                const options = Object.assign({}, baseOptions, { title: { text: 'Sar ' + startDate + ' To ' + endDate }, subtitle: { text: 'Hostname : ' + hostname + ' Type : ' + type }, xAxis: Object.assign({}, baseOptions.xAxis, { categories: categories, tickInterval: (type === 'Peak' || type === 'Average') ? 1 : Math.max(1, Math.floor(metrics.length / 20)), labels: Object.assign({}, baseOptions.xAxis.labels, { step: (type === 'Peak' || type === 'Average') ? 1 : undefined }) }), yAxis: { title: { text: report.type.includes('cpu') ? 'Percent' : 'Memory (' + (totalMem || '?') + ' GB)', style: { fontSize: '10px' } }, min: 0, max: report.type.includes('cpu') ? 100 : (totalMem || undefined), maxPadding: report.type.includes('mem') ? 0.2 : 0, endOnTick: report.type.includes('mem') ? false : true, labels: { style: { fontSize: (type === 'Peak' || type === 'Average') ? '6px' : '8px' }, formatter: function () { if (report.type.includes('mem') && totalMem) { const val = this.value; const percent = ((val / totalMem) * 100).toFixed(1); return val + ' GB (' + percent + '%)'; } return String(this.value); } } }, series: series, plotOptions: { area: { stacking: stacking, lineColor: '#000000', lineWidth: type === 'Normal' ? 0.5 : 0.1, marker: { enabled: false } }, spline: { marker: { enabled: true, radius: 2 } } } });
-                if (report.type.includes('mem') && type === 'Normal' && totalAvg !== undefined) {
+                const options = Object.assign({}, baseOptions, { title: { text: 'Sar ' + startDate + ' To ' + endDate }, subtitle: { text: 'Hostname : ' + hostname + ' Type : ' + type }, xAxis: Object.assign({}, baseOptions.xAxis, { categories: categories, tickInterval: (type === 'Peak' || type === 'Average') ? 1 : Math.max(1, Math.floor(metrics.length / 20)), labels: Object.assign({}, baseOptions.xAxis.labels, { step: (type === 'Peak' || type === 'Average') ? 1 : undefined }) }), yAxis: { title: { text: (report.type?.includes('cpu') || report.id?.includes('cpu')) ? 'Percent' : 'Memory (' + (totalMem || '?') + ' GB)', style: { fontSize: '10px' } }, min: 0, max: (report.type?.includes('cpu') || report.id?.includes('cpu')) ? 100 : (totalMem || undefined), maxPadding: (report.type?.includes('mem') || report.id?.includes('mem')) ? 0.2 : 0, endOnTick: (report.type?.includes('mem') || report.id?.includes('mem')) ? false : true, labels: { style: { fontSize: (type === 'Peak' || type === 'Average') ? '6px' : '8px' }, formatter: function () { if ((report.type?.includes('mem') || report.id?.includes('mem')) && totalMem) { const val = this.value; const percent = ((val / totalMem) * 100).toFixed(1); return val + ' GB (' + percent + '%)'; } return String(this.value); } } }, series: series, plotOptions: { area: { stacking: stacking, lineColor: '#000000', lineWidth: type === 'Normal' ? 0.5 : 0.1, marker: { enabled: false } }, spline: { marker: { enabled: true, radius: 2 } } } });
+                if ((report.type?.includes('mem') || report.id?.includes('mem')) && type === 'Normal' && totalAvg !== undefined) {
                   const avgPercent = totalMem ? ((totalAvg / totalMem) * 100).toFixed(1) : 0;
                   options.yAxis.plotLines = [{ value: totalAvg, color: 'white', dashStyle: 'Dash', width: 2, label: { text: 'AVG Memory Usage = ' + totalAvg.toFixed(2) + ' GB = ' + avgPercent + '%', y: 15, style: { color: '#CC0000', fontSize: '8px' }, align: 'right', verticalAlign: 'top', textAlign: 'right', x: 0 } }];
                 }
@@ -238,21 +262,32 @@ export class PdfGeneratorService {
     return { html: htmlContent, chartsToRender };
   }
 
-  static async generatePdfBuffer(payload: ReportPayload): Promise<Buffer> {
+  static async generatePdfBuffer(payload: ReportPayload, options: { skipCover?: boolean, skipTOC?: boolean, skipGroupCover?: boolean, pageOffset?: number, totalFullPages?: number, pageMap?: Record<string, number> } = {}): Promise<Buffer> {
     const browser = await puppeteer.launch({
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       headless: true,
-      protocolTimeout: 600000,
+      protocolTimeout: 1200000, // 20 minutes for very large chunks
       ignoreHTTPSErrors: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--no-zygote', '--js-flags=--max-old-space-size=4096']
+      args: [
+        '--no-sandbox', 
+        '--disable-setuid-sandbox', 
+        '--disable-dev-shm-usage', 
+        '--disable-gpu', 
+        '--no-zygote', 
+        '--js-flags=--max-old-space-size=4096',
+        '--single-process',
+        '--disable-extensions'
+      ]
     } as any);
 
     try {
       const page = await browser.newPage();
+      await page.setDefaultNavigationTimeout(600000); // 10 minutes
       await page.setViewport({ width: 1200, height: 1600 });
 
       const logoBase64 = this.getLogoBase64();
-      const firstPass = this.generateHTML(payload, {}, logoBase64);
+      const initialPageMap = options.pageMap || {};
+      const firstPass = this.generateHTML(payload, initialPageMap, logoBase64, options.totalFullPages || 0, options);
       await page.setContent(firstPass.html, { waitUntil: 'domcontentloaded', timeout: 600000 });
 
       const CHUNK_SIZE = 50;
@@ -270,8 +305,6 @@ export class PdfGeneratorService {
         });
       };
 
-
-
       for (let i = 0; i < firstPass.chartsToRender.length; i += CHUNK_SIZE) {
         await renderBatch(firstPass.chartsToRender.slice(i, i + CHUNK_SIZE));
       }
@@ -280,7 +313,7 @@ export class PdfGeneratorService {
       const result = await page.evaluate(() => {
         const map: Record<string, number> = {};
         const elements = document.querySelectorAll('#cover, #toc, [id^="group-"], [id^="host-"]');
-        const pageBreaks = Array.from(document.querySelectorAll('.page-break'));
+        const pageBreaks = Array.from(document.querySelectorAll('.page-break')) as HTMLElement[];
         elements.forEach(el => {
           let pageNum = 1;
           for (const pb of pageBreaks) {
@@ -292,8 +325,8 @@ export class PdfGeneratorService {
         return { map, totalPhysicalPages: pageBreaks.length };
       });
 
-      const offset = (result.map['group-0'] || 1) - 1;
-      const finalPass = this.generateHTML(payload, result.map, logoBase64, result.totalPhysicalPages - offset);
+      const offset = (result.map['group-0'] || (options.skipCover ? 1 : (options.skipTOC ? 2 : 3))) - 1;
+      const finalPass = this.generateHTML(payload, result.map, logoBase64, result.totalPhysicalPages - offset, options);
       await page.setContent(finalPass.html, { waitUntil: 'domcontentloaded', timeout: 600000 });
 
       for (let i = 0; i < finalPass.chartsToRender.length; i += CHUNK_SIZE) {

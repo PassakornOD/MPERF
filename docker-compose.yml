@@ -36,6 +36,7 @@ services:
       - DATABASE_URL=mysql://root:password@mperf-db:3306/sarlog
       - NEXTAUTH_SECRET=y0ur_sup3r_s3cr3t_s3ssi0n_k3y
       - NEXTAUTH_URL=http://mperf-app
+      - TZ=Asia/Bangkok
     depends_on:
       - mperf-db
     volumes:
