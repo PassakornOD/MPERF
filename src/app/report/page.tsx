@@ -273,34 +273,52 @@ const ReportExportPage = () => {
               {isLoadingTemplates ? (
                   <div className="py-10 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600" /></div>
               ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {templates.map(template => (
-                          <div key={template.id} className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100 hover:border-blue-200 transition-all">
-                              <h4 className="font-black text-gray-900 mb-1">{template.name}</h4>
-                              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-6">{template.hosts.length} HOSTS</p>
-                              <button 
-                                  onClick={() => {
-                                      // 1. Set hosts
-                                      setSelectedHostnames(template.hosts);
-
-                                      // 2. Set report title
-                                      setReportTitle(template.reportTitle || template.name);
-
-                                      // 3. Set charts
-                                      setActiveReports(activeReports.map(r => ({ ...r, enabled: template.charts.some((c: any) => c.id === r.id) })));
-
-                                      // 4. Update selected groups and expand them
-                                      const uniqueGroups = Array.from(new Set(template.hosts.map(h => h.group)));
-                                      setSelectedGroups(uniqueGroups);
-                                      setExpandedGroups(uniqueGroups);
-                                  }}
-                                  className="w-full py-3 bg-white text-blue-600 rounded-xl font-bold text-sm border border-blue-100 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
-                              >
-                                  Load Template
-                              </button>
-                          </div>
-                      ))}
-                  </div>
+            <div className="space-y-3">
+                {templates.map(template => (
+                    <div key={template.id} className="grid grid-cols-12 items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-blue-200 transition-all gap-4">
+                        <div className="col-span-4 flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                                <Layout className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h4 className="font-black text-gray-900 truncate">{template.name}</h4>
+                                <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">{template.lastUpdated}</p>
+                            </div>
+                        </div>
+                        <div className="col-span-5">
+                            <h4 className="font-bold text-gray-700 text-sm truncate">{template.reportTitle}</h4>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">
+                                {template.hosts.length} HOSTS • {template.charts.length} CHARTS
+                            </p>
+                        </div>
+                        <div className="col-span-3 flex items-center justify-end gap-2">
+                            <button 
+                                onClick={() => {
+                                    setSelectedHostnames(template.hosts);
+                                    setReportTitle(template.reportTitle || template.name);
+                                    setActiveReports(activeReports.map(r => ({ ...r, enabled: template.charts.some((c: any) => c.id === r.id) })));
+                                    const uniqueGroups = Array.from(new Set(template.hosts.map(h => h.group)));
+                                    setSelectedGroups(uniqueGroups);
+                                    setExpandedGroups(uniqueGroups);
+                                }}
+                                className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg font-bold text-xs hover:bg-blue-600 hover:text-white transition-all"
+                            >
+                                LOAD
+                            </button>
+                            <button 
+                                onClick={async () => {
+                                    if (confirm('Are you sure you want to delete this template?')) {
+                                        await axios.delete(`/api/report-templates/${template.id}`);
+                                    }
+                                }}
+                                className="px-4 py-2 bg-red-50 text-red-500 rounded-lg font-bold text-xs hover:bg-red-600 hover:text-white transition-all"
+                            >
+                                DELETE
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
               )}
             </div>
 
