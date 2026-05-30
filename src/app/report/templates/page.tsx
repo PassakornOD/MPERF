@@ -90,7 +90,7 @@ const ReportTemplatesPage = () => {
                 month,
                 year
             });
-            showToast("Background report generation started", 'success');
+            showToast("Process report generation started", 'success');
             setIsBackgroundModalOpen(false);
             queryClient.invalidateQueries({ queryKey: ['background_jobs_status'] });
         } catch (e: any) {
@@ -129,6 +129,8 @@ const ReportTemplatesPage = () => {
     const [templateToDelete, setTemplateToDelete] = useState<number | null>(null);
     const [generatingTemplate, setGeneratingTemplate] = useState<Template | null>(null);
     const [editingTemplateId, setEditingTemplateId] = useState<number | null>(null);
+    const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
+    const [limitMessage, setLimitMessage] = useState('');
 
     const getPrevMonthDates = () => {
         const now = new Date();
@@ -330,20 +332,24 @@ const ReportTemplatesPage = () => {
         const isSelected = selectedGroups.includes(groupName);
         const groupData = hostGroupsRaw?.find((g: any) => g.hostgroup === groupName);
         const groupHostnames = groupData?.hostnames.map((h: any) => {
-            console.log(`[Debug] Host in group: ${h.hostname}, mem: ${h.mem}`);
             return { id: String(h.hostname_id), name: h.hostname, group: groupName, mem: h.mem };
         }) || [];
         if (isSelected) {
             setSelectedGroups(prev => prev.filter(g => g !== groupName));
             setSelectedHostnames(prev => prev.filter(h => h.group !== groupName));
         } else {
+            const remainingSlots = 50 - selectedHostnames.length;
+            if (groupHostnames.length > remainingSlots) {
+                setLimitMessage(`Cannot add ${groupHostnames.length} hosts. Only ${remainingSlots} slots remaining. Maximum 50 hosts allowed.`);
+                setIsLimitModalOpen(true);
+                return;
+            }
             setSelectedGroups(prev => [...prev, groupName]);
             setSelectedHostnames(prev => [...prev.filter(h => h.group !== groupName), ...groupHostnames]);
         }
     };
 
     const toggleHostname = (h: any) => {
-        console.log(`[Debug] Toggling host: ${h.hostname}, mem: ${h.mem}`);
         let groupName = h.group;
         if (!groupName && hostGroupsRaw) {
             const foundGroup = hostGroupsRaw.find((g: any) => g.hostnames.some((hn: any) => String(hn.hostname_id) === String(h.hostname_id)));
@@ -355,6 +361,11 @@ const ReportTemplatesPage = () => {
             if (exists) {
                 return prev.filter(p => p.id !== String(h.hostname_id));
             } else {
+                if (prev.length >= 50) {
+                    setLimitMessage('Maximum 50 hosts allowed per template.');
+                    setIsLimitModalOpen(true);
+                    return prev;
+                }
                 return [...prev, { id: String(h.hostname_id), name: h.hostname, group: groupName, mem: h.mem }];
             }
         });
@@ -545,10 +556,10 @@ const ReportTemplatesPage = () => {
                                                                 console.log(response.data.message);
                                                                 showToast("ลบไฟล์เรียบร้อยแล้ว", 'success');
                                                                 queryClient.invalidateQueries({ queryKey: ['background_jobs_status'] });
-                                                                } catch (error: any) {
-                                                                    console.error("Delete failed:", error.response?.data || error);
-                                                                    showToast("ลบไฟล์ไม่สำเร็จ: " + (error.response?.data?.error || "Unknown error"), 'error');
-                                                                }
+                                                            } catch (error: any) {
+                                                                console.error("Delete failed:", error.response?.data || error);
+                                                                showToast("ลบไฟล์ไม่สำเร็จ: " + (error.response?.data?.error || "Unknown error"), 'error');
+                                                            }
                                                         }}
                                                         className="inline-flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-red-600 hover:text-white transition-all border border-red-100"
                                                     >
@@ -915,6 +926,22 @@ const ReportTemplatesPage = () => {
                 title="Delete Template"
                 message="Are you sure you want to delete this template? This action cannot be undone."
             />
+
+            <Modal isOpen={isLimitModalOpen} onClose={() => setIsLimitModalOpen(false)} title="HOST LIMIT REACHED">
+                <div className="p-8 text-center">
+                    <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-amber-100 shadow-sm">
+                        <AlertCircle className="w-10 h-10 text-amber-500" />
+                    </div>
+                    <h3 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-tight italic">Maximum 50 Hosts</h3>
+                    <p className="text-gray-600 font-medium leading-relaxed mb-8">{limitMessage}</p>
+                    <button
+                        onClick={() => setIsLimitModalOpen(false)}
+                        className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-sm tracking-widest transition-all shadow-lg active:scale-[0.98] uppercase"
+                    >
+                        Understand
+                    </button>
+                </div>
+            </Modal>
         </div>
     );
 };

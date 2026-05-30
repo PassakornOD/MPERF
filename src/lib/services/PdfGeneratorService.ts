@@ -112,18 +112,18 @@ export class PdfGeneratorService {
           <style>
             @page { size: A4 portrait; margin: 15mm; }
             body { font-family: 'Inter', 'Helvetica', 'Arial', sans-serif; color: #000000; margin: 0; padding: 0; line-height: 1.4; width: 180mm; }
-            .page-break { page-break-after: always; position: relative; min-height: 255mm; display: flex; flex-direction: column; page-break-inside: avoid; }
+            .page-break { page-break-after: always; position: relative; min-height: 255mm; display: flex; flex-direction: column; }
             .content-wrapper { width: 100%; }
             a { text-decoration: none; color: inherit; }
             .cover { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 267mm; text-align: center; }
             .cover h1 { font-size: 24pt; color: #000000; margin-bottom: 10px; font-weight: bold; }
             .cover p { font-size: 12pt; margin: 5px 0; color: #000000; }
-            .toc { display: flex; flex-direction: column; padding-left: 15px; height: 267mm; }
+            .toc { display: flex; flex-direction: column; padding-left: 15px; min-height: 267mm; }
             .toc-content { width: 95%; }
             .toc h1 { font-size: 18pt; margin-bottom: 20px; color: #000000; padding-bottom: 10px; text-align: center; width: 100%; font-weight: bold; }
-            .toc-item { display: flex; align-items: baseline; font-size: 16pt; font-weight: bold; margin: 10px 0; color: #000000; }
+            .toc-item { display: flex; align-items: baseline; font-size: 14pt; font-weight: bold; margin: 8px 0; color: #000000; }
             .toc-item .dots { flex: 1; border-bottom: 1px dotted #000000; margin: 0 10px; }
-            .toc-hostname { display: flex; align-items: baseline; font-size: 14pt; font-weight: normal; margin: 5px 0 5px 40px; color: #000000; }
+            .toc-hostname { display: flex; align-items: baseline; font-size: 12pt; font-weight: normal; margin: 4px 0 4px 40px; color: #000000; }
             .toc-hostname .dots { flex: 1; border-bottom: 1px dotted #000000; margin: 0 10px; }
             .header { display: flex; justify-content: space-between; border-bottom: 1px solid #dfe6e9; padding-bottom: 5px; margin-bottom: 10px; font-size: 8pt; color: #000000; }
             .section-title { font-size: 16pt; font-weight: bold; color: #000000; margin-bottom: 10px; }
@@ -488,9 +488,9 @@ export class PdfGeneratorService {
         });
       }
 
-      const offset = (result.map['group-0'] || (options.skipCover ? 1 : (options.skipTOC ? 2 : 3))) - 1;
-      // Force offset to 2 to ensure content starts at Page 1.
-      const forcedOffset = 2;
+      const calculatedOffset = (result.map['group-0'] || (options.skipCover ? 1 : (options.skipTOC ? 2 : 3))) - 1;
+      // Use provided pageOffset if available, otherwise use calculated offset from first pass.
+      const forcedOffset = options.pageOffset !== undefined ? options.pageOffset : calculatedOffset;
       const finalPageMap = { ...initialPageMap, ...adjustedResultMap };
       const finalPass = this.generateHTML(payload, finalPageMap, logoBase64, result.totalPhysicalPages - forcedOffset, { ...options, pageOffset: forcedOffset });
       await page.setContent(finalPass.html, { waitUntil: 'domcontentloaded', timeout: 600000 });

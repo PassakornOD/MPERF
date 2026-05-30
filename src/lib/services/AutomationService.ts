@@ -101,12 +101,30 @@ export class AutomationService {
         }));
     }
 
+    // Phase 0: Pre-calculate TOC Pages
+    console.log(`[Automation] Pre-calculating TOC pages...`);
+    const mockTOCPayload: ReportPayload = {
+        reportMonth: `${monthName} ${year}`,
+        reportTitle: reportTitle,
+        targetMonth: month, targetYear: year, generatedDate,
+        hostgroups: hostgroups.map(g => ({
+            id: g.name, name: g.name,
+            hosts: g.hosts.map((h: any) => ({ name: h.name } as any))
+        }))
+    };
+    const mockTOCBuffer = await PdfGeneratorService.generatePdfBuffer(mockTOCPayload, { 
+        skipContent: true 
+    });
+    const mockTOCDoc = await PDFDocument.load(mockTOCBuffer);
+    const tocOffset = mockTOCDoc.getPageCount();
+    console.log(`[Automation] TOC occupies ${tocOffset} pages. Offset set to ${tocOffset}`);
+
     const intermediatePdfPaths: string[] = [];
     const hostgroupPageMap: Record<string, number> = {};
     const hostPageMap: Record<string, number> = {};
     
-    // Cover/TOC usually take 2 pages (Cover + TOC). Content starts from Page 3.
-    let currentGlobalPage = 3; 
+    // Use dynamic TOC count. Content starts from tocOffset + 1.
+    let currentGlobalPage = tocOffset + 1; 
     let totalProcessedHosts = 0;
     const totalHostsToProcess = targetHosts.length || hostgroups.reduce((acc, g) => acc + g.hosts.length, 0);
 
@@ -126,7 +144,7 @@ export class AutomationService {
       hostgroupPageMap[`group-${i}`] = currentGlobalPage;
       const coverBuffer = await PdfGeneratorService.generatePdfBuffer(coverPayload, { 
           skipCover: true, skipTOC: true, skipGroupCover: false, skipStats: true, skipCharts: true,
-          groupIndexOffset: i, pageOffset: 1, pageMap: hostgroupPageMap
+          groupIndexOffset: i, pageOffset: tocOffset, pageMap: hostgroupPageMap
       });
       const groupCoverPath = path.join(tmpDir, `group_${i}_cover.pdf`);
       fs.writeFileSync(groupCoverPath, coverBuffer);
@@ -160,7 +178,7 @@ export class AutomationService {
 
           const statsBuffer = await PdfGeneratorService.generatePdfBuffer(statsPayload, { 
               skipCover: true, skipTOC: true, skipGroupCover: true, skipCharts: true,
-              groupIndexOffset: i, pageOffset: 2, pageMap: hostgroupPageMap // Pass map to allow footer generation
+              groupIndexOffset: i, pageOffset: tocOffset, pageMap: hostgroupPageMap // Pass map to allow footer generation
           });
           const statsPath = path.join(tmpDir, `group_${i}_stats_chunk_${chunkIndex}.pdf`);
           fs.writeFileSync(statsPath, statsBuffer);
@@ -196,7 +214,7 @@ export class AutomationService {
           hostPageMap[`host-${i}-${hi}`] = currentGlobalPage;
           const hostBuffer = await PdfGeneratorService.generatePdfBuffer(hostPayload, { 
               skipCover: true, skipTOC: true, skipGroupCover: true, skipStats: true,
-              groupIndexOffset: i, hostIndexOffset: hi, pageOffset: 2,
+              groupIndexOffset: i, hostIndexOffset: hi, pageOffset: tocOffset,
               pageMap: { ...hostgroupPageMap, ...hostPageMap } // Pass updated map for footer
           });
           const hostPath = path.join(tmpDir, `group_${i}_host_${hi}_charts.pdf`);
@@ -229,11 +247,10 @@ export class AutomationService {
     };
 
     const combinedPageMap = { ...hostgroupPageMap, ...hostPageMap };
-    const tocOffset = 2; // Fixed Cover + TOC pages
     
     const coverTocBuffer = await PdfGeneratorService.generatePdfBuffer(fullStructurePayload, { 
         totalFullPages: currentGlobalPage - 1,
-        pageOffset: 2,
+        pageOffset: tocOffset,
         pageMap: combinedPageMap,
         skipContent: true 
     });

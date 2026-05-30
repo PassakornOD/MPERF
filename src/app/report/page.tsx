@@ -23,7 +23,8 @@ import {
   X,
   PlusCircle,
   GripVertical,
-  Type
+  Type,
+  AlertCircle
 } from 'lucide-react';
 import { ReportPayload } from '@/types/report';
 import FloatingInput from '@/components/common/FloatingInput';
@@ -42,6 +43,8 @@ const ReportExportPage = () => {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [reportTitle, setReportTitle] = useState('Monthly Performance Report');
+  const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
+  const [limitMessage, setLimitMessage] = useState('');
 
   const getPrevMonthDates = () => {
     const now = new Date();
@@ -74,6 +77,19 @@ const ReportExportPage = () => {
     setExpandedGroups(prev => prev.includes(groupName) ? prev.filter(g => g !== groupName) : [...prev, groupName]);
   };
 
+  const toggleHostname = (h: any) => {
+    setSelectedHostnames(prev => {
+        const exists = prev.find(p => p.id === h.id);
+        if (exists) return prev.filter(p => p.id !== h.id);
+        if (prev.length >= 50) {
+            setLimitMessage('Maximum 50 hosts allowed per report. For larger reports, please use the Templates section.');
+            setIsLimitModalOpen(true);
+            return prev;
+        }
+        return [...prev, h];
+    });
+  };
+
   const toggleGroup = (groupName: string) => {
     const isSelected = selectedGroups.includes(groupName);
     const groupData = hostGroupsRaw?.find((g: any) => g.hostgroup === groupName);
@@ -83,13 +99,15 @@ const ReportExportPage = () => {
       setSelectedGroups(prev => prev.filter(g => g !== groupName));
       setSelectedHostnames(prev => prev.filter(h => h.group !== groupName));
     } else {
+      const remainingSlots = 50 - selectedHostnames.length;
+      if (groupHostnames.length > remainingSlots) {
+          setLimitMessage(`Cannot add ${groupHostnames.length} hosts. Only ${remainingSlots} slots remaining. Maximum 50 hosts allowed.`);
+          setIsLimitModalOpen(true);
+          return;
+      }
       setSelectedGroups(prev => [...prev, groupName]);
       setSelectedHostnames(prev => [...prev.filter(h => h.group !== groupName), ...groupHostnames]);
     }
-  };
-
-  const toggleHostname = (h: any) => {
-    setSelectedHostnames(prev => prev.find(p => p.id === h.id) ? prev.filter(p => p.id !== h.id) : [...prev, h]);
   };
 
   const [activeReports, setActiveReports] = useState([
@@ -400,6 +418,22 @@ const ReportExportPage = () => {
           const link = document.createElement('a'); link.href = pdfUrl!; link.download = `MFEC_SAR_REPORT_${Date.now()}.pdf`; link.click();
       }}>
           {pdfUrl && <iframe src={pdfUrl} className="w-full h-[80vh] rounded-2xl border border-gray-100 shadow-inner" title="PDF Viewer" />}
+      </Modal>
+
+      <Modal isOpen={isLimitModalOpen} onClose={() => setIsLimitModalOpen(false)} title="HOST LIMIT REACHED">
+          <div className="p-8 text-center">
+              <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-amber-100 shadow-sm">
+                  <AlertCircle className="w-10 h-10 text-amber-500" />
+              </div>
+              <h3 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-tight italic">Maximum 50 Hosts</h3>
+              <p className="text-gray-600 font-medium leading-relaxed mb-8">{limitMessage}</p>
+              <button 
+                  onClick={() => setIsLimitModalOpen(false)}
+                  className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-sm tracking-widest transition-all shadow-lg active:scale-[0.98] uppercase"
+              >
+                  Understand
+              </button>
+          </div>
       </Modal>
     </div>
   );
