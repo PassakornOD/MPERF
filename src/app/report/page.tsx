@@ -1,32 +1,22 @@
 'use client';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import Block from '@/components/common/Block';
 import Modal from '@/components/common/Modal';
 import dynamic from 'next/dynamic';
 import {
-    ChevronDown,
-    ChevronRight,
-    ArrowUp,
-    ArrowDown,
     Loader2,
     Monitor,
-    Calendar,
     Layers,
     FileText,
-    Search,
     CheckCircle2,
-    Clock,
-    Layout,
-    User,
-    X,
-    PlusCircle,
-    GripVertical,
-    Type,
-    AlertCircle
+    AlertCircle,
+    X
 } from 'lucide-react';
 import { ReportPayload } from '@/types/report';
+import HostSelector from '@/components/report/HostSelector';
+import ReportConfiguration from '@/components/report/ReportConfiguration';
+import ChartLayoutOrder from '@/components/report/ChartLayoutOrder';
 import FloatingInput from '@/components/common/FloatingInput';
 
 interface Template {
@@ -47,6 +37,8 @@ const ReportExportPage = () => {
     const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
     const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
     const [selectedHostnames, setSelectedHostnames] = useState<{ id: string, name: string, group: string, mem?: number }[]>([]);
+    const [activeAction, setActiveAction] = useState<'create-template' | 'quick-gen' | 'load-template' | null>(null);
+    const [newTemplateName, setNewTemplateName] = useState('');
     const [isExporting, setIsFetchingPDF] = useState(false);
     const [exportStatus, setExportStatus] = useState('');
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -70,7 +62,7 @@ const ReportExportPage = () => {
     const [year, setYear] = useState<string>(datesObj.year);
 
     const { data: hostGroupsRaw } = useQuery({ queryKey: ['hostGroups-batch-report'], queryFn: async () => (await axios.get('/api/host-groups')).data });
-    const { data: templates = [], isLoading: isLoadingTemplates } = useQuery<Template[]>({
+    const { data: templates = [], isLoading: isLoadingTemplates, refetch: refetchTemplates } = useQuery<Template[]>({
         queryKey: ['report_templates'],
         queryFn: async () => {
             const res = await axios.get('/api/report-templates');
@@ -138,7 +130,7 @@ const ReportExportPage = () => {
         }
     };
 
-    const [activeReports, setActiveReports] = useState([
+    const DEFAULT_REPORTS = [
         { id: 'cpu-daily-average', label: 'CPU Daily (Average)', type: 'cpu-daily', mode: 'Average', enabled: true },
         { id: 'cpu-daily-peak', label: 'CPU Daily (Peak)', type: 'cpu-daily', mode: 'Peak', enabled: true },
         { id: 'cpu-monthly-normal', label: 'CPU Monthly', type: 'cpu-monthly', mode: 'Normal', enabled: true },
@@ -146,7 +138,17 @@ const ReportExportPage = () => {
         { id: 'cpu-daily-normal', label: 'CPU Daily (Normal)', type: 'cpu-daily', mode: 'Normal', enabled: false },
         { id: 'mem-daily-peak', label: 'Memory Daily (Peak)', type: 'mem-daily', mode: 'Peak', enabled: false },
         { id: 'mem-monthly-normal', label: 'Memory Monthly', type: 'mem-monthly', mode: 'Normal', enabled: false },
-    ]);
+    ];
+
+    const [activeReports, setActiveReports] = useState(DEFAULT_REPORTS);
+
+    const resetConfiguration = () => {
+        setSelectedHostnames([]);
+        setSelectedGroups([]);
+        setExpandedGroups([]);
+        setActiveReports(DEFAULT_REPORTS);
+        setNewTemplateName('');
+    };
 
     const handlePreviewPDF = async () => {
         if (isExporting || selectedHostnames.length === 0) return;
@@ -222,8 +224,28 @@ const ReportExportPage = () => {
         }
     };
 
-    const availableCharts = useMemo(() => activeReports.filter(r => !r.enabled), [activeReports]);
-    const selectedCharts = useMemo(() => activeReports.filter(r => r.enabled), [activeReports]);
+    const handleSaveTemplate = async () => {
+        if (!newTemplateName) {
+            alert('Please enter a template name');
+            return;
+        }
+        try {
+            await axios.post('/api/report-templates', {
+                name: newTemplateName,
+                config: JSON.stringify({
+                    reportTitle,
+                    hosts: selectedHostnames,
+                    charts: activeReports.filter(r => r.enabled)
+                })
+            });
+            alert('Template created successfully!');
+            setNewTemplateName('');
+            setActiveAction(null);
+            refetchTemplates();
+        } catch (e) {
+            alert('Failed to create template');
+        }
+    };
 
     const toggleReport = (id: string) => {
         setActiveReports(prev => prev.map(r => r.id === id ? { ...r, enabled: !r.enabled } : r));
@@ -256,11 +278,31 @@ const ReportExportPage = () => {
                     <h2 className="text-3xl font-black text-gray-900 tracking-tight uppercase italic underline decoration-blue-500 underline-offset-8">Performance Reports</h2>
                     <p className="text-gray-500 font-medium mt-2">Select hosts and configurations to generate document</p>
                 </div>
-                <div className="flex items-center gap-3 bg-blue-50 p-3 rounded-2xl border border-blue-100 shadow-sm">
-                    <CheckCircle2 className="w-5 h-5 text-blue-600" />
-                    <div>
-                        <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest leading-none mb-1">Selected</p>
-                        <p className="text-sm font-black text-blue-700 leading-none">{selectedHostnames.length} HOSTS</p>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => {
+                            resetConfiguration();
+                            setActiveAction('create-template');
+                        }}
+                        className={`px-4 py-3 rounded-xl font-black text-xs transition-all ${activeAction === 'create-template' ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'}`}
+                    >
+                        CREATE TEMPLATE
+                    </button>
+                    <button
+                        onClick={() => {
+                            resetConfiguration();
+                            setActiveAction('quick-gen');
+                        }}
+                        className={`px-4 py-3 rounded-xl font-black text-xs transition-all ${activeAction === 'quick-gen' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-900 hover:bg-slate-200'}`}
+                    >
+                        QUICK GEN REPORT
+                    </button>
+                    <div className="flex items-center gap-3 bg-blue-50 p-3 rounded-2xl border border-blue-100 shadow-sm">
+                        <CheckCircle2 className="w-5 h-5 text-blue-600" />
+                        <div>
+                            <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest leading-none mb-1">Selected</p>
+                            <p className="text-sm font-black text-blue-700 leading-none">{selectedHostnames.length} HOSTS</p>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -268,232 +310,171 @@ const ReportExportPage = () => {
             {/* Templates Section */}
             <div className="relative border border-gray-100 rounded-3xl p-8 pt-10 bg-white shadow-sm mb-12">
               <span className="absolute -top-4 left-8 bg-white px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 border border-gray-100 rounded-full shadow-sm flex items-center gap-2">
-                  <Layout className="w-3.5 h-3.5" /> Generate From Template
+                  <Layers className="w-3.5 h-3.5" /> Saved Templates
               </span>
               {isLoadingTemplates ? (
                   <div className="py-10 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600" /></div>
               ) : (
             <div className="space-y-3">
-                {templates.map(template => (
-                    <div key={template.id} className="grid grid-cols-12 items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-blue-200 transition-all gap-4">
-                        <div className="col-span-4 flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                <Layout className="w-5 h-5" />
+                {templates.length === 0 ? (
+                    <div className="py-8 text-center text-gray-400 font-bold uppercase text-xs tracking-widest">No templates found</div>
+                ) : (
+                    templates.map(template => (
+                        <div key={template.id} className="grid grid-cols-12 items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-blue-200 transition-all gap-4">
+                            <div className="col-span-4 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                                    <Layers className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <h4 className="font-black text-gray-900 truncate">{template.name}</h4>
+                                    <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">{template.lastUpdated}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h4 className="font-black text-gray-900 truncate">{template.name}</h4>
-                                <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">{template.lastUpdated}</p>
+                            <div className="col-span-5">
+                                <h4 className="font-bold text-gray-700 text-sm truncate flex items-center gap-2">
+                                    <FileText className="w-3.5 h-3.5 text-gray-400" />
+                                    {template.reportTitle}
+                                </h4>
+                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-4">
+                                    <span className="flex items-center gap-1.5"><Monitor className="w-3 h-3" /> {template.hosts.length} HOSTS</span>
+                                    <span className="flex items-center gap-1.5"><Layers className="w-3 h-3" /> {template.charts.length} CHARTS</span>
+                                </p>
+                            </div>
+                            <div className="col-span-3 flex items-center justify-end gap-2">
+                                <button 
+                                    onClick={() => {
+                                        resetConfiguration();
+                                        setSelectedHostnames(template.hosts);
+                                        setReportTitle(template.reportTitle || template.name);
+                                        setActiveReports(DEFAULT_REPORTS.map(r => ({ ...r, enabled: template.charts.some((c: any) => c.id === r.id) })));
+                                        const uniqueGroups = Array.from(new Set(template.hosts.map(h => h.group)));
+                                        setSelectedGroups(uniqueGroups);
+                                        setExpandedGroups(uniqueGroups);
+                                        setActiveAction('load-template');
+                                    }}
+                                    className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg font-bold text-xs hover:bg-blue-600 hover:text-white transition-all"
+                                >
+                                    LOAD
+                                </button>
+                                <button 
+                                    onClick={async () => {
+                                        if (confirm('Are you sure you want to delete this template?')) {
+                                            await axios.delete(`/api/report-templates/${template.id}`);
+                                            refetchTemplates();
+                                        }
+                                    }}
+                                    className="px-4 py-2 bg-red-50 text-red-500 rounded-lg font-bold text-xs hover:bg-red-600 hover:text-white transition-all"
+                                >
+                                    DELETE
+                                </button>
                             </div>
                         </div>
-                        <div className="col-span-5">
-                            <h4 className="font-bold text-gray-700 text-sm truncate">{template.reportTitle}</h4>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">
-                                {template.hosts.length} HOSTS • {template.charts.length} CHARTS
-                            </p>
-                        </div>
-                        <div className="col-span-3 flex items-center justify-end gap-2">
-                            <button 
-                                onClick={() => {
-                                    setSelectedHostnames(template.hosts);
-                                    setReportTitle(template.reportTitle || template.name);
-                                    setActiveReports(activeReports.map(r => ({ ...r, enabled: template.charts.some((c: any) => c.id === r.id) })));
-                                    const uniqueGroups = Array.from(new Set(template.hosts.map(h => h.group)));
-                                    setSelectedGroups(uniqueGroups);
-                                    setExpandedGroups(uniqueGroups);
-                                }}
-                                className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg font-bold text-xs hover:bg-blue-600 hover:text-white transition-all"
-                            >
-                                LOAD
-                            </button>
-                            <button 
-                                onClick={async () => {
-                                    if (confirm('Are you sure you want to delete this template?')) {
-                                        await axios.delete(`/api/report-templates/${template.id}`);
-                                    }
-                                }}
-                                className="px-4 py-2 bg-red-50 text-red-500 rounded-lg font-bold text-xs hover:bg-red-600 hover:text-white transition-all"
-                            >
-                                DELETE
-                            </button>
-                        </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
               )}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                <div className="lg:col-span-4 space-y-6">
-                    <div className="relative border border-gray-100 rounded-3xl p-6 pt-10 bg-white shadow-sm">
-                        <span className="absolute -top-4 left-6 bg-white px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 border border-gray-100 rounded-full shadow-sm flex items-center gap-2">
-                            <Monitor className="w-3.5 h-3.5" /> Select Hosts
-                        </span>
-                        <div className="relative mb-6">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <input
-                                className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold placeholder:text-gray-400 shadow-inner"
-                                placeholder="Search Hostname..."
-                                value={searchTerm}
-                                onChange={e => setSearchTerm(e.target.value)}
+            {activeAction && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                        <div className="flex items-center gap-4">
+                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm ${
+                                activeAction === 'create-template' ? 'bg-blue-600 text-white' : 
+                                activeAction === 'quick-gen' ? 'bg-slate-900 text-white' : 'bg-amber-500 text-white'
+                            }`}>
+                                {activeAction === 'create-template' ? <Layers className="w-6 h-6" /> : 
+                                 activeAction === 'quick-gen' ? <FileText className="w-6 h-6" /> : <Monitor className="w-6 h-6" />}
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight italic">
+                                    {activeAction === 'create-template' ? 'Create New Template' : 
+                                     activeAction === 'quick-gen' ? 'Quick Report Generation' : 'Edit Template & Generate'}
+                                </h3>
+                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Configure your report parameters below</p>
+                            </div>
+                        </div>
+                        <button 
+                            onClick={() => setActiveAction(null)}
+                            className="p-3 bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-900 rounded-2xl transition-all"
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
+                    </div>
+
+                    {activeAction === 'create-template' && (
+                        <div className="bg-blue-50/50 p-6 rounded-3xl border border-blue-100 space-y-4">
+                             <div className="flex items-center gap-3 text-blue-600 border-b border-blue-100 pb-2">
+                                <FileText className="w-4 h-4" />
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.1em]">Template Details</h4>
+                            </div>
+                            <FloatingInput 
+                                label="Template Name"
+                                value={newTemplateName}
+                                onChange={(e) => setNewTemplateName(e.target.value)}
+                                placeholder="Enter a descriptive name for this template..."
                             />
                         </div>
-                        <div className="space-y-1 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                            {filteredGroups.map((g: any) => {
-                                const isExpanded = expandedGroups.includes(g.hostgroup);
-                                return (
-                                    <div key={g.hostgroup} className="border border-gray-100 rounded-xl bg-white overflow-hidden mb-1">
-                                        <div
-                                            className={`flex items-center justify-between p-2 cursor-pointer transition-colors ${selectedGroups.includes(g.hostgroup) ? 'bg-blue-300 text-white' : 'hover:bg-gray-50'}`}
-                                            onClick={() => toggleGroup(g.hostgroup)}
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <button onClick={(e) => { e.stopPropagation(); toggleExpand(g.hostgroup); }}>
-                                                    {isExpanded ? <ChevronDown className={`w-3 h-3 ${selectedGroups.includes(g.hostgroup) ? 'text-white' : 'text-blue-600'}`} /> : <ChevronRight className="w-3 h-3 text-gray-400" />}
-                                                </button>
-                                                <span className={`text-[10px] font-black uppercase tracking-tight ${selectedGroups.includes(g.hostgroup) ? 'text-white' : 'text-gray-700'}`}>{g.hostgroup}</span>
-                                            </div>
-                                        </div>
-                                        {isExpanded && (
-                                            <div className="p-1 space-y-0.5 bg-gray-50/50">
-                                                {g.hostnames.map((h: any) => (
-                                                    <button
-                                                        key={h.hostname_id}
-                                                        onClick={(e) => { e.stopPropagation(); toggleHostname({ id: String(h.hostname_id), name: h.hostname, group: g.hostgroup, mem: h.mem }); }}
-                                                        className={`w-full flex items-center gap-3 p-2.5 ml-4 border-l border-gray-200 rounded-lg text-[10px] font-medium transition-all ${selectedHostnames.find(s => s.id === String(h.hostname_id)) ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
-                                                    >
-                                                        {h.hostname}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </div>
+                    )}
 
-                <div className="lg:col-span-8 space-y-8">
-                    <div className="space-y-8">
-                        <div className="relative border border-gray-100 rounded-3xl p-8 pt-10 bg-white shadow-sm">
-                            <span className="absolute -top-4 left-8 bg-white px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 border border-gray-100 rounded-full shadow-sm flex items-center gap-2">
-                                <Calendar className="w-3.5 h-3.5" /> Configurations
-                            </span>
-
-                            <div className="mb-8 space-y-4">
-                                <div className="flex items-center gap-3 text-blue-600 border-b border-gray-50 pb-2">
-                                    <Type className="w-4 h-4" />
-                                    <h4 className="text-[10px] font-black uppercase tracking-[0.1em]">Report Metadata</h4>
-                                </div>
-                                <FloatingInput
-                                    label="Report Title"
-                                    value={reportTitle}
-                                    onChange={e => setReportTitle(e.target.value)}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                <div className="space-y-5">
-                                    <div className="flex items-center gap-3 text-blue-600 border-b border-gray-50 pb-2">
-                                        <Clock className="w-4 h-4" />
-                                        <h4 className="text-[10px] font-black uppercase tracking-[0.1em]">Daily Reports Range</h4>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="text-[9px] font-black text-gray-400 uppercase block mb-1.5 ml-1">From Date</label>
-                                            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all shadow-sm" />
-                                        </div>
-                                        <div>
-                                            <label className="text-[9px] font-black text-gray-400 uppercase block mb-1.5 ml-1">To Date</label>
-                                            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all shadow-sm" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="space-y-5">
-                                    <div className="flex items-center gap-3 text-blue-600 border-b border-gray-50 pb-2">
-                                        <Calendar className="w-4 h-4" />
-                                        <h4 className="text-[10px] font-black uppercase tracking-[0.1em]">Monthly Period</h4>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="text-[9px] font-black text-gray-400 uppercase block mb-1.5 ml-1">Target Month</label>
-                                            <select value={month} onChange={e => setMonth(e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all shadow-sm">
-                                                {Array.from({ length: 12 }, (_, i) => <option key={i + 1} value={String(i + 1)}>{new Date(2000, i).toLocaleString('en-US', { month: 'long' })}</option>)}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="text-[9px] font-black text-gray-400 uppercase block mb-1.5 ml-1">Target Year</label>
-                                            <input type="number" value={year} onChange={e => setYear(e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all shadow-sm" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                        <div className="lg:col-span-4 space-y-6">
+                            <HostSelector
+                                groups={filteredGroups}
+                                selectedHosts={selectedHostnames}
+                                expandedGroups={expandedGroups}
+                                searchTerm={searchTerm}
+                                onSearchTermChange={setSearchTerm}
+                                onToggleExpand={toggleExpand}
+                                onToggleGroup={toggleGroup}
+                                onToggleHostname={toggleHostname}
+                                selectedGroups={selectedGroups}
+                            />
                         </div>
 
-                        <div className="relative border border-gray-100 rounded-3xl p-8 pt-10 bg-white shadow-sm">
-                            <span className="absolute -top-4 left-8 bg-white px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 border border-gray-100 rounded-full shadow-sm flex items-center gap-2">
-                                <Layout className="w-3.5 h-3.5" /> Chart Order & Layout
-                            </span>
-                            <div className="flex flex-row gap-8 items-start justify-center">
-                                {availableCharts.length > 0 && (
-                                    <div className="border border-gray-100 rounded-xl p-5 bg-gray-50/50 shadow-inner w-[48%]">
-                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-200 pb-3 mb-4">Available Charts</p>
-                                        <div className="space-y-1.5 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
-                                            {availableCharts.map((report) => (
-                                                <button
-                                                    key={report.id}
-                                                    onClick={() => toggleReport(report.id)}
-                                                    className="w-full flex items-center gap-3 p-2.5 bg-white rounded-lg border border-gray-100 text-[11px] font-bold hover:border-blue-200 transition-all text-left shadow-sm"
-                                                >
-                                                    <PlusCircle className="w-3.5 h-3.5 text-blue-600" />
-                                                    <span className="truncate">{report.label}</span>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                                <div className="border border-blue-100 rounded-xl p-5 bg-blue-50/20 shadow-inner w-[48%] min-h-[150px] flex flex-col">
-                                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest border-b border-blue-100 pb-3 mb-4">Selected Layout</p>
-                                    {selectedCharts.length > 0 ? (
-                                        <div className="space-y-1.5 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
-                                            {selectedCharts.map((report, sIdx) => (
-                                                <div key={report.id} className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-blue-100 shadow-sm">
-                                                    <div className="flex items-center gap-2 text-[11px] font-bold truncate text-gray-700">
-                                                        <GripVertical className="w-3.5 h-3.5 text-gray-300" />
-                                                        <span className="truncate">{report.label}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-0.5">
-                                                        <button onClick={() => moveChart(report.id, 'up')} disabled={sIdx === 0} className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-blue-600 disabled:opacity-20"><ArrowUp className="w-3 h-3" /></button>
-                                                        <button onClick={() => moveChart(report.id, 'down')} disabled={sIdx === selectedCharts.length - 1} className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-blue-600 disabled:opacity-20"><ArrowDown className="w-3 h-3" /></button>
-                                                        <button onClick={() => toggleReport(report.id)} className="p-1 hover:bg-red-50 text-red-500 rounded"><X className="w-3 h-3" /></button>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="flex-1 flex items-center justify-center text-gray-400 text-xs font-bold uppercase tracking-wider h-full">
-                                            Please select charts to display.
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                        <div className="lg:col-span-8 space-y-8">
+                            <ReportConfiguration
+                                reportTitle={reportTitle}
+                                onReportTitleChange={setReportTitle}
+                                startDate={startDate}
+                                onStartDateChange={setStartDate}
+                                endDate={endDate}
+                                onEndDateChange={setEndDate}
+                                month={month}
+                                onMonthChange={setMonth}
+                                year={year}
+                                onYearChange={setYear}
+                            />
+                            <ChartLayoutOrder
+                                availableCharts={activeReports.filter(r => !r.enabled)}
+                                selectedCharts={activeReports.filter(r => r.enabled)}
+                                onToggleReport={toggleReport}
+                                onMoveChart={moveChart}
+                            />
                         </div>
                     </div>
 
-
-                </div>
-            </div>
-
-            {selectedHostnames.length > 0 && (
-                <div className="flex items-center justify-center pt-4">
-                    <button
-                        onClick={handlePreviewPDF}
-                        disabled={isExporting || selectedCharts.length === 0}
-                        className="px-16 py-6 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-xl tracking-[0.2em] transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed uppercase flex items-center gap-4"
-                    >
-                        {isExporting ? <Loader2 className="w-6 h-6 animate-spin" /> : <FileText className="w-7 h-7" />}
-                        {isExporting ? exportStatus : 'GENERATE REPORT'}
-                    </button>
+                    <div className="flex items-center justify-center pt-8 border-t border-gray-100">
+                        {activeAction === 'create-template' ? (
+                            <button
+                                onClick={handleSaveTemplate}
+                                disabled={selectedHostnames.length === 0 || !newTemplateName}
+                                className="px-16 py-6 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-xl tracking-[0.2em] transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed uppercase flex items-center gap-4"
+                            >
+                                <Layers className="w-7 h-7" />
+                                SAVE TEMPLATE
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handlePreviewPDF}
+                                disabled={isExporting || selectedHostnames.length === 0 || activeReports.filter(r => r.enabled).length === 0}
+                                className="px-16 py-6 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-xl tracking-[0.2em] transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed uppercase flex items-center gap-4"
+                            >
+                                {isExporting ? <Loader2 className="w-6 h-6 animate-spin" /> : <FileText className="w-7 h-7" />}
+                                {isExporting ? exportStatus : 'GENERATE REPORT'}
+                            </button>
+                        )}
+                    </div>
                 </div>
             )}
 

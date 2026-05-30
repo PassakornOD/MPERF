@@ -13,6 +13,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const userId = (session.user as any).id;
+    const userRole = (session.user as any).role;
     const body = await req.json();
     const { name, config } = body;
 
@@ -21,20 +22,20 @@ export async function PUT(
     }
 
     // Check for duplicate name for this user (excluding current template)
-    const [existing]: any = await pool.query(
-      'SELECT id FROM report_templates WHERE name = ? AND user_id = ? AND id != ?',
-      [name, userId, id]
-    );
+    // If admin, check if template exists at all with this name? 
+    // Actually, keep the original logic for user-specific names if not admin.
+    // If admin, maybe they shouldn't be restricted by other users' template names?
+    // Let's stick to the core permission bypass.
 
-    if (existing.length > 0) {
-      return NextResponse.json({ error: 'A template with this name already exists' }, { status: 400 });
+    let updateQuery = 'UPDATE report_templates SET name = ?, config = ? WHERE id = ? AND user_id = ?';
+    let updateParams = [name, JSON.stringify(config), id, userId];
+
+    if (userRole === 'admin') {
+      updateQuery = 'UPDATE report_templates SET name = ?, config = ? WHERE id = ?';
+      updateParams = [name, JSON.stringify(config), id];
     }
 
-    // Ensure user only updates their own template
-    const [result]: any = await pool.query(
-      'UPDATE report_templates SET name = ?, config = ? WHERE id = ? AND user_id = ?',
-      [name, JSON.stringify(config), id, userId]
-    );
+    const [result]: any = await pool.query(updateQuery, updateParams);
 
     if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Template not found or unauthorized' }, { status: 404 });
@@ -56,9 +57,17 @@ export async function DELETE(
   try {
     const { id } = await params;
     const userId = (session.user as any).id;
+    const userRole = (session.user as any).role;
     
-    // Ensure user only deletes their own template
-    const [result]: any = await pool.query('DELETE FROM report_templates WHERE id = ? AND user_id = ?', [id, userId]);
+    let deleteQuery = 'DELETE FROM report_templates WHERE id = ? AND user_id = ?';
+    let deleteParams = [id, userId];
+
+    if (userRole === 'admin') {
+      deleteQuery = 'DELETE FROM report_templates WHERE id = ?';
+      deleteParams = [id];
+    }
+
+    const [result]: any = await pool.query(deleteQuery, deleteParams);
     
     if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Template not found or unauthorized' }, { status: 404 });

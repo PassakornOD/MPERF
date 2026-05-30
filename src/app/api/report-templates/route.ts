@@ -17,8 +17,29 @@ export async function GET() {
     console.log('User Name:', session.user?.name);
     console.log('Raw User ID from session:', (session.user as any).id);
     console.log('Parsed User ID:', userId);
+    console.log('User Role:', (session.user as any).role);
 
-    const [rows]: any = await pool.query('SELECT * FROM report_templates WHERE user_id = ? ORDER BY created_at DESC', [userId]);
+    let query = `
+      SELECT rt.*, u.username as owner_name 
+      FROM report_templates rt 
+      JOIN user u ON rt.user_id = u.user_id 
+      WHERE rt.user_id = ? 
+      ORDER BY rt.created_at DESC
+    `;
+    let params = [userId];
+
+    if ((session.user as any).role === 'admin') {
+      console.log('Admin detected, fetching all templates');
+      query = `
+        SELECT rt.*, u.username as owner_name 
+        FROM report_templates rt 
+        JOIN user u ON rt.user_id = u.user_id 
+        ORDER BY rt.created_at DESC
+      `;
+      params = [];
+    }
+
+    const [rows]: any = await pool.query(query, params);
     console.log(`DB Result: Found ${rows.length} rows`);
     console.log('---------------------------');
     

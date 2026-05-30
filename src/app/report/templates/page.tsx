@@ -12,14 +12,17 @@ import SarChart from '@/components/charts/SarChart';
 import { getChartOptions } from '@/components/charts/chartUtils';
 import { useToast } from '@/components/common/Toast';
 import { useSession } from 'next-auth/react';
-import { checkPermission } from '@/lib/permissions';
 import FloatingInput from '@/components/common/FloatingInput';
+import HostSelector from '@/components/report/HostSelector';
+import ReportConfiguration from '@/components/report/ReportConfiguration';
+import ChartLayoutOrder from '@/components/report/ChartLayoutOrder';
 
 interface Template {
     id: number;
     name: string;
     reportTitle: string;
     lastUpdated: string;
+    ownerName?: string;
     hosts: { id: string; name: string; group: string; mem: number }[];
     charts: { id: string; label: string; enabled: boolean }[];
 }
@@ -56,6 +59,7 @@ const ReportTemplatesPage = () => {
                         id: t.id,
                         name: t.name,
                         reportTitle: config.reportTitle || '',
+                        ownerName: t.owner_name,
                         hosts: config.hosts || config.selectedHostnames || [],
                         charts: config.charts || config.activeReports || [],
                         lastUpdated: new Date(t.updated_at || t.created_at).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false })
@@ -128,6 +132,8 @@ const ReportTemplatesPage = () => {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [templateToDelete, setTemplateToDelete] = useState<number | null>(null);
     const [generatingTemplate, setGeneratingTemplate] = useState<Template | null>(null);
+    const [previewSelectedHosts, setPreviewSelectedHosts] = useState<{ id: string; name: string; group: string; mem?: number }[]>([]);
+    const [previewActiveReports, setPreviewActiveReports] = useState<any[]>([]);
     const [editingTemplateId, setEditingTemplateId] = useState<number | null>(null);
     const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
     const [limitMessage, setLimitMessage] = useState('');
@@ -172,9 +178,9 @@ const ReportTemplatesPage = () => {
     const [hiddenChartsData, setHiddenChartsData] = useState<any[]>([]);
 
     const handlePreviewPDF = async () => {
-        if (isExporting || selectedHostnames.length === 0) return;
+        if (isExporting || previewSelectedHosts.length === 0) return;
         setIsFetchingPDF(true); setExportStatus('Preparing report...');
-        const selectedReportsList = activeReports.filter(r => r.enabled);
+        const selectedReportsList = previewActiveReports.filter(r => r.enabled);
 
         const getChartSVG = (id: string) => {
             const el = document.getElementById(id);
@@ -192,7 +198,7 @@ const ReportTemplatesPage = () => {
             const chartsData: any[] = [];
             const hostgroupsWithData = await Promise.all(
                 Object.values(
-                    selectedHostnames.reduce((acc: any, host) => {
+                    previewSelectedHosts.reduce((acc: any, host) => {
                         let groupName = host.group;
                         if (!groupName && hostGroupsRaw) {
                             const foundGroup = hostGroupsRaw.find((g: any) =>
@@ -296,9 +302,6 @@ const ReportTemplatesPage = () => {
         finally { setIsFetchingPDF(false); setExportStatus(''); setRenderCharts(false); setHiddenChartsData([]); }
     };
 
-    const availableCharts = useMemo(() => activeReports.filter(r => !r.enabled), [activeReports]);
-    const selectedCharts = useMemo(() => activeReports.filter(r => r.enabled), [activeReports]);
-
     const toggleReport = (id: string) => setActiveReports(prev => prev.map(r => r.id === id ? { ...r, enabled: !r.enabled } : r));
 
     const moveChart = (id: string, direction: 'up' | 'down') => {
@@ -338,12 +341,6 @@ const ReportTemplatesPage = () => {
             setSelectedGroups(prev => prev.filter(g => g !== groupName));
             setSelectedHostnames(prev => prev.filter(h => h.group !== groupName));
         } else {
-            const remainingSlots = 50 - selectedHostnames.length;
-            if (groupHostnames.length > remainingSlots) {
-                setLimitMessage(`Cannot add ${groupHostnames.length} hosts. Only ${remainingSlots} slots remaining. Maximum 50 hosts allowed.`);
-                setIsLimitModalOpen(true);
-                return;
-            }
             setSelectedGroups(prev => [...prev, groupName]);
             setSelectedHostnames(prev => [...prev.filter(h => h.group !== groupName), ...groupHostnames]);
         }
@@ -361,11 +358,6 @@ const ReportTemplatesPage = () => {
             if (exists) {
                 return prev.filter(p => p.id !== String(h.hostname_id));
             } else {
-                if (prev.length >= 50) {
-                    setLimitMessage('Maximum 50 hosts allowed per template.');
-                    setIsLimitModalOpen(true);
-                    return prev;
-                }
                 return [...prev, { id: String(h.hostname_id), name: h.hostname, group: groupName, mem: h.mem }];
             }
         });
@@ -398,7 +390,9 @@ const ReportTemplatesPage = () => {
 
     const handleGenerateReport = (template: Template) => {
         setGeneratingTemplate(template);
-        setSelectedHostnames(template.hosts);
+        setPreviewSelectedHosts(template.hosts);
+        setPreviewActiveReports(activeReports.map(r => ({ ...r, enabled: template.charts.some((c: any) => c.id === r.id) })));
+        setSelectedGroups(Array.from(new Set(template.hosts.map(h => h.group))));
         setIsGenerationModalOpen(true);
     };
 
@@ -438,7 +432,14 @@ const ReportTemplatesPage = () => {
                             </div>
                             <div className="flex flex-col">
                                 <h4 className="font-black text-gray-900 text-sm truncate">{template.name}</h4>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{template.lastUpdated}</p>
+                                <div className="flex items-center gap-2">
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{template.lastUpdated}</p>
+                                    {user?.role === 'admin' && template.ownerName && (
+                                        <span className="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter">
+                                            Owner: {template.ownerName}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
@@ -656,119 +657,26 @@ const ReportTemplatesPage = () => {
                         )}
 
                         {step === 2 && (
-                            <div className="space-y-4 pt-4">
-                                <div className="relative">
-                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                    <input className="w-full pl-11 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold shadow-inner outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Search hosts or groups..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
-                                </div>
-                                <div className="h-[400px] overflow-y-auto pr-2 custom-scrollbar border border-gray-100 rounded-3xl bg-white p-2">
-                                    {(() => {
-                                        const sortedGroups = [...filteredGroups].sort((a, b) => a.hostgroup.toLowerCase().localeCompare(b.hostgroup.toLowerCase()));
-                                        if (sortedGroups.length === 0) {
-                                            return (
-                                                <div className="h-full flex flex-col items-center justify-center text-gray-400 italic">
-                                                    <Monitor className="w-8 h-8 mb-2 opacity-20" />
-                                                    <p className="text-xs">No hosts found matching your search</p>
-                                                </div>
-                                            );
-                                        }
-                                        return sortedGroups.map((g: any) => {
-                                            const groupHosts = g.hostnames || [];
-                                            const selectedInGroup = groupHosts.filter((h: any) => selectedHostnames.some(s => s.id === String(h.hostname_id)));
-                                            const isAllSelected = groupHosts.length > 0 && selectedInGroup.length === groupHosts.length;
-                                            const isPartialSelected = selectedInGroup.length > 0 && selectedInGroup.length < groupHosts.length;
-
-                                            return (
-                                                <div key={g.hostgroup} className="mb-1">
-                                                    <div className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-xl transition-colors group/row">
-                                                        <button
-                                                            onClick={() => toggleExpand(g.hostgroup)}
-                                                            className="p-1 hover:bg-gray-200 rounded text-gray-400"
-                                                        >
-                                                            {expandedGroups.includes(g.hostgroup) ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                                                        </button>
-
-                                                        <div className="flex items-center gap-3 flex-1 cursor-pointer" onClick={() => toggleGroup(g.hostgroup)}>
-                                                            <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${isAllSelected ? 'bg-blue-600 border-blue-600' : isPartialSelected ? 'bg-blue-100 border-blue-400' : 'bg-white border-gray-300'}`}>
-                                                                {isAllSelected && <CheckCircle className="w-3.5 h-3.5 text-white" />}
-                                                                {isPartialSelected && <div className="w-2 h-0.5 bg-blue-600 rounded-full" />}
-                                                            </div>
-                                                            <div className="flex flex-col">
-                                                                <span className="text-[11px] font-black uppercase tracking-wider text-gray-800">{g.hostgroup}</span>
-                                                                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tight">{selectedInGroup.length} / {groupHosts.length} Selected</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {expandedGroups.includes(g.hostgroup) && (
-                                                        <div className="ml-9 mt-1 space-y-1 border-l-2 border-gray-50 pl-2">
-                                                            {groupHosts.map((h: any) => {
-                                                                const isSelected = selectedHostnames.some(s => s.id === String(h.hostname_id));
-                                                                return (
-                                                                    <div
-                                                                        key={h.hostname_id}
-                                                                        onClick={() => toggleHostname({ id: String(h.hostname_id), hostname: h.hostname, group: g.hostgroup, mem: h.mem })}
-                                                                        className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all ${isSelected ? 'bg-blue-50/50' : 'hover:bg-gray-50'}`}
-                                                                    >
-                                                                        <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${isSelected ? 'bg-blue-600 border-blue-600' : 'bg-white border-gray-300'}`}>
-                                                                            {isSelected && <CheckCircle className="w-3 h-3 text-white" />}
-                                                                        </div>
-                                                                        <span className={`text-[10px] font-bold ${isSelected ? 'text-blue-600' : 'text-gray-600'}`}>{h.hostname}</span>
-                                                                        <span className="text-[9px] text-gray-300 font-medium ml-auto">{h.mem}GB</span>
-                                                                    </div>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            );
-                                        });
-                                    })()}
-                                </div>
-                            </div>
+                            <HostSelector
+                                groups={filteredGroups}
+                                selectedHosts={selectedHostnames}
+                                expandedGroups={expandedGroups}
+                                searchTerm={searchTerm}
+                                onSearchTermChange={setSearchTerm}
+                                onToggleExpand={toggleExpand}
+                                onToggleGroup={toggleGroup}
+                                onToggleHostname={toggleHostname}
+                                selectedGroups={selectedGroups}
+                            />
                         )}
 
                         {step === 3 && (
-                            <div className="grid grid-cols-2 gap-8 pt-4">
-                                <div className="border border-gray-100 rounded-2xl p-5 bg-gray-50/50 flex flex-col h-[400px]">
-                                    <p className="font-black text-[10px] text-gray-400 uppercase mb-4 px-1 tracking-widest flex items-center gap-2"><Layout className="w-3.5 h-3.5" /> Available Charts</p>
-                                    <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
-                                        {availableCharts.map(r => (
-                                            <button
-                                                key={r.id}
-                                                onClick={() => toggleReport(r.id)}
-                                                className="w-full flex items-start gap-3 p-3.5 bg-white rounded-2xl border border-gray-100 text-[11px] font-black hover:border-blue-200 hover:shadow-md transition-all text-left group"
-                                            >
-                                                <PlusCircle className="w-4 h-4 text-blue-600 mt-0.5" />
-                                                <span className="leading-tight text-gray-700">{r.label}</span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="border border-blue-100 rounded-2xl p-5 bg-blue-50/30 flex flex-col h-[400px] shadow-inner">
-                                    <p className="font-black text-[10px] text-blue-600 uppercase mb-4 px-1 tracking-widest flex items-center gap-2"><Activity className="w-3.5 h-3.5" /> Selected Order</p>
-                                    <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
-                                        {selectedCharts.map((r, i) => (
-                                            <div key={r.id} className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-blue-200 shadow-sm animate-in slide-in-from-right-4 duration-300">
-                                                <div className="flex items-start gap-3 text-[11px] font-black text-gray-800">
-                                                    <GripVertical className="w-4 h-4 text-gray-300 mt-0.5" />
-                                                    <span className="leading-tight">{r.label}</span>
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    <button onClick={() => moveChart(r.id, 'up')} disabled={i === 0} className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-blue-600 disabled:opacity-20 transition-colors"><ArrowUp className="w-4 h-4" /></button>
-                                                    <button onClick={() => moveChart(r.id, 'down')} disabled={i === selectedCharts.length - 1} className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-blue-600 disabled:opacity-20 transition-colors"><ArrowDown className="w-4 h-4" /></button>
-                                                    <button onClick={() => toggleReport(r.id)} className="p-1.5 hover:bg-red-50 text-red-500 rounded-lg transition-colors ml-1"><X className="w-4 h-4" /></button>
-                                                </div>
-                                            </div>
-                                        ))}
-                                        {selectedCharts.length === 0 && (
-                                            <div className="h-full flex items-center justify-center text-center p-8">
-                                                <p className="text-[10px] font-black text-gray-400 uppercase italic tracking-widest">No charts selected</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
+                            <ChartLayoutOrder
+                                availableCharts={activeReports.filter(r => !r.enabled)}
+                                selectedCharts={activeReports.filter(r => r.enabled)}
+                                onToggleReport={toggleReport}
+                                onMoveChart={moveChart}
+                            />
                         )}
                     </div>
 
@@ -781,7 +689,7 @@ const ReportTemplatesPage = () => {
                             ) : (
                                 <button
                                     onClick={handleSaveTemplate}
-                                    disabled={!templateName.trim() || selectedHostnames.length === 0 || selectedCharts.length === 0}
+                                    disabled={!templateName.trim() || selectedHostnames.length === 0 || activeReports.filter(r => r.enabled).length === 0}
                                     className="px-12 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50 transition-all shadow-xl"
                                 >
                                     Save Template
@@ -797,89 +705,71 @@ const ReportTemplatesPage = () => {
                     <div className="p-8 space-y-8">
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                             <div className="lg:col-span-5 space-y-6">
-                                <div className="border border-gray-100 rounded-3xl p-8 bg-white shadow-sm h-full flex flex-col">
-                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-6 flex items-center gap-2">
-                                        <Monitor className="w-4 h-4" /> Selected Hosts ({selectedHostnames.length})
-                                    </h4>
-                                    <div className="flex-1 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar space-y-4">
-                                        {Object.entries(selectedHostnames.reduce((acc: any, h) => {
-                                            if (!acc[h.group]) acc[h.group] = [];
-                                            acc[h.group].push(h);
-                                            return acc;
-                                        }, {})).sort((a, b) => a[0].localeCompare(b[0])).map(([group, hosts]: [string, any]) => (
-                                            <div key={group} className="space-y-2">
-                                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                                    <span className="w-1.5 h-1.5 bg-blue-300 rounded-full"></span> {group}
-                                                </p>
-                                                <div className="grid grid-cols-1 gap-1 pl-3">
-                                                    {hosts.map((h: any) => (
-                                                        <div key={h.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-xl text-[10px] font-bold text-gray-700 hover:bg-gray-100 transition-colors">
-                                                            {h.name}
-                                                            <X className="w-3.5 h-3.5 cursor-pointer text-gray-300 hover:text-red-500 transition-colors" onClick={() => setSelectedHostnames(prev => prev.filter(p => p.id !== h.id))} />
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                <HostSelector
+                                    groups={filteredGroups}
+                                    selectedHosts={previewSelectedHosts}
+                                    expandedGroups={expandedGroups}
+                                    searchTerm={searchTerm}
+                                    onSearchTermChange={setSearchTerm}
+                                    onToggleExpand={toggleExpand}
+                                    onToggleGroup={(groupName) => {
+                                        const isSelected = selectedGroups.includes(groupName);
+                                        const groupData = hostGroupsRaw?.find((g: any) => g.hostgroup === groupName);
+                                        const groupHostnames = groupData?.hostnames.map((h: any) => ({ id: String(h.hostname_id), name: h.hostname, group: groupName, mem: h.mem })) || [];
+                                        
+                                        if (isSelected) {
+                                            setSelectedGroups(prev => prev.filter(g => g !== groupName));
+                                            setPreviewSelectedHosts(prev => prev.filter(h => h.group !== groupName));
+                                        } else {
+                                            setSelectedGroups(prev => [...prev, groupName]);
+                                            setPreviewSelectedHosts(prev => [...prev.filter(h => h.group !== groupName), ...groupHostnames]);
+                                        }
+                                    }}
+                                    onToggleHostname={(h) => {
+                                        setPreviewSelectedHosts(prev => {
+                                            const exists = prev.find(p => p.id === h.id);
+                                            if (exists) return prev.filter(p => p.id !== h.id);
+                                            return [...prev, h];
+                                        });
+                                    }}
+                                    selectedGroups={selectedGroups}
+                                />
                             </div>
 
                             <div className="lg:col-span-7 space-y-8">
-                                <div className="border border-gray-100 rounded-3xl p-8 bg-white shadow-sm space-y-8">
-                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-2 flex items-center gap-2">
-                                        <Calendar className="w-4 h-4" /> Configurations
-                                    </h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                        <div className="space-y-4">
-                                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-2 flex items-center gap-2"><Clock className="w-3 h-3" /> Daily Reports Range</p>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <div>
-                                                    <label className="text-[8px] font-black text-gray-400 uppercase mb-1 block ml-1">From</label>
-                                                    <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs font-bold shadow-inner" />
-                                                </div>
-                                                <div>
-                                                    <label className="text-[8px] font-black text-gray-400 uppercase mb-1 block ml-1">To</label>
-                                                    <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs font-bold shadow-inner" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="space-y-4">
-                                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-2 flex items-center gap-2"><Calendar className="w-3 h-3" /> Monthly Period</p>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <div>
-                                                    <label className="text-[8px] font-black text-gray-400 uppercase mb-1 block ml-1">Month</label>
-                                                    <select value={month} onChange={e => setMonth(e.target.value)} className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs font-bold shadow-inner">
-                                                        {Array.from({ length: 12 }, (_, i) => <option key={i + 1} value={String(i + 1)}>{new Date(2000, i).toLocaleString('en-US', { month: 'long' })}</option>)}
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label className="text-[8px] font-black text-gray-400 uppercase mb-1 block ml-1">Year</label>
-                                                    <input type="number" value={year} onChange={e => setYear(e.target.value)} className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs font-bold shadow-inner" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <ReportConfiguration
+                                    reportTitle={generatingTemplate?.reportTitle || reportTitle}
+                                    onReportTitleChange={setReportTitle}
+                                    startDate={startDate}
+                                    onStartDateChange={setStartDate}
+                                    endDate={endDate}
+                                    onEndDateChange={setEndDate}
+                                    month={month}
+                                    onMonthChange={setMonth}
+                                    year={year}
+                                    onYearChange={setYear}
+                                />
 
-                                <div className="border border-gray-100 rounded-3xl p-8 bg-white shadow-sm flex-1">
-                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-6 flex items-center gap-2">
-                                        <Layout className="w-4 h-4" /> Selected Chart Layout ({activeReports.filter(r => r.enabled).length})
-                                    </h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                                        {activeReports.filter(r => r.enabled).map((r, i) => (
-                                            <div key={r.id} className="flex items-center justify-between p-3.5 bg-blue-50/50 rounded-2xl border border-blue-100 shadow-sm">
-                                                <div className="text-[10px] font-black text-gray-700 flex items-center gap-3 truncate">
-                                                    <GripVertical className="w-4 h-4 text-blue-200" /> <span className="truncate">{r.label}</span>
-                                                </div>
-                                                <div className="flex gap-1">
-                                                    <button onClick={() => moveChart(r.id, 'up')} disabled={i === 0} className="p-1 hover:bg-white rounded-lg disabled:opacity-20 transition-colors"><ArrowUp className="w-3.5 h-3.5" /></button>
-                                                    <button onClick={() => moveChart(r.id, 'down')} disabled={i === activeReports.filter(r => r.enabled).length - 1} className="p-1 hover:bg-white rounded-lg disabled:opacity-20 transition-colors"><ArrowDown className="w-3.5 h-3.5" /></button>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                <ChartLayoutOrder
+                                    availableCharts={[]}
+                                    selectedCharts={previewActiveReports.filter(r => r.enabled)}
+                                    onToggleReport={(id) => {
+                                        setPreviewActiveReports(prev => prev.map(r => r.id === id ? { ...r, enabled: !r.enabled } : r));
+                                    }}
+                                    onMoveChart={(id, direction) => {
+                                        const selectedInOrder = previewActiveReports.filter(r => r.enabled);
+                                        const index = selectedInOrder.findIndex(r => r.id === id);
+                                        if ((direction === 'up' && index > 0) || (direction === 'down' && index < selectedInOrder.length - 1)) {
+                                            const newReports = [...previewActiveReports];
+                                            const swapIdx = direction === 'up' ? index - 1 : index + 1;
+                                            const targetId = selectedInOrder[swapIdx].id;
+                                            const currentIndex = newReports.findIndex(r => r.id === id);
+                                            const targetIndex = newReports.findIndex(r => r.id === targetId);
+                                            [newReports[currentIndex], newReports[targetIndex]] = [newReports[targetIndex], newReports[currentIndex]];
+                                            setPreviewActiveReports(newReports);
+                                        }
+                                    }}
+                                />
                             </div>
                         </div>
 
