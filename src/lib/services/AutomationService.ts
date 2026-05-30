@@ -91,7 +91,7 @@ export class AutomationService {
             acc[host.group].hosts.push(host);
             return acc;
         }, {});
-        hostgroups = Object.values(groupsMap).sort((a: any, b: any) => a.name.localeCompare(b.name));
+        hostgroups = Object.values(groupsMap); // Removed .sort() to respect payload order
     } else {
         // Default: Get everything if no template
         const rawGroups = await MetricService.getHostGroups(0, 'admin');
@@ -104,102 +104,113 @@ export class AutomationService {
     const intermediatePdfPaths: string[] = [];
     const hostgroupPageMap: Record<string, number> = {};
     const hostPageMap: Record<string, number> = {};
-    let currentGlobalPage = 1;
+    
+    // Cover/TOC usually take 2 pages (Cover + TOC). Content starts from Page 3.
+    let currentGlobalPage = 3; 
     let totalProcessedHosts = 0;
     const totalHostsToProcess = targetHosts.length || hostgroups.reduce((acc, g) => acc + g.hosts.length, 0);
 
-    // Track cover page inclusion per hostgroup
-    const groupAlreadyCovered: Record<string, boolean> = {};
-
-    // Phase 1: Generate all content chunks and track page counts
+    // Phase 1: Generate all content chunks and track page counts PRECISELY
     for (let i = 0; i < hostgroups.length; i++) {
       const group = hostgroups[i];
       console.log(`[Automation] Processing group ${i + 1}/${hostgroups.length}: ${group.name}`);
-      groupAlreadyCovered[group.name] = false;
       
-      hostgroupPageMap[`group-${i}`] = currentGlobalPage;
-      hostgroupPageMap[`group-stats-${i}`] = currentGlobalPage + 1;
-
-      // Chunk hosts in this group
-      const HOST_CHUNK_SIZE = 20;
-      for (let c = 0; c < group.hosts.length; c += HOST_CHUNK_SIZE) {
-        const hostChunk = group.hosts.slice(c, c + HOST_CHUNK_SIZE);
-        const chunkIndex = Math.floor(c / HOST_CHUNK_SIZE);
-        
-        const hostsWithData: HostData[] = await Promise.all(hostChunk.map(async (host: any, hi: number) => {
-          // ... (existing host data fetch)
-          const cpuStats = await MetricService.getCpuStatsSummary(0, 'admin', group.name, parseInt(host.id), String(month), String(year));
-          const memStats = await MetricService.getMemStatsSummary(0, 'admin', group.name, parseInt(host.id), String(month), String(year));
-
-          const hostCharts = await Promise.all(reportTypes.map(async (report: any) => {
-            let metrics: any[] = []; let totalAvg = 0;
-            try {
-              if (report.type === 'cpu-daily' || report.id?.includes('cpu-daily')) metrics = await MetricService.getCpuDaily(0, 'admin', group.name, parseInt(host.id), report.mode as any, startDate, endDate);
-              else if (report.type === 'cpu-monthly' || report.id?.includes('cpu-monthly')) metrics = await MetricService.getCpuMonthly(0, 'admin', group.name, parseInt(host.id), String(month), String(year));
-              else if (report.type === 'mem-daily' || report.id?.includes('mem-daily')) { const res = await MetricService.getMemDaily(0, 'admin', group.name, parseInt(host.id), report.mode as any, startDate, endDate); metrics = res.data; totalAvg = res.totalAvg; }
-              else if (report.type === 'mem-monthly' || report.id?.includes('mem-monthly')) metrics = await MetricService.getMemMonthly(0, 'admin', group.name, parseInt(host.id), String(month), String(year));
-            } catch (e) {}
-            return { label: report.label, metrics, report, totalAvg, hostname: host.name, hostMem: host.mem, startDate, endDate, month: String(month), year: String(year) };
-          }));
-
-          totalProcessedHosts++;
-          if (jobId) {
-            const progress = Math.round((totalProcessedHosts / totalHostsToProcess) * 85); // 85% for generation
-            this.updateStatus(jobId, { progress, message: `Rendering host: ${host.name} (${totalProcessedHosts}/${totalHostsToProcess})` });
-          }
-
-          return { id: String(host.id), name: host.name, mem: host.mem, cpuStats, memStats, charts: hostCharts };
-        }));
-
-        const payload: ReportPayload = {
+      // 1. Hostgroup Cover
+      const coverPayload: ReportPayload = {
           reportMonth: `${monthName} ${year}`,
           reportTitle: reportTitle,
           targetMonth: month, targetYear: year, generatedDate,
-          hostgroups: [{ id: group.name, name: group.name, hosts: hostsWithData }]
-        };
+          hostgroups: [{ id: group.name, name: group.name, hosts: [] }] 
+      };
+      
+      hostgroupPageMap[`group-${i}`] = currentGlobalPage;
+      const coverBuffer = await PdfGeneratorService.generatePdfBuffer(coverPayload, { 
+          skipCover: true, skipTOC: true, skipGroupCover: false, skipStats: true, skipCharts: true,
+          groupIndexOffset: i, pageOffset: 1, pageMap: hostgroupPageMap
+      });
+      const groupCoverPath = path.join(tmpDir, `group_${i}_cover.pdf`);
+      fs.writeFileSync(groupCoverPath, coverBuffer);
+      intermediatePdfPaths.push(groupCoverPath);
+      
+      const coverDoc = await PDFDocument.load(coverBuffer);
+      currentGlobalPage += coverDoc.getPageCount();
 
-        try {
-          // 1. สร้างหน้าปก Hostgroup (เฉพาะถ้ายังไม่เคยสร้าง)
-          let groupCoverPath: string | null = null;
-          if (!groupAlreadyCovered[group.name]) {
-              const coverPayload: ReportPayload = {
-                  reportMonth: `${monthName} ${year}`,
-                  reportTitle: reportTitle,
-                  targetMonth: month, targetYear: year, generatedDate,
-                  hostgroups: [{ id: group.name, name: group.name, hosts: [] }] // Empty hosts to generate just cover
-              };
-              const coverBuffer = await PdfGeneratorService.generatePdfBuffer(coverPayload, { skipCover: true, skipTOC: true, skipGroupCover: false });
-              groupCoverPath = path.join(tmpDir, `group_${i}_cover.pdf`);
-              fs.writeFileSync(groupCoverPath, coverBuffer);
-              intermediatePdfPaths.push(groupCoverPath);
-              groupAlreadyCovered[group.name] = true;
-          }
-
-          // 2. สร้าง Chunk ข้อมูล (โดยข้ามหน้าปก)
-          const skipGroupCover = true;
-          const groupBuffer = await PdfGeneratorService.generatePdfBuffer(payload, { skipCover: true, skipTOC: true, skipGroupCover });
-          const chunkPath = path.join(tmpDir, `group_${i}_chunk_${chunkIndex}.pdf`);
-          fs.writeFileSync(chunkPath, groupBuffer);
-          intermediatePdfPaths.push(chunkPath);
-
-          // Get exact page count of this chunk using pdf-lib
-          const chunkPdf = await PDFDocument.load(groupBuffer);
-          const chunkPageCount = chunkPdf.getPageCount();
+      // 2. Statistics Tables for ALL hosts in the group
+      const STAT_CHUNK_SIZE = 40; 
+      for (let c = 0; c < group.hosts.length; c += STAT_CHUNK_SIZE) {
+          const statChunk = group.hosts.slice(c, c + STAT_CHUNK_SIZE);
+          const chunkIndex = Math.floor(c / STAT_CHUNK_SIZE);
           
-          // Map host page numbers relative to currentGlobalPage
-          // This is still a bit of a heuristic for the TOC if multiple hosts are in one chunk
-          // but we can refine it if we render each host as a separate chunk.
-          // For now, we'll assume hosts start sequentially.
-          hostsWithData.forEach((h, hi) => {
-             const globalHi = c + hi;
-             hostPageMap[`host-${i}-${globalHi}`] = currentGlobalPage + 2 + (hi * (chunkPageCount - 2) / hostsWithData.length); // Heuristic
-          });
+          const hostsWithStatsData = await Promise.all(statChunk.map(async (host: any) => {
+              const cpuStats = await MetricService.getCpuStatsSummary(0, 'admin', group.name, parseInt(host.id), String(month), String(year));
+              const memStats = await MetricService.getMemStatsSummary(0, 'admin', group.name, parseInt(host.id), String(month), String(year));
+              return { id: String(host.id), name: host.name, mem: host.mem, cpuStats, memStats, charts: [] };
+          }));
 
-          currentGlobalPage += chunkPageCount;
-          console.log(`[Automation] Generated chunk ${group.name} Part ${chunkIndex + 1}, ${chunkPageCount} pages. Total: ${currentGlobalPage}`);
-        } catch (e) {
-          console.error(`[Automation] Failed to generate PDF for group: ${group.name}`, e);
-        }
+          const statsPayload: ReportPayload = {
+              reportMonth: `${monthName} ${year}`,
+              reportTitle: reportTitle,
+              targetMonth: month, targetYear: year, generatedDate,
+              hostgroups: [{ id: group.name, name: group.name, hosts: hostsWithStatsData }]
+          };
+
+          // Record start of stats for this chunk
+          const statsPageId = chunkIndex === 0 ? `group-stats-${i}` : `group-stats-${i}-cpu-${chunkIndex}`;
+          hostgroupPageMap[statsPageId] = currentGlobalPage;
+
+          const statsBuffer = await PdfGeneratorService.generatePdfBuffer(statsPayload, { 
+              skipCover: true, skipTOC: true, skipGroupCover: true, skipCharts: true,
+              groupIndexOffset: i, pageOffset: 2, pageMap: hostgroupPageMap // Pass map to allow footer generation
+          });
+          const statsPath = path.join(tmpDir, `group_${i}_stats_chunk_${chunkIndex}.pdf`);
+          fs.writeFileSync(statsPath, statsBuffer);
+          intermediatePdfPaths.push(statsPath);
+          
+          const statsDoc = await PDFDocument.load(statsBuffer);
+          currentGlobalPage += statsDoc.getPageCount();
+      }
+
+      // 3. Charts for EACH host individually
+      for (let hi = 0; hi < group.hosts.length; hi++) {
+          const host = group.hosts[hi];
+          console.log(`[Automation] Rendering charts for host ${hi + 1}/${group.hosts.length}: ${host.name}`);
+          
+          const hostCharts = await Promise.all(reportTypes.map(async (report: any) => {
+              let metrics: any[] = []; let totalAvg = 0;
+              try {
+                  if (report.type === 'cpu-daily' || report.id?.includes('cpu-daily')) metrics = await MetricService.getCpuDaily(0, 'admin', group.name, parseInt(host.id), report.mode as any, startDate, endDate);
+                  else if (report.type === 'cpu-monthly' || report.id?.includes('cpu-monthly')) metrics = await MetricService.getCpuMonthly(0, 'admin', group.name, parseInt(host.id), String(month), String(year));
+                  else if (report.type === 'mem-daily' || report.id?.includes('mem-daily')) { const res = await MetricService.getMemDaily(0, 'admin', group.name, parseInt(host.id), report.mode as any, startDate, endDate); metrics = res.data; totalAvg = res.totalAvg; }
+                  else if (report.type === 'mem-monthly' || report.id?.includes('mem-monthly')) metrics = await MetricService.getMemMonthly(0, 'admin', group.name, parseInt(host.id), String(month), String(year));
+              } catch (e) {}
+              return { label: report.label, metrics, report, totalAvg, hostname: host.name, hostMem: host.mem, startDate, endDate, month: String(month), year: String(year) };
+          }));
+
+          const hostPayload: ReportPayload = {
+              reportMonth: `${monthName} ${year}`,
+              reportTitle: reportTitle,
+              targetMonth: month, targetYear: year, generatedDate,
+              hostgroups: [{ id: group.name, name: group.name, hosts: [{ id: String(host.id), name: host.name, mem: host.mem, charts: hostCharts } as any] }]
+          };
+
+          hostPageMap[`host-${i}-${hi}`] = currentGlobalPage;
+          const hostBuffer = await PdfGeneratorService.generatePdfBuffer(hostPayload, { 
+              skipCover: true, skipTOC: true, skipGroupCover: true, skipStats: true,
+              groupIndexOffset: i, hostIndexOffset: hi, pageOffset: 2,
+              pageMap: { ...hostgroupPageMap, ...hostPageMap } // Pass updated map for footer
+          });
+          const hostPath = path.join(tmpDir, `group_${i}_host_${hi}_charts.pdf`);
+          fs.writeFileSync(hostPath, hostBuffer);
+          intermediatePdfPaths.push(hostPath);
+          
+          const hostDoc = await PDFDocument.load(hostBuffer);
+          currentGlobalPage += hostDoc.getPageCount();
+
+          totalProcessedHosts++;
+          if (jobId) {
+              const progress = Math.round((totalProcessedHosts / totalHostsToProcess) * 85); 
+              this.updateStatus(jobId, { progress, message: `Rendered host: ${host.name} (${totalProcessedHosts}/${totalHostsToProcess})` });
+          }
       }
     }
 
@@ -207,7 +218,6 @@ export class AutomationService {
     console.log(`[Automation] Generating Cover and Table of Contents...`);
     if (jobId) this.updateStatus(jobId, { progress: 90, message: 'Generating Table of Contents...' });
 
-    // Build a payload that represents the FULL report structure (for TOC generation)
     const fullStructurePayload: ReportPayload = {
         reportMonth: `${monthName} ${year}`,
         reportTitle: reportTitle,
@@ -219,17 +229,13 @@ export class AutomationService {
     };
 
     const combinedPageMap = { ...hostgroupPageMap, ...hostPageMap };
-    // Cover/TOC takes 2 pages (Cover + TOC)
-    const tocOffset = 2; 
-    // Shift all content pages by tocOffset
-    Object.keys(combinedPageMap).forEach(key => combinedPageMap[key] += tocOffset);
-
-    console.log(`[Automation] Combined Page Map:`, JSON.stringify(combinedPageMap));
-
+    const tocOffset = 2; // Fixed Cover + TOC pages
+    
     const coverTocBuffer = await PdfGeneratorService.generatePdfBuffer(fullStructurePayload, { 
-        totalFullPages: currentGlobalPage + tocOffset - 1,
-        pageOffset: 0,
-        pageMap: combinedPageMap
+        totalFullPages: currentGlobalPage - 1,
+        pageOffset: 2,
+        pageMap: combinedPageMap,
+        skipContent: true 
     });
     
     const coverPath = path.join(tmpDir, `cover_toc.pdf`);

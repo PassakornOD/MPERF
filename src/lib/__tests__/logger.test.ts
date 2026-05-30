@@ -12,7 +12,7 @@ vi.mock('fs', () => ({
 
 describe('Security Logger', () => {
     test('appends security event to log file', () => {
-        logSecurityEvent('admin', 'TEST_ACTION', 'User performed test');
+        logSecurityEvent('TEST_ACTION', { user: 'admin', details: 'User performed test' });
         expect(fs.appendFileSync).toHaveBeenCalled();
         const callArgs = (fs.appendFileSync as any).mock.calls[0];
         expect(callArgs[1]).toContain('TEST_ACTION');

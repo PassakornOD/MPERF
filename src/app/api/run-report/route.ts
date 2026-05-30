@@ -54,7 +54,7 @@ export async function POST(request: Request) {
         templateName,
         month,
         year,
-        timestamp: new Date().toLocaleString(),
+        timestamp: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false }),
         message: 'Job initialized'
     };
     

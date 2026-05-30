@@ -5,7 +5,7 @@ import React from 'react';
 
 describe('Block Component', () => {
   test('renders children correctly', () => {
-    render(<Block>Test Content</Block>);
+    render(<Block title="Test Title">Test Content</Block>);
     expect(screen.getByText('Test Content')).toBeInTheDocument();
   });
 
