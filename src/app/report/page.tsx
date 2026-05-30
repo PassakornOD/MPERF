@@ -29,6 +29,15 @@ import {
 import { ReportPayload } from '@/types/report';
 import FloatingInput from '@/components/common/FloatingInput';
 
+interface Template {
+    id: number;
+    name: string;
+    reportTitle: string;
+    lastUpdated: string;
+    hosts: { id: string; name: string; group: string; mem: number }[];
+    charts: { id: string; label: string; enabled: boolean }[];
+}
+
 const SarChart = dynamic(() => import('@/components/charts/SarChart'), { ssr: false });
 const Highcharts = typeof window !== 'undefined' ? require('highcharts') : null;
 
@@ -61,6 +70,25 @@ const ReportExportPage = () => {
   const [year, setYear] = useState<string>(datesObj.year);
 
   const { data: hostGroupsRaw } = useQuery({ queryKey: ['hostGroups-batch-report'], queryFn: async () => (await axios.get('/api/host-groups')).data });
+  const { data: templates = [], isLoading: isLoadingTemplates } = useQuery<Template[]>({
+      queryKey: ['report_templates'],
+      queryFn: async () => {
+          const res = await axios.get('/api/report-templates');
+          return res.data.map((t: any) => {
+              try {
+                  const config = typeof t.config === 'string' ? JSON.parse(t.config) : t.config;
+                  return {
+                      id: t.id,
+                      name: t.name,
+                      reportTitle: config.reportTitle || '',
+                      hosts: config.hosts || config.selectedHostnames || [],
+                      charts: config.charts || config.activeReports || [],
+                      lastUpdated: new Date(t.updated_at || t.created_at).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false })
+                  };
+              } catch (e) { return null; }
+          }).filter((t: any) => t !== null);
+      }
+  });
 
   const filteredGroups = useMemo(() => {
     if (!hostGroupsRaw) return [];
@@ -237,6 +265,43 @@ const ReportExportPage = () => {
         </div>
       </header>
 
+      {/* Templates Section */}
+      <div className="border-b border-gray-100 pb-12">
+        <h3 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tight italic">Or Generate From Template</h3>
+        {isLoadingTemplates ? (
+            <div className="py-10 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600" /></div>
+        ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {templates.map(template => (
+                    <div key={template.id} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                        <h4 className="font-black text-gray-900 mb-1">{template.name}</h4>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-6">{template.hosts.length} HOSTS</p>
+                        <button 
+                            onClick={() => {
+                                // 1. Set hosts
+                                setSelectedHostnames(template.hosts);
+
+                                // 2. Set report title
+                                setReportTitle(template.reportTitle || template.name);
+
+                                // 3. Set charts
+                                setActiveReports(activeReports.map(r => ({ ...r, enabled: template.charts.some((c: any) => c.id === r.id) })));
+
+                                // 4. Update selected groups and expand them
+                                const uniqueGroups = Array.from(new Set(template.hosts.map(h => h.group)));
+                                setSelectedGroups(uniqueGroups);
+                                setExpandedGroups(uniqueGroups);
+                            }}
+                            className="w-full py-3 bg-blue-50 text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-100 transition-all"
+                        >
+                            Load Template
+                        </button>
+                    </div>
+                ))}
+            </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div className="lg:col-span-4 space-y-6">
             <div className="relative border border-gray-100 rounded-3xl p-6 pt-10 bg-white shadow-sm">
@@ -290,8 +355,43 @@ const ReportExportPage = () => {
 
         <div className="lg:col-span-8 space-y-8">
 
-            {selectedHostnames.length > 0 && (
-              <>
+      <div className="border-b border-gray-100 pb-12">
+        <h3 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tight italic">Or Generate From Template</h3>
+        {isLoadingTemplates ? (
+            <div className="py-10 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600" /></div>
+        ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {templates.map(template => (
+                    <div key={template.id} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                        <h4 className="font-black text-gray-900 mb-1">{template.name}</h4>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-6">{template.hosts.length} HOSTS</p>
+                        <button 
+                            onClick={() => {
+                                // 1. Set hosts
+                                setSelectedHostnames(template.hosts);
+
+                                // 2. Set report title
+                                setReportTitle(template.reportTitle || template.name);
+
+                                // 3. Set charts
+                                setActiveReports(activeReports.map(r => ({ ...r, enabled: template.charts.some((c: any) => c.id === r.id) })));
+
+                                // 4. Update selected groups and expand them
+                                const uniqueGroups = Array.from(new Set(template.hosts.map(h => h.group)));
+                                setSelectedGroups(uniqueGroups);
+                                setExpandedGroups(uniqueGroups);
+                            }}
+                            className="w-full py-3 bg-blue-50 text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-100 transition-all"
+                        >
+                            Load Template
+                        </button>
+                    </div>
+                ))}
+            </div>
+        )}
+      </div>
+
+            <div className="space-y-8">
                 <div className="relative border border-gray-100 rounded-3xl p-8 pt-10 bg-white shadow-sm">
                     <span className="absolute -top-4 left-8 bg-white px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 border border-gray-100 rounded-full shadow-sm flex items-center gap-2">
                         <Calendar className="w-3.5 h-3.5" /> Configurations
@@ -395,8 +495,8 @@ const ReportExportPage = () => {
                             </div>
                     </div>
                 </div>
-              </>
-            )}
+            </div>
+
 
         </div>
       </div>
