@@ -373,7 +373,7 @@ const ReportExportPage = () => {
                                         </div>
                                     </div>
                                     <div className="flex-1">
-                                        <div className="bg-white border border-gray-100 px-3 py-2 rounded-lg inline-flex flex-col gap-0.5 max-w-full">
+                                        <div className="px-3 py-2 rounded-lg inline-flex flex-col gap-0.5 max-w-full">
                                             <h4 className="font-bold text-gray-700 text-[10px] truncate flex items-center gap-1.5">
                                                 <FileText className="w-3 h-3 text-blue-500/50" />
                                                 {template.reportTitle}
