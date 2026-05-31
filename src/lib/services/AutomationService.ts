@@ -3,7 +3,7 @@ import path from 'path';
 import { PDFDocument } from 'pdf-lib';
 import { MetricService } from './MetricService';
 import { PdfGeneratorService } from './PdfGeneratorService';
-import { ReportPayload, HostGroupData, HostData } from '@/types/report';
+import { ReportPayload } from '@/types/report';
 import pool from '@/lib/db';
 
 export class AutomationService {
@@ -17,8 +17,8 @@ export class AutomationService {
       
       // Cleanup: Only remove the lockfile in case of a hard crash previously
       // We don't auto-fail jobs here to avoid false positives.
-    } catch (e) {
-      console.error('[Automation] Init failed:', e);
+    } catch {
+      console.error('[Automation] Init failed');
     } finally {
       if (fs.existsSync(lockFile)) fs.unlinkSync(lockFile);
     }
