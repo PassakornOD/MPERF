@@ -128,7 +128,9 @@ const BatchReportPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isGenerationModalOpen, setIsGenerationModalOpen] = useState(false);
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [isDeleteJobConfirmOpen, setIsDeleteJobConfirmOpen] = useState(false);
     const [templateToDelete, setTemplateToDelete] = useState<number | null>(null);
+    const [jobToDelete, setJobToDelete] = useState<string | null>(null);
     const [generatingTemplate, setGeneratingTemplate] = useState<Template | null>(null);
     const [previewSelectedHosts, setPreviewSelectedHosts] = useState<{ id: string; name: string; group: string; mem?: number }[]>([]);
     const [previewActiveReports, setPreviewActiveReports] = useState<any[]>([]);
@@ -578,14 +580,9 @@ const BatchReportPage = () => {
                                                                 <Download className="w-3 h-3" /> Download
                                                             </a>
                                                             <button
-                                                                onClick={async () => {
-                                                                    try {
-                                                                        await axios.delete(`/api/run-report/status/${job.id}`);
-                                                                        showToast("File deleted successfully", 'success');
-                                                                        queryClient.invalidateQueries({ queryKey: ['background_jobs_status'] });
-                                                                    } catch (error: any) {
-                                                                        showToast("Failed to delete file", 'error');
-                                                                    }
+                                                                onClick={() => {
+                                                                    setJobToDelete(job.id);
+                                                                    setIsDeleteJobConfirmOpen(true);
                                                                 }}
                                                                 className="p-1.5 bg-red-50 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition-all border border-red-100"
                                                                 title="Delete File"
@@ -610,14 +607,9 @@ const BatchReportPage = () => {
                                                                 <Zap className="w-3 h-3" /> Retry
                                                             </button>
                                                             <button
-                                                                onClick={async () => {
-                                                                    try {
-                                                                        await axios.delete(`/api/run-report/status/${job.id}`);
-                                                                        showToast("Job deleted", 'success');
-                                                                        queryClient.invalidateQueries({ queryKey: ['background_jobs_status'] });
-                                                                    } catch (error: any) {
-                                                                        showToast("Failed to delete job", 'error');
-                                                                    }
+                                                                onClick={() => {
+                                                                    setJobToDelete(job.id);
+                                                                    setIsDeleteJobConfirmOpen(true);
                                                                 }}
                                                                 className="p-1.5 bg-red-50 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition-all border border-red-100"
                                                                 title="Delete Job"
@@ -869,6 +861,27 @@ const BatchReportPage = () => {
                 onConfirm={handleConfirmDelete}
                 title="Delete Template"
                 message="Are you sure you want to delete this template? This action cannot be undone."
+            />
+
+            <ConfirmModal
+                isOpen={isDeleteJobConfirmOpen}
+                onClose={() => setIsDeleteJobConfirmOpen(false)}
+                onConfirm={async () => {
+                    if (jobToDelete) {
+                        try {
+                            await axios.delete(`/api/run-report/status/${jobToDelete}`);
+                            showToast("Job deleted successfully", 'success');
+                            queryClient.invalidateQueries({ queryKey: ['background_jobs_status'] });
+                        } catch (error: any) {
+                            showToast("Failed to delete job", 'error');
+                        } finally {
+                            setJobToDelete(null);
+                            setIsDeleteJobConfirmOpen(false);
+                        }
+                    }
+                }}
+                title="Delete Job"
+                message="Are you sure you want to delete this job? This action cannot be undone."
             />
 
             <Modal isOpen={isLimitModalOpen} onClose={() => setIsLimitModalOpen(false)} title="HOST LIMIT REACHED">
