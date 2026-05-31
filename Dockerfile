@@ -6,7 +6,12 @@ RUN apt-get update && apt-get install -y \
     wget gnupg tar unzip ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+
 WORKDIR /app
+
+# Skip Puppeteer browser download during npm install
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_SKIP_DOWNLOAD=true
 
 # Install app dependencies
 COPY package*.json ./
@@ -69,8 +74,8 @@ RUN mkdir -p /app/public/reports && chmod -R 777 /app/public/reports
 
 # Create script for report generation
 RUN echo '#!/bin/bash\n\
-export NODE_PATH=/usr/local/lib/node_modules\n\
-npx ts-node -r tsconfig-paths/register --transpile-only --project /app/tsconfig.scripts.json /app/scripts/generate_monthly_reports.ts "$@"' > /usr/local/bin/reportlargepdf && \
+    export NODE_PATH=/usr/local/lib/node_modules\n\
+    npx ts-node -r tsconfig-paths/register --transpile-only --project /app/tsconfig.scripts.json /app/scripts/generate_monthly_reports.ts "$@"' > /usr/local/bin/reportlargepdf && \
     chmod +x /usr/local/bin/reportlargepdf
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true

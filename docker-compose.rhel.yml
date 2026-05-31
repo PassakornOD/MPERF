@@ -16,24 +16,18 @@ services:
       - ../mperf_db.sql:/docker-entrypoint-initdb.d/01-schema.sql
 
   mperf-app:
-    image: mperf-app:latest
-    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
     hostname: mperf-app
     restart: always
     networks:
       - mperf-net
-    deploy:
-      replicas: ${REPLICAS:-2}
-      resources:
-        reservations:
-          memory: ${MEM_RESERVATION:-1G}
-        limits:
-          memory: ${MEM_LIMIT:-4G}
-    shm_size: ${SHM_SIZE:-4gb}
+    shm_size: ${SHM_SIZE:-2gb}
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost}
       - TZ=Asia/Bangkok
     depends_on:
       - mperf-db
