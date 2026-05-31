@@ -41,71 +41,63 @@ const HostSelector: React.FC<HostSelectorProps> = ({
     selectedGroups,
 }) => {
     return (
-        <div className="relative border border-gray-100 rounded-[2rem] p-6 pt-12 bg-white shadow-sm transition-all hover:shadow-md h-full flex flex-col">
+        <div className="relative border border-gray-100 rounded-2xl p-5 pt-10 bg-white shadow-sm transition-all hover:shadow-md h-full flex flex-col">
             <span className="absolute -top-4 left-6 bg-blue-50 text-blue-700 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
                 <Monitor className="w-3.5 h-3.5" /> Select Target Hosts
             </span>
             
-            <div className="space-y-4 mb-6">
+            <div className="space-y-3 mb-5">
                 <div className="relative group">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                     <input
-                        className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all font-semibold placeholder:text-gray-400 placeholder:font-medium shadow-inner"
+                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all placeholder:text-gray-400 placeholder:font-medium shadow-inner"
                         placeholder="Search infrastructure..."
                         value={searchTerm}
                         onChange={e => onSearchTermChange(e.target.value)}
                     />
                 </div>
                 <div className="flex gap-2">
-                    <button onClick={onExpandAll} className="flex-1 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors border border-gray-200/50 shadow-sm">Expand All</button>
-                    <button onClick={onCollapseAll} className="flex-1 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors border border-gray-200/50 shadow-sm">Reset</button>
+                    <button onClick={onExpandAll} className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-xl text-[9px] font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors border border-gray-200/50 shadow-sm">Expand</button>
+                    <button onClick={onCollapseAll} className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-xl text-[9px] font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors border border-gray-200/50 shadow-sm">Reset</button>
                 </div>
             </div>
 
-            <div className="flex-1 space-y-2 overflow-y-auto pr-2 custom-scrollbar min-h-[400px] max-h-[600px]">
+            <div className="flex-1 space-y-1.5 overflow-y-auto pr-1 custom-scrollbar min-h-[300px] max-h-[500px]">
                 {groups.length === 0 ? (
-                    <div className="py-10 text-center text-gray-400 font-medium text-sm italic">No hosts found matching your search.</div>
+                    <div className="py-8 text-center text-gray-400 font-medium text-xs italic">No hosts found matching your search.</div>
                 ) : groups.map((g: any) => {
                     const isExpanded = expandedGroups.includes(g.hostgroup);
                     const isGroupSelected = selectedGroups.includes(g.hostgroup);
-                    const selectedInGroup = selectedHosts.filter(h => h.group === g.hostgroup).length;
                     
                     return (
-                        <div key={g.hostgroup} className="border border-gray-100 rounded-2xl bg-white overflow-hidden transition-all duration-200 hover:border-blue-100">
+                        <div key={g.hostgroup} className="border border-gray-100 rounded-xl bg-white overflow-hidden transition-all duration-200 hover:border-blue-100">
                             <div
-                                className={`flex items-center justify-between p-4 cursor-pointer transition-all ${isGroupSelected ? 'bg-blue-600 text-white shadow-lg shadow-blue-100 scale-[1.01]' : 'hover:bg-gray-50'}`}
+                                className={`flex items-center justify-between p-3 cursor-pointer transition-all ${isGroupSelected ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'hover:bg-gray-50'}`}
                                 onClick={() => onToggleGroup(g.hostgroup)}
                             >
-                                <div className="flex items-center gap-3 min-w-0">
+                                <div className="flex items-center gap-2 min-w-0">
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); onToggleExpand(g.hostgroup); }}
-                                        className={`w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${isGroupSelected ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-500 hover:bg-blue-50 hover:text-blue-600'}`}
+                                        className={`w-5 h-5 rounded-md flex items-center justify-center transition-colors ${isGroupSelected ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-500 hover:bg-blue-50 hover:text-blue-600'}`}
                                     >
-                                        {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                                        {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                                     </button>
-                                    <div className="min-w-0">
-                                        <span className={`text-xs font-bold truncate block ${isGroupSelected ? 'text-white' : 'text-gray-900'}`}>{g.hostgroup}</span>
-                                        {selectedInGroup > 0 && !isGroupSelected && (
-                                            <span className="text-[9px] font-bold text-blue-500 uppercase tracking-tighter">{selectedInGroup} of {g.hostnames.length} selected</span>
-                                        )}
-                                    </div>
+                                    <span className={`text-[11px] font-bold truncate ${isGroupSelected ? 'text-white' : 'text-gray-900'}`}>{g.hostgroup}</span>
                                 </div>
-                                {isGroupSelected && (
-                                    <div className="bg-white/20 px-2 py-0.5 rounded-full text-[9px] font-black uppercase">All</div>
-                                )}
+                                {isGroupSelected && <div className="bg-white/20 px-2 py-0.5 rounded-md text-[9px] font-black uppercase">All</div>}
                             </div>
                             {isExpanded && (
-                                <div className="p-2 space-y-1 bg-gray-50/30 border-t border-gray-50">
+                                <div className="p-1 space-y-0.5 bg-gray-50/30 border-t border-gray-50">
                                     {g.hostnames.map((h: any) => {
                                         const isSelected = selectedHosts.some(s => s.id === String(h.hostname_id));
                                         return (
                                             <button
                                                 key={h.hostname_id}
                                                 onClick={(e) => { e.stopPropagation(); onToggleHostname({ id: String(h.hostname_id), name: h.hostname, group: g.hostgroup, mem: h.mem }); }}
-                                                className={`w-full flex items-center justify-between gap-3 p-3 pl-10 rounded-xl text-xs font-semibold transition-all ${isSelected ? 'bg-white text-blue-700 border border-blue-100 shadow-sm' : 'text-gray-500 hover:bg-white hover:text-gray-900 hover:shadow-sm'}`}
+                                                className={`w-full flex items-center justify-between gap-2 p-2.5 pl-8 rounded-lg text-[10px] font-semibold transition-all ${isSelected ? 'bg-white text-blue-700 border border-blue-100 shadow-sm' : 'text-gray-500 hover:bg-white hover:text-gray-900 hover:shadow-sm'}`}
                                             >
                                                 <span className="truncate">{h.hostname}</span>
-                                                {isSelected && <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>}
+                                                {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>}
                                             </button>
                                         );
                                     })}
