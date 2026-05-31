@@ -10,7 +10,9 @@ vi.mock('puppeteer', () => ({
         setContent: vi.fn(),
         evaluate: vi.fn().mockResolvedValue({ map: {}, totalPhysicalPages: 1 }),
         pdf: vi.fn().mockResolvedValue(Buffer.from('dummy-pdf')),
-        close: vi.fn()
+        close: vi.fn(),
+        setDefaultNavigationTimeout: vi.fn(),
+        setViewport: vi.fn()
       }),
       close: vi.fn()
     })

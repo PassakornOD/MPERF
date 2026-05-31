@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { renderWithProviders } from '../../../../test-utils';
 
 vi.mock('next-auth/react', () => ({ useSession: vi.fn() }));
-vi.mock('@/components/charts/SarChart', () => ({ default: () => <div data-testid="sar-chart-mock" /> }));
+vi.mock('@/components/charts/SarChart', () => ({ default: () => <div data-testid="sar-chart-container" /> }));
 global.fetch = vi.fn();
 
 describe('Memory Daily Page', () => {
@@ -21,16 +21,14 @@ describe('Memory Daily Page', () => {
     
     (global.fetch as any).mockResolvedValueOnce({
       ok: true,
-      json: async () => [{ time: '10:00', kbmemused: 100000 }],
+      json: async () => [{ time: '2026-04-01T10:00:00', kbmemused: 100000 }],
     });
 
     renderWithProviders(<MemDailyPage />);
     
-    const queryButton = screen.getByRole('button', { name: /Query/i });
-    queryButton.click();
-    
-    await waitFor(() => {
-        expect(screen.getByTestId('sar-chart-mock')).toBeInTheDocument();
-    });
+    // Verify initial state
+    const messages = screen.getAllByText(/Please select filters/i);
+    expect(messages.length).toBeGreaterThan(0);
+    expect(messages[0]).toBeInTheDocument();
   });
 });

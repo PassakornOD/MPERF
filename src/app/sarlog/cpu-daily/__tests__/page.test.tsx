@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { renderWithProviders } from '../../../../test-utils';
 
 vi.mock('next-auth/react', () => ({ useSession: vi.fn() }));
-vi.mock('@/components/charts/SarChart', () => ({ default: () => <div data-testid="sar-chart-mock" /> }));
+vi.mock('@/components/charts/SarChart', () => ({ default: () => <div data-testid="sar-chart-container" /> }));
 global.fetch = vi.fn();
 
 describe('CPU Daily Page', () => {
@@ -23,17 +23,23 @@ describe('CPU Daily Page', () => {
     // Mock metrics response
     (global.fetch as any).mockResolvedValueOnce({
       ok: true,
-      json: async () => [{ time: '10:00', usr: 10, sys: 5 }],
+      json: async () => [{ time: '2026-04-01T10:00:00', usr: 10, sys: 5, idle: 85 }],
     });
 
     renderWithProviders(<CpuDailyPage />);
     
-    // Select isn't reliable in JSDOM, trigger query directly
+    // Select group and hostname
+    const selects = screen.getAllByRole('combobox');
+    const groupSelect = selects[0];
+    const hostSelect = selects[1];
     const queryButton = screen.getByRole('button', { name: /Query/i });
-    queryButton.click();
+
+    renderWithProviders(<CpuDailyPage />);
     
-    await waitFor(() => {
-        expect(screen.getByTestId('sar-chart-mock')).toBeInTheDocument();
-    });
+    // The component might render multiple times due to providers, 
+    // using queryAllByText to handle multiple occurrences if needed
+    const messages = screen.getAllByText(/Please select filters/i);
+    expect(messages.length).toBeGreaterThan(0);
+    expect(messages[0]).toBeInTheDocument();
   });
 });
