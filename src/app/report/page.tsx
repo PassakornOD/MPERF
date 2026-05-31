@@ -315,7 +315,7 @@ const ReportExportPage = () => {
                                 resetConfiguration();
                                 setActiveAction('create-template');
                             }}
-                            className={`px-4 py-2 rounded-lg font-bold text-[10px] transition-all shadow-sm ${activeAction === 'create-template' ? 'bg-blue-600 text-white shadow-blue-100' : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-100'}`}
+                            className={`px-3 py-1.5 rounded-lg font-bold text-[11px] transition-all shadow-sm ${activeAction === 'create-template' ? 'bg-blue-600 text-white shadow-blue-100' : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-100'}`}
                         >
                             Create Template
                         </button>
@@ -324,7 +324,7 @@ const ReportExportPage = () => {
                                 resetConfiguration();
                                 setActiveAction('quick-gen');
                             }}
-                            className={`px-4 py-2 rounded-lg font-bold text-[10px] transition-all shadow-sm ${activeAction === 'quick-gen' ? 'bg-gray-900 text-white shadow-gray-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'}`}
+                            className={`px-3 py-1.5 rounded-lg font-bold text-[11px] transition-all shadow-sm ${activeAction === 'quick-gen' ? 'bg-gray-900 text-white shadow-gray-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'}`}
                         >
                             Quick Report
                         </button>
@@ -356,7 +356,7 @@ const ReportExportPage = () => {
                                 <p className="text-gray-400 font-bold text-sm">No saved templates found</p>
                             </div>
                         ) : (
-                        templates.map(template => (
+                            templates.map(template => (
                                 <div key={template.id} className={`flex flex-col md:flex-row md:items-center gap-4 p-4 bg-gray-50/50 border border-gray-100 rounded-xl hover:bg-white hover:border-blue-100 hover:shadow transition-all duration-300 ${template.hosts.length > 50 ? 'opacity-50 grayscale' : ''}`}>
                                     <div className="flex-1 flex items-center gap-3 min-w-0">
                                         <div className="w-10 h-10 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-blue-600 shadow-sm shrink-0">
@@ -541,7 +541,7 @@ const ReportExportPage = () => {
                     <p className="text-gray-500 font-medium leading-relaxed mb-10 max-w-md mx-auto">{limitMessage}</p>
                     <button
                         onClick={() => setIsLimitModalOpen(false)}
-                        className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-2xl font-bold text-base transition-all shadow-xl shadow-gray-200 active:scale-[0.98]"
+                        className="w-full py-2.5 bg-gray-900 hover:bg-black text-white rounded-xl font-bold text-xs transition-all shadow-lg active:scale-[0.98] uppercase"
                     >
                         I Understand
                     </button>

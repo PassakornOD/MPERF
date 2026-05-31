@@ -548,13 +548,16 @@ const BatchReportPage = () => {
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex flex-col gap-1">
-                                                    <div className="flex items-center gap-1.5">
-                                                        {job.status === 'processing' && <Loader2 className="w-3 h-3 animate-spin text-blue-600" />}
-                                                        {job.status === 'completed' && <CheckCircle className="w-3 h-3 text-green-500" />}
-                                                        {(job.status === 'failed' || job.status === 'stale') && <AlertCircle className="w-3 h-3 text-red-500" />}
-                                                        <span className={`text-[10px] font-bold capitalize ${job.status === 'completed' ? 'text-green-600' :
-                                                            (job.status === 'failed' || job.status === 'stale') ? 'text-red-600' : 'text-blue-600'
-                                                            }`}>{job.status === 'processing' ? `Processing ${job.progress}%` : job.status}</span>
+                                                    <div className="flex items-center justify-between gap-2 mb-0.5">
+                                                        <div className="flex items-center gap-1.5">
+                                                            {job.status === 'processing' && <Loader2 className="w-2.5 h-2.5 animate-spin text-blue-600" />}
+                                                            {job.status === 'completed' && <CheckCircle className="w-2.5 h-2.5 text-green-500" />}
+                                                            {(job.status === 'failed' || job.status === 'stale') && <AlertCircle className="w-2.5 h-2.5 text-red-500" />}
+                                                            <span className={`text-[9px] font-black uppercase tracking-wider ${job.status === 'completed' ? 'text-green-600' :
+                                                                (job.status === 'failed' || job.status === 'stale') ? 'text-red-600' : 'text-blue-600'
+                                                                }`}>{job.status}</span>
+                                                        </div>
+                                                        <span className="text-[9px] font-bold text-gray-500">{job.progress}%</span>
                                                     </div>
                                                     <div className="w-24 h-1 bg-gray-100 rounded-full overflow-hidden shadow-inner">
                                                         <div className={`h-full transition-all duration-700 ease-out ${job.status === 'completed' ? 'bg-green-500' :
@@ -570,7 +573,7 @@ const BatchReportPage = () => {
                                                             <a
                                                                 href={`/api/run-report/download?filePath=${encodeURIComponent(job.pdfPath)}`}
                                                                 download
-                                                                className="inline-flex items-center gap-1 bg-green-50 text-green-600 px-2 py-1 rounded-lg text-[9px] font-bold hover:bg-green-600 hover:text-white transition-all border border-green-100 shadow-sm"
+                                                                className="inline-flex items-center gap-1 bg-green-50 text-green-600 px-2 py-1 rounded-md text-[9px] font-bold hover:bg-green-600 hover:text-white transition-all border border-green-100"
                                                             >
                                                                 <Download className="w-3 h-3" /> Download
                                                             </a>
@@ -584,7 +587,7 @@ const BatchReportPage = () => {
                                                                         showToast("Failed to delete file", 'error');
                                                                     }
                                                                 }}
-                                                                className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm"
+                                                                className="p-1.5 bg-red-50 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition-all border border-red-100"
                                                                 title="Delete File"
                                                             >
                                                                 <Trash2 className="w-3 h-3" />
@@ -602,7 +605,7 @@ const BatchReportPage = () => {
                                                                         showToast("Failed to retry job", 'error');
                                                                     }
                                                                 }}
-                                                                className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-1 rounded-lg text-[9px] font-bold hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm"
+                                                                className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-1 rounded-md text-[9px] font-bold hover:bg-blue-600 hover:text-white transition-all border border-blue-100"
                                                             >
                                                                 <Zap className="w-3 h-3" /> Retry
                                                             </button>
@@ -616,7 +619,7 @@ const BatchReportPage = () => {
                                                                         showToast("Failed to delete job", 'error');
                                                                     }
                                                                 }}
-                                                                className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm"
+                                                                className="p-1.5 bg-red-50 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition-all border border-red-100"
                                                                 title="Delete Job"
                                                             >
                                                                 <Trash2 className="w-3 h-3" />
@@ -660,35 +663,35 @@ const BatchReportPage = () => {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] font-black text-gray-400 uppercase ml-1">Target Month</label>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                            <label className="text-[9px] font-black text-gray-400 uppercase ml-1">Target Month</label>
                             <select
                                 value={month}
                                 onChange={e => setMonth(e.target.value)}
-                                className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all shadow-inner"
+                                className="w-full bg-gray-50 border border-gray-100 rounded-xl p-2.5 text-[11px] font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all shadow-inner"
                             >
                                 {Array.from({ length: 12 }, (_, i) => <option key={i + 1} value={String(i + 1)}>{new Date(2000, i).toLocaleString('en-US', { month: 'long' })}</option>)}
                             </select>
                         </div>
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] font-black text-gray-400 uppercase ml-1">Target Year</label>
+                        <div className="space-y-1">
+                            <label className="text-[9px] font-black text-gray-400 uppercase ml-1">Target Year</label>
                             <input
                                 type="number"
                                 value={year}
                                 onChange={e => setYear(e.target.value)}
-                                className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all shadow-inner"
+                                className="w-full bg-gray-50 border border-gray-100 rounded-xl p-2.5 text-[11px] font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all shadow-inner"
                             />
                         </div>
                     </div>
 
                     <div className="pt-4 border-t border-gray-50 flex gap-3">
-                        <button onClick={() => setIsBackgroundModalOpen(false)} className="flex-1 py-4 rounded-2xl font-black text-xs uppercase text-gray-500 hover:bg-gray-100 transition-all tracking-widest">Cancel</button>
+                        <button onClick={() => setIsBackgroundModalOpen(false)} className="flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase text-gray-500 hover:bg-gray-100 transition-all tracking-widest">Cancel</button>
                         <button
                             onClick={triggerBackgroundJob}
-                            className="flex-1 bg-slate-900 text-white py-4 rounded-2xl font-black text-xs uppercase hover:bg-slate-800 transition-all shadow-lg tracking-widest flex items-center justify-center gap-2"
+                            className="flex-1 bg-slate-900 text-white py-2.5 rounded-xl font-black text-[10px] uppercase hover:bg-slate-800 transition-all shadow-md tracking-widest flex items-center justify-center gap-2"
                         >
-                            <Zap className="w-4 h-4 text-yellow-400" /> Start Batch
+                            <Zap className="w-3.5 h-3.5 text-yellow-400" /> Start Batch
                         </button>
                     </div>
                 </div>
@@ -696,10 +699,10 @@ const BatchReportPage = () => {
 
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingTemplateId ? "Edit Template" : "Add New Template"} maxWidth="max-w-4xl">
                 <div className="space-y-6 p-4">
-                    <div className="flex gap-2 bg-gray-100/50 p-2 rounded-2xl border border-gray-100 shadow-inner">
-                        <button onClick={() => setStep(1)} className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${step === 1 ? 'bg-white shadow-md text-blue-600 border border-blue-50' : 'text-gray-400 hover:text-gray-900'}`}>1. Template Info</button>
-                        <button onClick={() => setStep(2)} className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${step === 2 ? 'bg-white shadow-md text-blue-600 border border-blue-50' : 'text-gray-400 hover:text-gray-900'}`}>2. Select Hosts</button>
-                        <button onClick={() => setStep(3)} className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${step === 3 ? 'bg-white shadow-md text-blue-600 border border-blue-50' : 'text-gray-400 hover:text-gray-900'}`}>3. Chart Order</button>
+                    <div className="flex gap-1 bg-gray-100/50 p-1 rounded-xl border border-gray-100 shadow-inner">
+                        <button onClick={() => setStep(1)} className={`flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${step === 1 ? 'bg-white shadow-sm text-blue-600 border border-blue-50' : 'text-gray-400 hover:text-gray-900'}`}>1. Template Info</button>
+                        <button onClick={() => setStep(2)} className={`flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${step === 2 ? 'bg-white shadow-sm text-blue-600 border border-blue-50' : 'text-gray-400 hover:text-gray-900'}`}>2. Select Hosts</button>
+                        <button onClick={() => setStep(3)} className={`flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${step === 3 ? 'bg-white shadow-sm text-blue-600 border border-blue-50' : 'text-gray-400 hover:text-gray-900'}`}>3. Chart Order</button>
                     </div>
 
                     <div className="min-h-[400px]">
@@ -736,17 +739,17 @@ const BatchReportPage = () => {
                         )}
                     </div>
 
-                    <div className="flex justify-between pt-8 border-t border-gray-100">
-                        <button onClick={() => setIsModalOpen(false)} className="px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-gray-400 hover:bg-gray-50 transition-all">Cancel</button>
-                        <div className="flex gap-3">
-                            {step > 1 && <button onClick={() => setStep(step - 1)} className="px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all">Back</button>}
+                    <div className="flex justify-between pt-6 border-t border-gray-100">
+                        <button onClick={() => setIsModalOpen(false)} className="px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest text-gray-400 hover:bg-gray-50 transition-all">Cancel</button>
+                        <div className="flex gap-2">
+                            {step > 1 && <button onClick={() => setStep(step - 1)} className="px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all">Back</button>}
                             {step < 3 ? (
-                                <button onClick={() => setStep(step + 1)} className="px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all">Continue</button>
+                                <button onClick={() => setStep(step + 1)} className="px-8 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition-all">Continue</button>
                             ) : (
                                 <button
                                     onClick={handleSaveTemplate}
                                     disabled={!templateName.trim() || selectedHostnames.length === 0 || activeReports.filter(r => r.enabled).length === 0}
-                                    className="px-12 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50 transition-all shadow-xl"
+                                    className="px-8 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50 transition-all shadow-md"
                                 >
                                     Save Template
                                 </button>
@@ -831,12 +834,12 @@ const BatchReportPage = () => {
                             </div>
                         </div>
 
-                        <div className="pt-10 border-t border-gray-100 flex justify-center gap-6">
+                        <div className="pt-6 border-t border-gray-100 flex justify-center gap-6">
                             <button
                                 onClick={async () => { setGeneratingTemplate(generatingTemplate); setIsGenerationModalOpen(false); setSelectedTemplateForBg(generatingTemplate); setIsBackgroundModalOpen(true); }}
-                                className="flex items-center gap-4 bg-slate-900 text-white px-20 py-5 rounded-3xl font-black text-xl tracking-[0.2em] hover:bg-slate-800 transition-all uppercase shadow-2xl"
+                                className="flex items-center gap-2 bg-slate-900 text-white px-10 py-3 rounded-xl font-black text-xs tracking-[0.1em] hover:bg-slate-800 transition-all uppercase shadow-md"
                             >
-                                <Zap className="w-5 h-5 text-yellow-400" /> Start Batch
+                                <Zap className="w-3.5 h-3.5 text-yellow-400" /> Start Batch
                             </button>
                         </div>
                     </div>

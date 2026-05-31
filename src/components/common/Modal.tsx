@@ -55,22 +55,22 @@ const Modal = ({
       <Draggable nodeRef={nodeRef} handle=".modal-handle" bounds="parent">
         <div 
           ref={nodeRef} 
-          className={`bg-white rounded-[32px] w-full ${maxWidth} flex flex-col shadow-[0_30px_60px_-12px_rgba(0,0,0,0.2)] overflow-hidden animate-in fade-in zoom-in duration-300 self-center will-change-transform`}
+          className={`bg-white rounded-2xl w-full ${maxWidth} flex flex-col shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden animate-in fade-in zoom-in duration-300 self-center will-change-transform`}
         >
-          <div className="flex justify-between items-center px-6 py-3 border-b border-gray-100 modal-handle cursor-move bg-gray-50/50">
-            <h2 className="font-black text-sm text-gray-950 tracking-tight">{title}</h2>
+          <div className="flex justify-between items-center px-4 py-2 border-b border-gray-100 modal-handle cursor-move bg-gray-50/50">
+            <h2 className="font-black text-xs text-gray-950 tracking-tight">{title}</h2>
             <div className="flex items-center gap-1">
               {onDownload && (
-                <button onClick={onDownload} className="p-1.5 hover:bg-gray-100 rounded-lg transition-all" title="Download PDF">
-                  <Download className="w-4 h-4 text-blue-600" />
+                <button onClick={onDownload} className="p-1 hover:bg-gray-100 rounded-lg transition-all" title="Download PDF">
+                  <Download className="w-3.5 h-3.5 text-blue-600" />
                 </button>
               )}
-              <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg transition-all text-gray-400 hover:text-gray-950">
-                <X className="w-4 h-4" />
+              <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg transition-all text-gray-400 hover:text-gray-950">
+                <X className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
-          <div className="px-8 py-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
+          <div className="px-6 py-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
             {children}
           </div>
         </div>

@@ -37,14 +37,14 @@ const TabbedModal = ({
           </button>
         </div>
         
-        <div className="flex px-5 gap-1 bg-gray-50/50 border-b border-gray-100 pt-3">
+        <div className="flex px-4 gap-0.5 bg-gray-50/50 border-b border-gray-100 pt-2">
             {tabs.map((tab, idx) => (
                 <button 
                     key={idx} 
                     onClick={() => setActiveTab(idx)}
-                    className={`px-4 py-2 text-xs font-black transition-all rounded-t-lg border-t border-x ${
+                    className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all rounded-t-lg border-t border-x ${
                         activeTab === idx 
-                        ? 'bg-white border-gray-100 text-blue-600 -mb-[1px] shadow-[0_-2px_10px_rgba(0,0,0,0.02)] z-10' 
+                        ? 'bg-white border-gray-100 text-blue-600 -mb-[1px] shadow-[0_-1px_5px_rgba(0,0,0,0.02)] z-10' 
                         : 'bg-transparent border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-100/50'
                     }`}
                 >

@@ -36,7 +36,7 @@ export default function OperationsPage() {
                 <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-blue-50 text-blue-600 text-xs font-bold border border-blue-100 shadow-sm">
                     <ShieldCheck size={16} /> System Documentation
                 </div>
-                <h1 className="text-xl font-bold text-gray-900 tracking-tight">Operations Guide</h1>
+                <h1 className="text-5xl font-bold text-gray-900 tracking-tight">Operations Guide</h1>
                 <p className="text-gray-500 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-medium">Manage your server assets, analyze performance, and generate comprehensive reports.</p>
             </header>
 
@@ -116,7 +116,7 @@ export default function OperationsPage() {
                                     "Click Generate PDF"
                                 ].map((step, i) => (
                                     <li key={i} className="flex gap-3 text-sm text-gray-600 font-bold">
-                                        <span className="text-blue-300 font-black">0{i+1}.</span> {step}
+                                        <span className="text-blue-300 font-black">0{i + 1}.</span> {step}
                                     </li>
                                 ))}
                             </ol>
@@ -135,7 +135,7 @@ export default function OperationsPage() {
                                     "Monitor job status in the table"
                                 ].map((step, i) => (
                                     <li key={i} className="flex gap-3 text-sm text-gray-600 font-bold">
-                                        <span className="text-amber-300 font-black">0{i+1}.</span> {step}
+                                        <span className="text-amber-300 font-black">0{i + 1}.</span> {step}
                                     </li>
                                 ))}
                             </ol>
@@ -153,7 +153,7 @@ export default function OperationsPage() {
                                 { step: "Chart Layout", desc: "Select and order metrics (CPU/Mem) to define the report layout." },
                             ].map((item, idx) => (
                                 <div key={idx} className="bg-indigo-50/50 p-6 rounded-3xl border border-indigo-100 flex flex-col justify-between group hover:bg-indigo-600 transition-all duration-300">
-                                    <div className="text-[10px] font-black text-indigo-700 uppercase tracking-widest mb-4 group-hover:text-indigo-200">Step 0{idx+1}</div>
+                                    <div className="text-[10px] font-black text-indigo-700 uppercase tracking-widest mb-4 group-hover:text-indigo-200">Step 0{idx + 1}</div>
                                     <div>
                                         <p className="text-sm font-bold text-indigo-900 mb-2 group-hover:text-white">{item.step}</p>
                                         <p className="text-xs text-indigo-700 font-medium leading-relaxed group-hover:text-indigo-100">{item.desc}</p>
