@@ -182,7 +182,7 @@ const ManageAssetsPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-black text-gray-800">Manage Assets</h2>
+        <h2 className="text-xl font-bold text-gray-800">Manage Assets</h2>
         <div className="flex gap-3 items-center">
             <div className="relative w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

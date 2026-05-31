@@ -109,117 +109,135 @@ const SarManagementPage = () => {
   const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-[32px] border border-gray-100 shadow-sm p-8">
-        <div className="flex gap-4 mb-6">
-          <button onClick={() => setType('cpu')} className={`px-6 py-2 rounded-2xl text-xs font-black uppercase transition-all ${type === 'cpu' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500'}`}>CPU</button>
-          <button onClick={() => setType('mem')} className={`px-6 py-2 rounded-2xl text-xs font-black uppercase transition-all ${type === 'mem' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500'}`}>Memory</button>
+    <div className="space-y-8 animate-ease-in pb-20">
+      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 sm:p-10 transition-all hover:shadow-md">
+        <div className="flex flex-wrap gap-3 mb-10">
+          <button onClick={() => setType('cpu')} className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${type === 'cpu' ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>CPU Analytics</button>
+          <button onClick={() => setType('mem')} className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${type === 'mem' ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>Memory Analytics</button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <select className="bg-gray-50 border-2 border-gray-50 rounded-2xl p-3 text-xs font-bold" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
-            <option value="">Select Hostgroup</option>
-            {hostGroups?.map((g: any) => <option key={g.hostgroup} value={g.hostgroup}>{g.hostgroup}</option>)}
-          </select>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5 items-end justify-center">
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Hostgroup</label>
+            <select className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
+              <option value="">Select Hostgroup</option>
+              {hostGroups?.map((g: any) => <option key={g.hostgroup} value={g.hostgroup}>{g.hostgroup}</option>)}
+            </select>
+          </div>
           
-          <select className="bg-gray-50 border-2 border-gray-50 rounded-2xl p-3 text-xs font-bold" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
-            <option value="">All Hostnames</option>
-            {hostGroups?.find((g: any) => g.hostgroup === selectedGroup)?.hostnames.map((h: any) => (
-              <option key={h.hostname_id} value={h.hostname_id}>{h.hostname}</option>
-            ))}
-          </select>
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Hostname</label>
+            <select className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner disabled:opacity-50" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
+              <option value="">All Hostnames</option>
+              {hostGroups?.find((g: any) => g.hostgroup === selectedGroup)?.hostnames.map((h: any) => (
+                <option key={h.hostname_id} value={h.hostname_id}>{h.hostname}</option>
+              ))}
+            </select>
+          </div>
 
-          <select className="bg-gray-50 border-2 border-gray-50 rounded-2xl p-3 text-xs font-bold" value={filterLevel} onChange={(e) => setFilterLevel(e.target.value as any)}>
-            <option value="all">All Data</option>
-            <option value="year">By Year</option>
-            <option value="month">By Month</option>
-            <option value="day">By Day</option>
-          </select>
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Filter Level</label>
+            <select className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" value={filterLevel} onChange={(e) => setFilterLevel(e.target.value as any)}>
+              <option value="all">All Records</option>
+              <option value="year">By Year</option>
+              <option value="month">By Month</option>
+              <option value="day">By Day</option>
+            </select>
+          </div>
 
-          <div className="flex gap-2">
-            {filterLevel !== 'all' && (
-                <select className="bg-gray-50 border-2 border-gray-50 rounded-2xl p-3 text-xs font-bold w-full" value={year} onChange={(e) => setYear(e.target.value)}>
-                    {years.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-            )}
-            {(filterLevel === 'month' || filterLevel === 'day') && (
-                <select className="bg-gray-50 border-2 border-gray-50 rounded-2xl p-3 text-xs font-bold w-full" value={month} onChange={(e) => setMonth(e.target.value)}>
-                    {months.map(m => <option key={m.val} value={m.val}>{m.name}</option>)}
-                </select>
-            )}
-            {filterLevel === 'day' && (
-                <select className="bg-gray-50 border-2 border-gray-50 rounded-2xl p-3 text-xs font-bold w-full" value={day} onChange={(e) => setDay(e.target.value)}>
-                    {Array.from({ length: getDaysInMonth(month, year) }, (_, i) => String(i + 1).padStart(2, '0')).map(d => <option key={d} value={d}>{d}</option>)}
-                </select>
-            )}
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Period Selection</label>
+            <div className="flex gap-2">
+              {filterLevel !== 'all' && (
+                  <select className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-3 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" value={year} onChange={(e) => setYear(e.target.value)}>
+                      {years.map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+              )}
+              {(filterLevel === 'month' || filterLevel === 'day') && (
+                  <select className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-3 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" value={month} onChange={(e) => setMonth(e.target.value)}>
+                      {months.map(m => <option key={m.val} value={m.val}>{m.name}</option>)}
+                  </select>
+              )}
+              {filterLevel === 'day' && (
+                  <select className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-3 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" value={day} onChange={(e) => setDay(e.target.value)}>
+                      {Array.from({ length: getDaysInMonth(month, year) }, (_, i) => String(i + 1).padStart(2, '0')).map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+              )}
+            </div>
           </div>
 
           <div className="flex gap-2">
-            <button onClick={() => handleQuery(1)} className="flex-1 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-6 py-3 text-xs font-black uppercase flex items-center justify-center gap-2">
+            <button onClick={() => handleQuery(1)} className="flex-1 bg-gray-900 hover:bg-black text-white rounded-xl px-6 py-3 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-200">
                 {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Search className="w-4 h-4" />} Query
             </button>
-            <button onClick={() => setIsConfirmOpen(true)} className="bg-red-50 hover:bg-red-100 text-red-600 rounded-2xl px-6 py-3 text-xs font-black uppercase transition-all">
+            <button onClick={() => setIsConfirmOpen(true)} className="flex-none bg-red-50 hover:bg-red-600 hover:text-white text-red-600 rounded-xl px-5 py-3 text-xs font-bold transition-all border border-red-100 shadow-sm">
                 Delete
             </button>
           </div>
         </div>
       </div>
       
-      {/* (Add ConfirmModal component implementation here or use standard one) */}
       <ConfirmModal 
           isOpen={isConfirmOpen} 
           onClose={() => setIsConfirmOpen(false)} 
           onConfirm={handleDelete}
-          title="Confirm Deletion"
-          message={`Are you sure you want to delete SAR ${type} data for ${selectedGroup} / ${selectedHostnameId} (Level: ${filterLevel})?`}
+          title="Confirm Data Deletion"
+          message={`Are you sure you want to permanently delete SAR ${type.toUpperCase()} data for ${selectedGroup} / ${selectedHostnameId} at the ${filterLevel} level? This action cannot be undone.`}
       />
 
       {filterLevel === 'month' && summaryData.length > 0 && (
-          <div className="bg-white rounded-[32px] border border-gray-100 shadow-sm p-8 space-y-4">
-            <h3 className="text-xs font-black uppercase text-gray-900">Data Availability Summary ({year}-{month})</h3>
-            {Object.entries(summaryData.reduce((acc: any, s: any) => {
-                const key = `${s.hostname_id}|${s.hostname}`;
-                if (!acc[key]) acc[key] = [];
-                acc[key].push(s);
-                return acc;
-            }, {})).map(([key, records]: [string, any]) => {
-                const [id, hostname] = key.split('|');
-                return (
-                    <div key={id}>
-                        <p className="text-[10px] font-black text-blue-600 uppercase mb-2 border-b border-blue-50 pb-1">{hostname} (ID: {id})</p>
-                        <div className="flex flex-wrap gap-2">
-                            {records.map((s: any) => {
-                                const dateObj = new Date(s.date);
-                                const d = String(dateObj.getDate()).padStart(2, '0');
-                                const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-                                const y = dateObj.getFullYear();
-                                return (
-                                    <div key={s.date} className="px-3 py-1 bg-gray-50 text-gray-700 rounded-lg text-[10px] font-bold border border-gray-100">
-                                        {d}-{m}-{y}: {s.count} records
-                                    </div>
-                                );
-                            })}
+          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 sm:p-10 space-y-6 transition-all hover:shadow-lg">
+            <div className="flex items-center gap-3 border-b border-gray-50 pb-4">
+                <Calendar className="text-blue-500 w-5 h-5" />
+                <h3 className="text-sm font-bold text-gray-900">Data Availability Summary ({year}-{month})</h3>
+            </div>
+            <div className="space-y-8">
+                {Object.entries(summaryData.reduce((acc: any, s: any) => {
+                    const key = `${s.hostname_id}|${s.hostname}`;
+                    if (!acc[key]) acc[key] = [];
+                    acc[key].push(s);
+                    return acc;
+                }, {})).map(([key, records]: [string, any]) => {
+                    const [id, hostname] = key.split('|');
+                    return (
+                        <div key={id} className="space-y-4">
+                            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2">
+                                <Monitor size={12} /> {hostname} <span className="text-gray-300 font-medium">ID: {id}</span>
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                                {records.map((s: any) => {
+                                    const dateObj = new Date(s.date);
+                                    const d = String(dateObj.getDate()).padStart(2, '0');
+                                    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+                                    const y = dateObj.getFullYear();
+                                    return (
+                                        <div key={s.date} className="px-4 py-2 bg-gray-50 text-gray-700 rounded-xl text-[10px] font-bold border border-gray-100 shadow-sm hover:border-blue-200 transition-colors">
+                                            {d}-{m}-{y}: <span className="text-blue-600">{s.count}</span> records
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
-                );
-            })}
+                    );
+                })}
+            </div>
           </div>
       )}
 
       {queryData.length > 0 && (
-        <div className="bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden transition-all hover:shadow-lg">
           <div className="overflow-x-auto">
-            <table className="w-full text-[10px]">
+            <table className="w-full text-[11px] text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 text-gray-400 font-black uppercase text-[9px]">
-                  {Object.keys(queryData[0]).map(key => <th key={key} className="px-6 py-4 text-left">{key}</th>)}
+                <tr className="bg-gray-50/50 text-gray-400 font-bold uppercase text-[9px] border-b border-gray-100">
+                  {Object.keys(queryData[0]).map(key => <th key={key} className="px-8 py-5 tracking-wider">{key}</th>)}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-50">
                 {queryData.map((row, idx) => (
-                  <tr key={idx} className="border-t border-gray-50 hover:bg-gray-50/50">
+                  <tr key={idx} className="hover:bg-blue-50/30 transition-colors">
                     {Object.entries(row).map(([key, val]: [string, any], i) => (
-                      <td key={i} className="px-6 py-3 font-bold text-gray-600">
+                      <td key={i} className="px-8 py-4 font-semibold text-gray-600 whitespace-nowrap">
                         {key === 'time' ? new Date(val).toISOString().replace('T', ' ').substring(0, 19) : val}
                       </td>
                     ))}
@@ -228,11 +246,11 @@ const SarManagementPage = () => {
               </tbody>
             </table>
           </div>
-          <div className="p-4 border-t border-gray-100 flex items-center justify-between">
-              <span className="text-[10px] font-bold text-gray-500 uppercase">Page {page} of {totalPages} ({total} total)</span>
+          <div className="px-8 py-6 bg-gray-50/30 border-t border-gray-50 flex items-center justify-between">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Showing Page {page} of {totalPages} <span className="mx-2 text-gray-200">|</span> Total {total} records</span>
               <div className="flex gap-2">
-                  <button onClick={() => handleQuery(page - 1, true)} disabled={page <= 1} className="px-3 py-1 rounded bg-gray-100 text-xs font-bold hover:bg-gray-200 disabled:opacity-50">Prev</button>
-                  <button onClick={() => handleQuery(page + 1, true)} disabled={page >= totalPages} className="px-3 py-1 rounded bg-gray-100 text-xs font-bold hover:bg-gray-200 disabled:opacity-50">Next</button>
+                  <button onClick={() => handleQuery(page - 1, true)} disabled={page <= 1} className="px-5 py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold hover:bg-gray-50 transition-all disabled:opacity-30 shadow-sm">Previous</button>
+                  <button onClick={() => handleQuery(page + 1, true)} disabled={page >= totalPages} className="px-5 py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold hover:bg-gray-50 transition-all disabled:opacity-30 shadow-sm">Next</button>
               </div>
           </div>
         </div>

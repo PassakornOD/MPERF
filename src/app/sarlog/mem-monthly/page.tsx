@@ -6,8 +6,9 @@ import dynamic from 'next/dynamic';
 import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { Loader2, Activity } from 'lucide-react';
 
-const SarChart = dynamic(() => import('@/components/charts/SarChart'), { 
+const SarChart = dynamic(() => import('@/components/charts/SarChart'), {
   ssr: false,
   loading: () => <div className="w-full h-[435px] bg-gray-50 animate-pulse flex items-center justify-center">Loading Chart...</div>
 });
@@ -59,40 +60,40 @@ const MemMonthlyPage = () => {
 
   const getChartOptions = (): Highcharts.Options => {
     if (!metrics || metrics.length === 0) return { title: { text: 'No Data Found' } };
-    
+
     const hostnameInfo = hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.find(h => String(h.hostname_id) === selectedHostnameId);
-    const totalMem = (hostnameInfo as any)?.mem || 16; 
+    const totalMem = (hostnameInfo as any)?.mem || 16;
 
     // Extract unique times for X-axis labels
     const timeLabels = Array.from(new Set(metrics.map((m: any) => m.time_label))).sort();
-    
+
     // Map data to series by day
     const daySeriesMap: Record<number, any[]> = {};
     metrics.forEach((m: any) => {
-        if (!daySeriesMap[m.day]) daySeriesMap[m.day] = new Array(timeLabels.length).fill(null);
-        const idx = timeLabels.indexOf(m.time_label);
-        if (idx !== -1) daySeriesMap[m.day][idx] = Number(m.val);
+      if (!daySeriesMap[m.day]) daySeriesMap[m.day] = new Array(timeLabels.length).fill(null);
+      const idx = timeLabels.indexOf(m.time_label);
+      if (idx !== -1) daySeriesMap[m.day][idx] = Number(m.val);
     });
 
     return {
       chart: { type: 'line', shadow: false, backgroundColor: undefined },
       title: { text: 'Memory Monthly Usage', style: { fontSize: '14px' } },
       subtitle: { text: `Hostname : ${hostnameInfo?.hostname || ''} Month : ${months.find(m => m.value === month)?.label}/${year}`, style: { fontSize: '12px' } },
-      xAxis: { 
+      xAxis: {
         categories: timeLabels as string[],
         tickInterval: 5,
         labels: { rotation: -45, align: 'right', style: { fontSize: '8px' } }
       },
-      yAxis: { 
+      yAxis: {
         title: { text: `Memory (${totalMem} GB)` },
         min: 0,
         max: totalMem,
-        labels: { formatter: function() { return (this.value as number).toFixed(1); } }
+        labels: { formatter: function () { return (this.value as number).toFixed(1); } }
       },
       plotOptions: {
         line: { lineWidth: 1, marker: { enabled: false, radius: 2 } }
       },
-      series: Object.keys(daySeriesMap).sort((a,b) => Number(a)-Number(b)).map(day => ({
+      series: Object.keys(daySeriesMap).sort((a, b) => Number(a) - Number(b)).map(day => ({
         name: `Day ${day}`,
         data: daySeriesMap[Number(day)],
         type: 'line'
@@ -101,40 +102,54 @@ const MemMonthlyPage = () => {
   };
 
   return (
-    <Block title="Sar stats" subtitle="Memory Monthly Usage" tabs={[]}>
-      <div className="bg-gray-100 p-4 rounded-md mb-8 flex flex-wrap gap-4 items-end justify-center">
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Hostgroup</label>
-          <select className="border border-gray-300 rounded px-2 py-1 text-sm" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
+    <Block title="Sar Statistics" subtitle="Monthly Memory Utilization Analysis" tabs={[]}>
+      <div className="bg-gray-50/80 p-5 sm:p-6 rounded-3xl border border-gray-100 mb-2 flex flex-wrap gap-4 items-end justify-start lg:justify-center transition-all">
+        <div className="flex-1 min-w-[160px]">
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Hostgroup</label>
+          <select className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
             <option value="">Select Hostgroup</option>
             {hostGroups?.map(g => <option key={g.hostgroup_id} value={g.hostgroup}>{g.hostgroup}</option>)}
           </select>
         </div>
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Hostname</label>
-          <select className="border border-gray-300 rounded px-2 py-1 text-sm" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
+        <div className="flex-1 min-w-[160px]">
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Hostname</label>
+          <select className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm disabled:opacity-50" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
             <option value="">Select Hostname</option>
             {hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.map(h => <option key={h.hostname_id} value={h.hostname_id}>{h.hostname}</option>)}
           </select>
         </div>
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Month / Year</label>
+        <div className="w-48">
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Month / Year</label>
           <div className="flex gap-2">
-            <select className="border border-gray-300 rounded px-2 py-1 text-sm" value={month} onChange={(e) => setMonth(e.target.value)}>
+            <select className="bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={month} onChange={(e) => setMonth(e.target.value)}>
               {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
             </select>
-            <select className="border border-gray-300 rounded px-2 py-1 text-sm" value={year} onChange={(e) => setYear(e.target.value)}>
+            <select className="bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={year} onChange={(e) => setYear(e.target.value)}>
               {years.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
           </div>
         </div>
-        <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 h-[30px]" disabled={!selectedGroup || !selectedHostnameId}>Query</button>
+        <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-blue-600 text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 disabled:opacity-50 h-[38px]" disabled={!selectedGroup || !selectedHostnameId}>Query</button>
       </div>
 
-      <div id="container" className="min-h-[450px]">
-        {isFetching ? <div className="text-center py-20">Loading...</div> : queryEnabled ? (
-          metrics && metrics.length > 0 ? <SarChart options={getChartOptions()} /> : <div className="text-center py-20 bg-gray-50 rounded">No records found.</div>
-        ) : <div className="text-gray-400 italic text-center">Please select filters and click Query.</div>}
+      <div id="container" className="min-h-[450px] bg-white rounded-3xl border border-gray-50 shadow-inner p-4">
+        {isFetching ? (
+          <div className="text-center py-32">
+            <div className="animate-spin rounded-full h-14 w-14 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-6 text-sm font-bold text-gray-400">Fetching metrics...</p>
+          </div>
+        ) : queryEnabled ? (
+          metrics && metrics.length > 0 ? <SarChart options={getChartOptions()} /> : (
+            <div className="text-center py-32 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+              <p className="text-gray-400 font-bold">No performance records found for this period.</p>
+            </div>
+          )
+        ) : (
+          <div className="flex flex-col items-center justify-center py-32 text-gray-300">
+            <Activity size={64} className="mb-4 opacity-20" />
+            <p className="font-bold text-lg">Select filters and click Query to visualize data</p>
+          </div>
+        )}
       </div>
     </Block>
   );

@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useToast } from '@/components/common/Toast';
+import { Loader2, Download, Activity } from 'lucide-react';
 
 const SarChart = dynamic(() => import('@/components/charts/SarChart'), {
   ssr: false,
@@ -212,53 +213,59 @@ const CpuDailyPage = () => {
   };
 
   return (
-    <Block title="Sar stats" subtitle="CPU Daily Usage" tabs={[]}>
-      <div className="bg-gray-100 p-4 rounded-md mb-8 flex flex-wrap gap-4 items-end justify-center">
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Hostgroup</label>
-          <select className="border border-gray-300 rounded px-2 py-1 text-sm min-w-[150px]" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
+    <Block title="Sar Statistics" subtitle="Daily CPU Utilization Analysis" tabs={[]}>
+      <div className="bg-gray-50/80 p-4 sm:p-5 rounded-3xl border border-gray-100 mb-2 flex flex-wrap gap-3 items-end justify-start lg:justify-center transition-all">
+        <div className="w-44">
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Hostgroup</label>
+          <select className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
             <option value="">Select Hostgroup</option>
             {hostGroups?.map(g => <option key={g.hostgroup_id} value={g.hostgroup}>{g.hostgroup}</option>)}
           </select>
         </div>
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Hostname</label>
-          <select className="border border-gray-300 rounded px-2 py-1 text-sm min-w-[150px]" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
+        <div className="w-44">
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Hostname</label>
+          <select className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm disabled:opacity-50" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
             <option value="">Select Hostname</option>
             {hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.map(h => <option key={h.hostname_id} value={h.hostname_id}>{h.hostname}</option>)}
           </select>
         </div>
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Type</label>
-          <select className="border border-gray-300 rounded px-2 py-1 text-sm" value={type} onChange={(e) => setType(e.target.value as any)}>
+        <div className="w-28">
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Type</label>
+          <select className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={type} onChange={(e) => setType(e.target.value as any)}>
             <option value="Peak">Peak</option>
             <option value="Normal">Normal</option>
             <option value="Average">Average</option>
           </select>
         </div>
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Start Date</label>
-          <input type="date" className="border border-gray-300 rounded px-2 py-1 text-sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+        <div className="w-36">
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Start Date</label>
+          <input type="date" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
         </div>
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Stop Date</label>
-          <input type="date" className="border border-gray-300 rounded px-2 py-1 text-sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+        <div className="w-36">
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Stop Date</label>
+          <input type="date" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
         </div>
-        <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 h-[30px]" disabled={!selectedGroup || !selectedHostnameId}>Query</button>
+        <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-blue-600 text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 disabled:opacity-50 h-[38px]" disabled={!selectedGroup || !selectedHostnameId}>Query</button>
       </div>
 
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end">
         {metrics && metrics.length > 0 && (
-          <button onClick={handleExport} className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700" disabled={isExporting}>
-            {isExporting ? 'Exporting...' : 'Export PDF'}
+          <button onClick={handleExport} className="flex items-center gap-2 bg-emerald-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100 disabled:opacity-50" disabled={isExporting}>
+            {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            {isExporting ? 'Exporting...' : 'Export PDF Report'}
           </button>
         )}
       </div>
 
-      <div id="container" className="min-h-[435px]">
-        {isFetching ? <div className="text-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div><p className="mt-4 text-gray-500">Loading...</p></div> : queryEnabled ? (
-          metrics && metrics.length > 0 ? <SarChart ref={chartRef} options={getChartOptions()} /> : <div className="text-center py-20 bg-gray-50 rounded">No records found.</div>
-        ) : <div className="text-gray-400 italic text-center">Please select filters and click Query.</div>}
+      <div id="container" className="min-h-[435px] bg-white rounded-3xl border border-gray-50 shadow-inner p-4">
+        {isFetching ? <div className="text-center py-32"><div className="animate-spin rounded-full h-14 w-14 border-b-2 border-blue-600 mx-auto"></div><p className="mt-6 text-sm font-bold text-gray-400">Fetching metrics...</p></div> : queryEnabled ? (
+          metrics && metrics.length > 0 ? <SarChart ref={chartRef} options={getChartOptions()} /> : <div className="text-center py-32 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200"><p className="text-gray-400 font-bold">No performance records found for this period.</p></div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-32 text-gray-300">
+            <Activity size={64} className="mb-4 opacity-20" />
+            <p className="font-bold text-lg">Select filters and click Query to visualize data</p>
+          </div>
+        )}
       </div>
     </Block>
   );

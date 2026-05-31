@@ -11,7 +11,10 @@ import {
     FileText,
     CheckCircle2,
     AlertCircle,
-    X
+    X,
+    Clock,
+    Trash2,
+    Activity
 } from 'lucide-react';
 import { ReportPayload } from '@/types/report';
 import HostSelector from '@/components/report/HostSelector';
@@ -299,156 +302,167 @@ const ReportExportPage = () => {
     };
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8 pb-20">
-            <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <h2 className="text-3xl font-black text-gray-900 tracking-tight uppercase italic underline decoration-blue-500 underline-offset-8">Performance Reports</h2>
-                    <p className="text-gray-500 font-medium mt-2">Select hosts and configurations to generate document</p>
+        <div className="max-w-7xl mx-auto space-y-10 pb-20 animate-ease-in">
+            <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 px-4">
+                <div className="space-y-1">
+                    <h2 className="text-xl font-bold text-gray-900 tracking-tight">Performance Reports</h2>
+                    <p className="text-sm font-medium text-gray-400">Configure and generate professional server utilization documents</p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => {
-                            resetConfiguration();
-                            setActiveAction('create-template');
-                        }}
-                        className={`px-4 py-3 rounded-xl font-black text-xs transition-all ${activeAction === 'create-template' ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'}`}
-                    >
-                        CREATE TEMPLATE
-                    </button>
-                    <button
-                        onClick={() => {
-                            resetConfiguration();
-                            setActiveAction('quick-gen');
-                        }}
-                        className={`px-4 py-3 rounded-xl font-black text-xs transition-all ${activeAction === 'quick-gen' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-900 hover:bg-slate-200'}`}
-                    >
-                        QUICK GEN REPORT
-                    </button>
-                    <div className="flex items-center gap-3 bg-blue-50 p-3 rounded-2xl border border-blue-100 shadow-sm">
-                        <CheckCircle2 className="w-5 h-5 text-blue-600" />
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => {
+                                resetConfiguration();
+                                setActiveAction('create-template');
+                            }}
+                            className={`flex-1 sm:flex-none px-6 py-3.5 rounded-2xl font-bold text-sm transition-all shadow-sm ${activeAction === 'create-template' ? 'bg-blue-600 text-white shadow-blue-100' : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-100'}`}
+                        >
+                            Create Template
+                        </button>
+                        <button
+                            onClick={() => {
+                                resetConfiguration();
+                                setActiveAction('quick-gen');
+                            }}
+                            className={`flex-1 sm:flex-none px-6 py-3.5 rounded-2xl font-bold text-sm transition-all shadow-sm ${activeAction === 'quick-gen' ? 'bg-gray-900 text-white shadow-gray-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'}`}
+                        >
+                            Quick Report
+                        </button>
+                    </div>
+                    <div className="flex items-center gap-4 bg-white px-5 py-3 rounded-[1.5rem] border border-gray-100 shadow-sm">
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                            <CheckCircle2 className="w-5 h-5" />
+                        </div>
                         <div>
-                            <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest leading-none mb-1">Selected</p>
-                            <p className="text-sm font-black text-blue-700 leading-none">{selectedHostnames.length} HOSTS</p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">Selection</p>
+                            <p className="text-sm font-bold text-gray-900 leading-none">{selectedHostnames.length} Hosts</p>
                         </div>
                     </div>
                 </div>
             </header>
 
             {/* Templates Section */}
-            <div className="relative border border-gray-100 rounded-3xl p-8 pt-10 bg-white shadow-sm mb-12">
-              <span className="absolute -top-4 left-8 bg-white px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 border border-gray-100 rounded-full shadow-sm flex items-center gap-2">
-                  <Layers className="w-3.5 h-3.5" /> Saved Templates
-              </span>
-              {isLoadingTemplates ? (
-                  <div className="py-10 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600" /></div>
-              ) : (
-            <div className="space-y-3">
-                {templates.length === 0 ? (
-                    <div className="py-8 text-center text-gray-400 font-bold uppercase text-xs tracking-widest">No templates found</div>
+            <div className="relative border border-gray-100 rounded-[2.5rem] p-8 sm:p-10 pt-12 sm:pt-14 bg-white shadow-sm mb-12 group transition-all hover:shadow-md">
+                <span className="absolute -top-4 left-8 bg-blue-600 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-white rounded-full shadow-lg shadow-blue-100 flex items-center gap-2">
+                    <Layers className="w-3.5 h-3.5" /> Saved Templates
+                </span>
+                {isLoadingTemplates ? (
+                    <div className="py-20 text-center"><Loader2 className="w-12 h-12 animate-spin mx-auto text-blue-600 opacity-20" /></div>
                 ) : (
-                    templates.map(template => (
-                        <div key={template.id} className={`grid grid-cols-12 items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-blue-200 transition-all gap-4 ${template.hosts.length > 50 ? 'opacity-50 grayscale' : ''}`}>
-                            <div className="col-span-4 flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                    <Layers className="w-5 h-5" />
+                    <div className="space-y-4">
+                        {templates.length === 0 ? (
+                            <div className="py-16 text-center border-2 border-dashed border-gray-100 rounded-3xl">
+                                <Layers className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+                                <p className="text-gray-400 font-bold text-sm">No saved templates found</p>
+                            </div>
+                        ) : (
+                            templates.map(template => (
+                                <div key={template.id} className={`flex flex-col md:flex-row md:items-center gap-6 p-6 bg-gray-50/50 border border-gray-100 rounded-3xl hover:bg-white hover:border-blue-100 hover:shadow-xl transition-all duration-300 ${template.hosts.length > 50 ? 'opacity-50 grayscale' : ''}`}>
+                                    <div className="flex-1 flex items-center gap-5 min-w-0">
+                                        <div className="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-blue-600 shadow-sm shrink-0">
+                                            <Layers className="w-6 h-6" />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <h4 className="font-bold text-gray-900 text-lg truncate mb-1">{template.name}</h4>
+                                            <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
+                                                <Clock className="w-3.5 h-3.5" /> {template.lastUpdated}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="bg-white border border-gray-100 px-4 py-3 rounded-2xl inline-flex flex-col gap-1 max-w-full">
+                                            <h4 className="font-bold text-gray-700 text-sm truncate flex items-center gap-2">
+                                                <FileText className="w-4 h-4 text-blue-500/50" />
+                                                {template.reportTitle}
+                                            </h4>
+                                            <div className={`text-[10px] font-bold uppercase tracking-widest flex items-center gap-4 ${template.hosts.length > 50 ? 'text-red-500' : 'text-gray-400'}`}>
+                                                <span className="flex items-center gap-1.5"><Monitor className="w-3.5 h-3.5" /> {template.hosts.length} Hosts</span>
+                                                <span className="flex items-center gap-1.5"><Activity className="w-3.5 h-3.5" /> {template.charts.length} Charts</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-end gap-3 shrink-0">
+                                        <button
+                                            onClick={() => {
+                                                if (template.hosts.length > 50) {
+                                                    setLimitMessage('This template has ' + template.hosts.length + ' hosts, which exceeds the maximum limit of 50. Please create a new template with fewer hosts.');
+                                                    setIsLimitModalOpen(true);
+                                                    return;
+                                                }
+                                                resetConfiguration();
+                                                setSelectedHostnames(template.hosts);
+                                                setReportTitle(template.reportTitle || template.name);
+                                                setActiveReports(DEFAULT_REPORTS.map(r => ({ ...r, enabled: template.charts.some((c: any) => c.id === r.id) })));
+                                                const uniqueGroups = Array.from(new Set(template.hosts.map(h => h.group)));
+                                                setSelectedGroups(uniqueGroups);
+                                                setExpandedGroups(uniqueGroups);
+                                                setActiveAction('load-template');
+                                            }}
+                                            className={`flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs transition-all ${template.hosts.length > 50 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-100'}`}
+                                        >
+                                            Load Configuration
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                if (template.hosts.length > 50) return;
+                                                setDeleteConfirm({ isOpen: true, templateId: template.id });
+                                            }}
+                                            className={`p-3 rounded-xl transition-all ${template.hosts.length > 50 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-red-50 text-red-500 hover:bg-red-500 hover:text-white border border-red-100'}`}
+                                            title="Delete Template"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 className="font-black text-gray-900 truncate">{template.name}</h4>
-                                    <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">{template.lastUpdated}</p>
-                                </div>
-                            </div>
-                            <div className="col-span-5">
-                                <h4 className="font-bold text-gray-700 text-sm truncate flex items-center gap-2">
-                                    <FileText className="w-3.5 h-3.5 text-gray-400" />
-                                    {template.reportTitle}
-                                </h4>
-                                <p className={`text-[10px] font-bold uppercase tracking-widest mt-0.5 flex items-center gap-4 ${template.hosts.length > 50 ? 'text-red-400' : 'text-gray-400'}`}>
-                                    <span className="flex items-center gap-1.5"><Monitor className="w-3 h-3" /> {template.hosts.length} HOSTS</span>
-                                    <span className="flex items-center gap-1.5"><Layers className="w-3 h-3" /> {template.charts.length} CHARTS</span>
-                                </p>
-                            </div>
-                            <div className="col-span-3 flex items-center justify-end gap-2">
-                                <button 
-                                    onClick={() => {
-                                        if (template.hosts.length > 50) {
-                                            setLimitMessage('This template has ' + template.hosts.length + ' hosts, which exceeds the maximum limit of 50. Please create a new template with fewer hosts.');
-                                            setIsLimitModalOpen(true);
-                                            return;
-                                        }
-                                        resetConfiguration();
-                                        setSelectedHostnames(template.hosts);
-                                        setReportTitle(template.reportTitle || template.name);
-                                        setActiveReports(DEFAULT_REPORTS.map(r => ({ ...r, enabled: template.charts.some((c: any) => c.id === r.id) })));
-                                        const uniqueGroups = Array.from(new Set(template.hosts.map(h => h.group)));
-                                        setSelectedGroups(uniqueGroups);
-                                        setExpandedGroups(uniqueGroups);
-                                        setActiveAction('load-template');
-                                    }}
-                                    className={`px-4 py-2 rounded-lg font-bold text-xs transition-all ${template.hosts.length > 50 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white'}`}
-                                >
-                                    LOAD
-                                </button>
-                                <button 
-                                    onClick={() => {
-                                        if (template.hosts.length > 50) return;
-                                        setDeleteConfirm({ isOpen: true, templateId: template.id });
-                                    }}
-                                    className={`px-4 py-2 rounded-lg font-bold text-xs transition-all ${template.hosts.length > 50 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-red-50 text-red-500 hover:bg-red-600 hover:text-white'}`}
-                                >
-                                    DELETE
-                                </button>
-                            </div>
-                        </div>
-                    ))
+                            ))
+                        )}
+                    </div>
                 )}
-            </div>
-              )}
             </div>
 
             {activeAction && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                        <div className="flex items-center gap-4">
-                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm ${
-                                activeAction === 'create-template' ? 'bg-blue-600 text-white' : 
-                                activeAction === 'quick-gen' ? 'bg-slate-900 text-white' : 'bg-amber-500 text-white'
-                            }`}>
-                                {activeAction === 'create-template' ? <Layers className="w-6 h-6" /> : 
-                                 activeAction === 'quick-gen' ? <FileText className="w-6 h-6" /> : <Monitor className="w-6 h-6" />}
+                <div className="space-y-10 animate-ease-in bg-white border border-gray-100 rounded-[3rem] p-8 sm:p-12 shadow-xl shadow-gray-100/50">
+                    <div className="flex items-center justify-between border-b border-gray-50 pb-8">
+                        <div className="flex items-center gap-6">
+                            <div className={`w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg ${activeAction === 'create-template' ? 'bg-blue-600 text-white shadow-blue-100' :
+                                activeAction === 'quick-gen' ? 'bg-gray-900 text-white shadow-gray-300' : 'bg-amber-500 text-white shadow-amber-100'
+                                }`}>
+                                {activeAction === 'create-template' ? <Layers size={32} /> :
+                                    activeAction === 'quick-gen' ? <FileText size={32} /> : <Monitor size={32} />}
                             </div>
                             <div>
-                                <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight italic">
-                                    {activeAction === 'create-template' ? 'Create New Template' : 
-                                     activeAction === 'quick-gen' ? 'Quick Report Generation' : 'Edit Template & Generate'}
+                                <h3 className="text-2xl font-bold text-gray-900 tracking-tight">
+                                    {activeAction === 'create-template' ? 'Create New Template' :
+                                        activeAction === 'quick-gen' ? 'Quick Report Generation' : 'Edit Template & Generate'}
                                 </h3>
-                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Configure your report parameters below</p>
+                                <p className="text-sm text-gray-400 font-medium mt-1">Configure your report parameters and host selection below</p>
                             </div>
                         </div>
-                        <button 
+                        <button
                             onClick={() => setActiveAction(null)}
-                            className="p-3 bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-900 rounded-2xl transition-all"
+                            className="p-4 bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-900 rounded-2xl transition-all border border-gray-100"
                         >
-                            <X className="w-6 h-6" />
+                            <X size={24} />
                         </button>
                     </div>
 
                     {activeAction === 'create-template' && (
-                        <div className="bg-blue-50/50 p-6 rounded-3xl border border-blue-100 space-y-4">
-                             <div className="flex items-center gap-3 text-blue-600 border-b border-blue-100 pb-2">
-                                <FileText className="w-4 h-4" />
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.1em]">Template Details</h4>
+                        <div className="bg-blue-50/30 p-8 rounded-3xl border border-blue-100 space-y-6">
+                            <div className="flex items-center gap-3 text-blue-700">
+                                <FileText className="w-5 h-5" />
+                                <h4 className="text-xs font-bold uppercase tracking-wider">Template Identification</h4>
                             </div>
-                            <FloatingInput 
-                                label="Template Name"
+                            <FloatingInput
+                                label="New Template Name"
                                 value={newTemplateName}
                                 onChange={(e) => setNewTemplateName(e.target.value)}
-                                placeholder="Enter a descriptive name for this template..."
+                                placeholder="e.g., Monthly Batch - Application Group A"
                             />
                         </div>
                     )}
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                        <div className="lg:col-span-4 space-y-6">
+                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 items-start">
+                        <div className="xl:col-span-4">
                             <HostSelector
                                 groups={filteredGroups}
                                 selectedHosts={selectedHostnames}
@@ -464,7 +478,7 @@ const ReportExportPage = () => {
                             />
                         </div>
 
-                        <div className="lg:col-span-8 space-y-8">
+                        <div className="xl:col-span-8 space-y-10">
                             <ReportConfiguration
                                 reportTitle={reportTitle}
                                 onReportTitleChange={setReportTitle}
@@ -486,57 +500,57 @@ const ReportExportPage = () => {
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-center pt-8 border-t border-gray-100">
+                    <div className="flex items-center justify-center pt-10 border-t border-gray-50">
                         {activeAction === 'create-template' ? (
                             <button
                                 onClick={handleSaveTemplate}
                                 disabled={selectedHostnames.length === 0 || !newTemplateName}
-                                className="px-16 py-6 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-xl tracking-[0.2em] transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed uppercase flex items-center gap-4"
+                                className="w-full sm:w-auto px-16 py-6 bg-blue-600 hover:bg-blue-700 text-white rounded-3xl font-bold text-xl transition-all shadow-2xl shadow-blue-200 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-4 group"
                             >
-                                <Layers className="w-7 h-7" />
-                                SAVE TEMPLATE
+                                <Layers className="w-7 h-7 group-hover:scale-110 transition-transform" />
+                                Save Template
                             </button>
                         ) : (
                             <button
                                 onClick={handlePreviewPDF}
                                 disabled={isExporting || selectedHostnames.length === 0 || activeReports.filter(r => r.enabled).length === 0}
-                                className="px-16 py-6 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-xl tracking-[0.2em] transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed uppercase flex items-center gap-4"
+                                className="w-full sm:w-auto px-16 py-6 bg-gray-900 hover:bg-black text-white rounded-3xl font-bold text-xl transition-all shadow-2xl shadow-gray-300 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-4 group"
                             >
-                                {isExporting ? <Loader2 className="w-6 h-6 animate-spin" /> : <FileText className="w-7 h-7" />}
-                                {isExporting ? exportStatus : 'GENERATE REPORT'}
+                                {isExporting ? <Loader2 className="w-7 h-7 animate-spin" /> : <FileText className="w-7 h-7 group-hover:scale-110 transition-transform" />}
+                                {isExporting ? exportStatus : 'Generate Report'}
                             </button>
                         )}
                     </div>
                 </div>
             )}
 
-            <Modal isOpen={!!pdfUrl} onClose={() => setPdfUrl(null)} title="REPORT PREVIEW" maxWidth="max-w-6xl" onDownload={() => {
-                const link = document.createElement('a'); link.href = pdfUrl!; link.download = `MFEC_SAR_REPORT_${Date.now()}.pdf`; link.click();
+            <Modal isOpen={!!pdfUrl} onClose={() => setPdfUrl(null)} title="Report Preview" maxWidth="max-w-6xl" onDownload={() => {
+                const link = document.createElement('a'); link.href = pdfUrl!; link.download = `Metrisar_Report_${Date.now()}.pdf`; link.click();
             }}>
-                {pdfUrl && <iframe src={pdfUrl} className="w-full h-[80vh] rounded-2xl border border-gray-100 shadow-inner" title="PDF Viewer" />}
+                {pdfUrl && <iframe src={pdfUrl} className="w-full h-[80vh] rounded-3xl border border-gray-100 shadow-inner" title="PDF Viewer" />}
             </Modal>
 
-            <Modal isOpen={isLimitModalOpen} onClose={() => setIsLimitModalOpen(false)} title="HOST LIMIT REACHED">
-                <div className="p-8 text-center">
-                    <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-amber-100 shadow-sm">
-                        <AlertCircle className="w-10 h-10 text-amber-500" />
+            <Modal isOpen={isLimitModalOpen} onClose={() => setIsLimitModalOpen(false)} title="Host Limit Reached">
+                <div className="p-10 text-center">
+                    <div className="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-amber-100 shadow-inner">
+                        <AlertCircle className="w-12 h-12 text-amber-500" />
                     </div>
-                    <h3 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-tight italic">Maximum 50 Hosts</h3>
-                    <p className="text-gray-600 font-medium leading-relaxed mb-8">{limitMessage}</p>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight">Maximum 50 Hosts Allowed</h3>
+                    <p className="text-gray-500 font-medium leading-relaxed mb-10 max-w-md mx-auto">{limitMessage}</p>
                     <button
                         onClick={() => setIsLimitModalOpen(false)}
-                        className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-sm tracking-widest transition-all shadow-lg active:scale-[0.98] uppercase"
+                        className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-2xl font-bold text-base transition-all shadow-xl shadow-gray-200 active:scale-[0.98]"
                     >
-                        Understand
+                        I Understand
                     </button>
                 </div>
             </Modal>
 
-            <ConfirmModal 
+            <ConfirmModal
                 isOpen={deleteConfirm.isOpen}
                 onClose={() => setDeleteConfirm({ isOpen: false, templateId: null })}
-                title="DELETE TEMPLATE"
-                message="Are you sure you want to delete this template? This action cannot be undone."
+                title="Delete Template"
+                message="Are you sure you want to delete this template? This action cannot be undone and will remove all saved configurations."
                 onConfirm={async () => {
                     if (deleteConfirm.templateId) {
                         try {

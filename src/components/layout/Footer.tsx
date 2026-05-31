@@ -1,7 +1,11 @@
 const Footer = () => {
   return (
-    <footer className="w-full py-4 text-center text-sm text-gray-500 bg-gray-50 border-t border-gray-100">
-      <p>© {new Date().getFullYear()} METRISAR Dashboard | Developed by Passakorn Jonlapon</p>
+    <footer className="w-full py-8 text-center bg-transparent border-t border-gray-100/50">
+      <div className="max-w-7xl mx-auto px-4">
+        <p className="text-sm font-medium text-gray-400">
+          &copy; {new Date().getFullYear()} Metrisar Dashboard &bull; Designed by Passakorn Jonlapon
+        </p>
+      </div>
     </footer>
   );
 };

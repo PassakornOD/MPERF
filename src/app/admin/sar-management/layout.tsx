@@ -16,13 +16,13 @@ export default function SarManagementLayout({ children }: { children: React.Reac
 
   return (
     <div className="max-w-7xl mx-auto py-8">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tight">SAR Management</h1>
-          <p className="text-sm font-bold text-gray-400 mt-2">Centralized administration for SAR data explorer and ingestion</p>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">Sar Management</h1>
+          <p className="text-sm font-medium text-gray-400 mt-1">Centralized administration for data explorer and ingestion</p>
         </div>
 
-        <div className="bg-gray-100 p-1 rounded-2xl flex">
+        <div className="bg-gray-100 p-1 rounded-2xl flex w-fit">
           {tabs.map((tab) => {
             const isActive = pathname.startsWith(tab.href);
             return (

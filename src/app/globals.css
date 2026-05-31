@@ -1,37 +1,101 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f9fafb;
+  --foreground: #111827;
+  --card: #ffffff;
+  --border: #e5e7eb;
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --muted: #6b7280;
+  --radius: 1rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #030712;
+    --foreground: #f9fafb;
+    --card: #111827;
+    --border: #1f2937;
+    --muted: #9ca3af;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.admin-container {
-  font-size: 0.75rem; /* text-xs */
+/* Custom Utilities for Modern UI */
+.modern-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  transition: all 0.2s ease-in-out;
 }
 
-.admin-container h1, .admin-container h2, .admin-container h3, .admin-container h4 {
-  font-size: 0.75rem; /* text-xs */
+.modern-card:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.responsive-container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-container { padding-left: 1.5rem; padding-right: 1.5rem; }
+}
+
+@media (min-width: 1024px) {
+  .responsive-container { padding-left: 2rem; padding-right: 2rem; }
+}
+
+/* Typography Helpers */
+.title-case {
+  text-transform: capitalize;
+}
+
+.heading-lg {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
   font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+@media (min-width: 768px) {
+  .heading-lg { font-size: 1.25rem; line-height: 1.75rem; }
+}
+
+/* Highcharts Style Protection */
+.highcharts-container {
+  font-family: var(--font-sans) !important;
+}
+
+.highcharts-title {
+  fill: var(--foreground) !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
 }
 
 @keyframes slideDown {
