@@ -39,7 +39,7 @@ export class PdfGeneratorService {
     }
   }
 
-  static generateHTML(payload: ReportPayload, pageMap: Record<string, number> = {}, logoBase64: string = '', totalLogicalPages: number = 0, options: { skipCover?: boolean, skipTOC?: boolean, skipGroupCover?: boolean, skipStats?: boolean, skipCharts?: boolean, skipContent?: boolean, groupIndexOffset?: number, hostIndexOffset?: number, pageOffset?: number, totalFullPages?: number } = {}): { html: string, chartsToRender: ChartToRender[] } {
+  static generateHTML(payload: ReportPayload, pageMap: Record<string, number> = {}, logoBase64: string = '', options: { skipCover?: boolean, skipTOC?: boolean, skipGroupCover?: boolean, skipStats?: boolean, skipCharts?: boolean, skipContent?: boolean, groupIndexOffset?: number, hostIndexOffset?: number, pageOffset?: number, totalFullPages?: number } = {}): { html: string, chartsToRender: ChartToRender[] } {
     const months = Array.from({ length: 12 }, (_, i) => {
       const d = new Date();
       if (payload.targetYear && payload.targetMonth) {
@@ -88,14 +88,11 @@ export class PdfGeneratorService {
 
     const displayHostgroups = payload.hostgroups;
 
-    const getLogicalFooter = (id: string, isReportingPage: boolean = true) => {
+    const getLogicalFooter = (id: string) => {
       if (!pageMap[id]) return '';
       const logicalPage = pageMap[id] - offset;
-      // Allow pages even if logicalPage <= 0 if they are part of the report structure, 
-      // but only number them if they are > 0.
       if (logicalPage <= 0) return '';
-      const displayPage = logicalPage;
-      return `<div class="footer">Page ${displayPage}</div>`;
+      return `<div class="footer">Page ${logicalPage}</div>`;
     };
 
     const chartsToRender: ChartToRender[] = [];
@@ -194,8 +191,6 @@ export class PdfGeneratorService {
           if (hosts.length <= maxCombinedRows) {
             runningPageCount++;
             const pageId = `group-stats-${currentGi}`;
-            const displayPage = pageMap[pageId] || runningPageCount;
-            const totalDisplay = options.totalFullPages || totalLogicalPages;
             groupHtml += `
                   <div id="${pageId}" class="page-break">
                     ${getLogicalFooter(pageId)}
@@ -229,8 +224,6 @@ export class PdfGeneratorService {
             cpuPages.forEach((chunk, cpIndex) => {
               runningPageCount++;
               const pageId = cpIndex === 0 ? `group-stats-${currentGi}` : `group-stats-${currentGi}-cpu-${cpIndex}`;
-              const displayPage = pageMap[pageId] || runningPageCount;
-              const totalDisplay = options.totalFullPages || totalLogicalPages;
               groupHtml += `
                     <div id="${pageId}" class="page-break">
                       ${getLogicalFooter(pageId)}
@@ -256,8 +249,6 @@ export class PdfGeneratorService {
             memPages.forEach((chunk, mpIndex) => {
               runningPageCount++;
               const pageId = `group-stats-${currentGi}-mem-${mpIndex}`;
-              const displayPage = pageMap[pageId] || runningPageCount;
-              const totalDisplay = options.totalFullPages || totalLogicalPages;
               groupHtml += `
                     <div id="${pageId}" class="page-break">
                       ${getLogicalFooter(pageId)}
@@ -287,7 +278,7 @@ export class PdfGeneratorService {
               runningPageCount++;
               const pageId = `host-${currentGi}-${currentHi}${pi === 0 ? '' : '-p' + pi}`;
               const displayPage = pageMap[pageId] || runningPageCount;
-              const totalDisplay = options.totalFullPages || totalLogicalPages;
+              const totalDisplay = options.totalFullPages || 0;
               return `
                     <div id="${pageId}" class="page-break">
                       ${getLogicalFooter(pageId)}
@@ -427,7 +418,7 @@ export class PdfGeneratorService {
 
       const logoBase64 = this.getLogoBase64();
       const initialPageMap = options.pageMap || {};
-      const firstPass = this.generateHTML(payload, initialPageMap, logoBase64, options.totalFullPages || 0, options);
+      const firstPass = this.generateHTML(payload, initialPageMap, logoBase64, options);
       await page.setContent(firstPass.html, { waitUntil: 'domcontentloaded', timeout: 600000 });
 
       const CHUNK_SIZE = 50;
@@ -491,7 +482,7 @@ export class PdfGeneratorService {
       // Use provided pageOffset if available, otherwise use calculated offset from first pass.
       const forcedOffset = options.pageOffset !== undefined ? options.pageOffset : calculatedOffset;
       const finalPageMap = { ...initialPageMap, ...adjustedResultMap };
-      const finalPass = this.generateHTML(payload, finalPageMap, logoBase64, result.totalPhysicalPages - forcedOffset, { ...options, pageOffset: forcedOffset });
+      const finalPass = this.generateHTML(payload, finalPageMap, logoBase64, { ...options, pageOffset: forcedOffset });
       await page.setContent(finalPass.html, { waitUntil: 'domcontentloaded', timeout: 600000 });
 
       for (let i = 0; i < finalPass.chartsToRender.length; i += CHUNK_SIZE) {
