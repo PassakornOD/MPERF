@@ -9,7 +9,7 @@ export default function FaqLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
-  const username = (session?.user as any)?.name;
+  const username = (session?.user as { name?: string | null })?.name;
   
   const isAuthorized = username && ['sysreport', 'mfadmin'].includes(username.toLowerCase());
 

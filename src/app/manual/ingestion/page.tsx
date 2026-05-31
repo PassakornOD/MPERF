@@ -4,11 +4,11 @@ import fs from 'fs';
 import path from 'path';
 
 export default async function IngestionManualPage() {
-  const filePath = path.resolve(process.cwd(), '..', 'INGESTION_MANUAL.md');
+  const filePath = path.resolve(process.cwd(), 'INGESTION_MANUAL.md');
   
   if (!fs.existsSync(filePath)) {
-    // If not found, maybe we are in the root directory already?
-    const fallbackPath = path.resolve(process.cwd(), 'INGESTION_MANUAL.md');
+    // If not found, maybe we are in a sub-folder and need to look up?
+    const fallbackPath = path.resolve(process.cwd(), '..', 'INGESTION_MANUAL.md');
     if (fs.existsSync(fallbackPath)) {
       return (
         <div className="container mx-auto px-6 py-12 max-w-4xl">
