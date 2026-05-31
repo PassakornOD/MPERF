@@ -315,7 +315,7 @@ const ReportExportPage = () => {
                                 resetConfiguration();
                                 setActiveAction('create-template');
                             }}
-                            className={`flex-1 sm:flex-none px-6 py-3.5 rounded-2xl font-bold text-sm transition-all shadow-sm ${activeAction === 'create-template' ? 'bg-blue-600 text-white shadow-blue-100' : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-100'}`}
+                            className={`px-4 py-2 rounded-lg font-bold text-[10px] transition-all shadow-sm ${activeAction === 'create-template' ? 'bg-blue-600 text-white shadow-blue-100' : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-100'}`}
                         >
                             Create Template
                         </button>
@@ -324,18 +324,18 @@ const ReportExportPage = () => {
                                 resetConfiguration();
                                 setActiveAction('quick-gen');
                             }}
-                            className={`flex-1 sm:flex-none px-6 py-3.5 rounded-2xl font-bold text-sm transition-all shadow-sm ${activeAction === 'quick-gen' ? 'bg-gray-900 text-white shadow-gray-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'}`}
+                            className={`px-4 py-2 rounded-lg font-bold text-[10px] transition-all shadow-sm ${activeAction === 'quick-gen' ? 'bg-gray-900 text-white shadow-gray-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'}`}
                         >
                             Quick Report
                         </button>
                     </div>
-                    <div className="flex items-center gap-4 bg-white px-5 py-3 rounded-[1.5rem] border border-gray-100 shadow-sm">
-                        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-                            <CheckCircle2 className="w-5 h-5" />
+                    <div className="flex items-center gap-3 bg-white px-3 py-2 rounded-lg border border-gray-100 shadow-sm">
+                        <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+                            <CheckCircle2 className="w-4 h-4" />
                         </div>
                         <div>
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">Selection</p>
-                            <p className="text-sm font-bold text-gray-900 leading-none">{selectedHostnames.length} Hosts</p>
+                            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-0.5">Selection</p>
+                            <p className="text-xs font-bold text-gray-900 leading-none">{selectedHostnames.length} Hosts</p>
                         </div>
                     </div>
                 </div>
@@ -356,32 +356,32 @@ const ReportExportPage = () => {
                                 <p className="text-gray-400 font-bold text-sm">No saved templates found</p>
                             </div>
                         ) : (
-                            templates.map(template => (
-                                <div key={template.id} className={`flex flex-col md:flex-row md:items-center gap-6 p-6 bg-gray-50/50 border border-gray-100 rounded-3xl hover:bg-white hover:border-blue-100 hover:shadow-xl transition-all duration-300 ${template.hosts.length > 50 ? 'opacity-50 grayscale' : ''}`}>
-                                    <div className="flex-1 flex items-center gap-5 min-w-0">
-                                        <div className="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-blue-600 shadow-sm shrink-0">
-                                            <Layers className="w-6 h-6" />
+                        templates.map(template => (
+                                <div key={template.id} className={`flex flex-col md:flex-row md:items-center gap-4 p-4 bg-gray-50/50 border border-gray-100 rounded-xl hover:bg-white hover:border-blue-100 hover:shadow transition-all duration-300 ${template.hosts.length > 50 ? 'opacity-50 grayscale' : ''}`}>
+                                    <div className="flex-1 flex items-center gap-3 min-w-0">
+                                        <div className="w-10 h-10 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-blue-600 shadow-sm shrink-0">
+                                            <Layers className="w-4 h-4" />
                                         </div>
                                         <div className="min-w-0">
-                                            <h4 className="font-bold text-gray-900 text-lg truncate mb-1">{template.name}</h4>
-                                            <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
-                                                <Clock className="w-3.5 h-3.5" /> {template.lastUpdated}
+                                            <h4 className="font-bold text-gray-900 text-xs truncate mb-0.5">{template.name}</h4>
+                                            <div className="flex items-center gap-1.5 text-[9px] font-semibold text-gray-400">
+                                                <Clock className="w-3 h-3" /> {template.lastUpdated}
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex-1">
-                                        <div className="bg-white border border-gray-100 px-4 py-3 rounded-2xl inline-flex flex-col gap-1 max-w-full">
-                                            <h4 className="font-bold text-gray-700 text-sm truncate flex items-center gap-2">
-                                                <FileText className="w-4 h-4 text-blue-500/50" />
+                                        <div className="bg-white border border-gray-100 px-3 py-2 rounded-lg inline-flex flex-col gap-0.5 max-w-full">
+                                            <h4 className="font-bold text-gray-700 text-[10px] truncate flex items-center gap-1.5">
+                                                <FileText className="w-3 h-3 text-blue-500/50" />
                                                 {template.reportTitle}
                                             </h4>
-                                            <div className={`text-[10px] font-bold uppercase tracking-widest flex items-center gap-4 ${template.hosts.length > 50 ? 'text-red-500' : 'text-gray-400'}`}>
-                                                <span className="flex items-center gap-1.5"><Monitor className="w-3.5 h-3.5" /> {template.hosts.length} Hosts</span>
-                                                <span className="flex items-center gap-1.5"><Activity className="w-3.5 h-3.5" /> {template.charts.length} Charts</span>
+                                            <div className={`text-[9px] font-bold uppercase tracking-widest flex items-center gap-3 ${template.hosts.length > 50 ? 'text-red-500' : 'text-gray-400'}`}>
+                                                <span className="flex items-center gap-1"><Monitor className="w-3 h-3" /> {template.hosts.length} Hosts</span>
+                                                <span className="flex items-center gap-1"><Activity className="w-3 h-3" /> {template.charts.length} Charts</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center justify-end gap-3 shrink-0">
+                                    <div className="flex items-center justify-end gap-2 shrink-0">
                                         <button
                                             onClick={() => {
                                                 if (template.hosts.length > 50) {
@@ -398,19 +398,19 @@ const ReportExportPage = () => {
                                                 setExpandedGroups(uniqueGroups);
                                                 setActiveAction('load-template');
                                             }}
-                                            className={`flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs transition-all ${template.hosts.length > 50 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-100'}`}
+                                            className={`px-4 py-2 rounded-lg font-bold text-[10px] transition-all ${template.hosts.length > 50 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
                                         >
-                                            Load Configuration
+                                            Load
                                         </button>
                                         <button
                                             onClick={() => {
                                                 if (template.hosts.length > 50) return;
                                                 setDeleteConfirm({ isOpen: true, templateId: template.id });
                                             }}
-                                            className={`p-3 rounded-xl transition-all ${template.hosts.length > 50 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-red-50 text-red-500 hover:bg-red-500 hover:text-white border border-red-100'}`}
+                                            className={`p-2 rounded-lg transition-all ${template.hosts.length > 50 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-red-50 text-red-500 hover:bg-red-500 hover:text-white border border-red-100'}`}
                                             title="Delete Template"
                                         >
-                                            <Trash2 className="w-5 h-5" />
+                                            <Trash2 className="w-4 h-4" />
                                         </button>
                                     </div>
                                 </div>
@@ -421,47 +421,47 @@ const ReportExportPage = () => {
             </div>
 
             {activeAction && (
-                <div className="space-y-10 animate-ease-in bg-white border border-gray-100 rounded-[3rem] p-8 sm:p-12 shadow-xl shadow-gray-100/50">
-                    <div className="flex items-center justify-between border-b border-gray-50 pb-8">
-                        <div className="flex items-center gap-6">
-                            <div className={`w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg ${activeAction === 'create-template' ? 'bg-blue-600 text-white shadow-blue-100' :
-                                activeAction === 'quick-gen' ? 'bg-gray-900 text-white shadow-gray-300' : 'bg-amber-500 text-white shadow-amber-100'
+                <div className="space-y-6 animate-ease-in bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+                    <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                        <div className="flex items-center gap-4">
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${activeAction === 'create-template' ? 'bg-blue-600 text-white' :
+                                activeAction === 'quick-gen' ? 'bg-gray-900 text-white' : 'bg-amber-500 text-white'
                                 }`}>
-                                {activeAction === 'create-template' ? <Layers size={32} /> :
-                                    activeAction === 'quick-gen' ? <FileText size={32} /> : <Monitor size={32} />}
+                                {activeAction === 'create-template' ? <Layers size={20} /> :
+                                    activeAction === 'quick-gen' ? <FileText size={20} /> : <Monitor size={20} />}
                             </div>
                             <div>
-                                <h3 className="text-2xl font-bold text-gray-900 tracking-tight">
+                                <h3 className="text-sm font-bold text-gray-900 tracking-tight">
                                     {activeAction === 'create-template' ? 'Create New Template' :
                                         activeAction === 'quick-gen' ? 'Quick Report Generation' : 'Edit Template & Generate'}
                                 </h3>
-                                <p className="text-sm text-gray-400 font-medium mt-1">Configure your report parameters and host selection below</p>
+                                <p className="text-[10px] text-gray-400 font-medium mt-0.5">Configure report parameters and host selection.</p>
                             </div>
                         </div>
                         <button
                             onClick={() => setActiveAction(null)}
-                            className="p-4 bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-900 rounded-2xl transition-all border border-gray-100"
+                            className="p-2 bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-all border border-gray-100"
                         >
-                            <X size={24} />
+                            <X size={16} />
                         </button>
                     </div>
 
                     {activeAction === 'create-template' && (
-                        <div className="bg-blue-50/30 p-8 rounded-3xl border border-blue-100 space-y-6">
-                            <div className="flex items-center gap-3 text-blue-700">
-                                <FileText className="w-5 h-5" />
-                                <h4 className="text-xs font-bold uppercase tracking-wider">Template Identification</h4>
+                        <div className="bg-blue-50/30 p-4 rounded-xl border border-blue-100 space-y-3">
+                            <div className="flex items-center gap-2 text-blue-700">
+                                <FileText className="w-3.5 h-3.5" />
+                                <h4 className="text-[10px] font-bold uppercase tracking-wider">Template Identification</h4>
                             </div>
                             <FloatingInput
                                 label="New Template Name"
                                 value={newTemplateName}
                                 onChange={(e) => setNewTemplateName(e.target.value)}
-                                placeholder="e.g., Monthly Batch - Application Group A"
+                                placeholder="e.g., Monthly Batch - App Group A"
                             />
                         </div>
                     )}
 
-                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 items-start">
+                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
                         <div className="xl:col-span-4">
                             <HostSelector
                                 groups={filteredGroups}
@@ -478,7 +478,7 @@ const ReportExportPage = () => {
                             />
                         </div>
 
-                        <div className="xl:col-span-8 space-y-10">
+                        <div className="xl:col-span-8 space-y-6">
                             <ReportConfiguration
                                 reportTitle={reportTitle}
                                 onReportTitleChange={setReportTitle}
@@ -500,23 +500,22 @@ const ReportExportPage = () => {
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-center pt-10 border-t border-gray-50">
+                    <div className="flex items-center justify-center pt-4 border-t border-gray-100">
                         {activeAction === 'create-template' ? (
                             <button
                                 onClick={handleSaveTemplate}
                                 disabled={selectedHostnames.length === 0 || !newTemplateName}
-                                className="w-full sm:w-auto px-16 py-6 bg-blue-600 hover:bg-blue-700 text-white rounded-3xl font-bold text-xl transition-all shadow-2xl shadow-blue-200 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-4 group"
+                                className="px-10 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition-all shadow-sm disabled:opacity-50 flex items-center gap-2"
                             >
-                                <Layers className="w-7 h-7 group-hover:scale-110 transition-transform" />
-                                Save Template
+                                <Layers className="w-4 h-4" /> Save Template
                             </button>
                         ) : (
                             <button
                                 onClick={handlePreviewPDF}
                                 disabled={isExporting || selectedHostnames.length === 0 || activeReports.filter(r => r.enabled).length === 0}
-                                className="w-full sm:w-auto px-16 py-6 bg-gray-900 hover:bg-black text-white rounded-3xl font-bold text-xl transition-all shadow-2xl shadow-gray-300 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-4 group"
+                                className="px-10 py-3 bg-gray-900 hover:bg-black text-white rounded-xl font-bold text-xs transition-all shadow-sm disabled:opacity-50 flex items-center gap-2"
                             >
-                                {isExporting ? <Loader2 className="w-7 h-7 animate-spin" /> : <FileText className="w-7 h-7 group-hover:scale-110 transition-transform" />}
+                                {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
                                 {isExporting ? exportStatus : 'Generate Report'}
                             </button>
                         )}

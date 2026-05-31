@@ -423,14 +423,14 @@ const BatchReportPage = () => {
 
     return (
         <div className="max-w-6xl mx-auto space-y-10 animate-ease-in">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white p-8 sm:p-10 rounded-[2.5rem] shadow-sm border border-gray-100 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none"><FileText size={120} /></div>
-                <div className="relative z-10 space-y-2">
-                    <h2 className="text-xl font-bold text-gray-900 tracking-tight">Batch Reports</h2>
-                    <p className="text-sm font-medium text-gray-400">Select a template and trigger background batch report generation jobs.</p>
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none"><FileText size={60} /></div>
+                <div className="relative z-10 space-y-1">
+                    <h2 className="text-lg font-bold text-gray-900 tracking-tight">Batch Reports</h2>
+                    <p className="text-gray-500 font-medium text-xs">Trigger background batch report generation jobs.</p>
                 </div>
-                <button onClick={() => { setEditingTemplateId(null); setTemplateName(''); setReportTitle(''); setSelectedHostnames([]); setStep(1); setIsModalOpen(true); }} className="relative z-10 flex items-center justify-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold text-sm transition-all hover:bg-blue-700 shadow-xl shadow-blue-100 group">
-                    <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" /> Create New Template
+                <button onClick={() => { setEditingTemplateId(null); setTemplateName(''); setReportTitle(''); setSelectedHostnames([]); setStep(1); setIsModalOpen(true); }} className="relative z-10 flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition-all hover:bg-blue-700 shadow-sm shadow-blue-100 group">
+                    <Plus className="w-4 h-4" /> Create Template
                 </button>
             </div>
 
@@ -442,61 +442,64 @@ const BatchReportPage = () => {
                 {isLoadingTemplates ? (
                     <div className="py-20 text-center bg-white rounded-[2rem] border border-gray-100 shadow-sm"><Loader2 className="w-10 h-10 animate-spin mx-auto text-blue-600" /></div>
                 ) : templates.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 gap-3">
                         {templates.map((template) => (
-                            <div key={template.id} className="flex flex-col md:flex-row md:items-center gap-6 bg-white p-6 sm:p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl hover:border-blue-100 transition-all group">
+                            <div key={template.id} className="flex flex-col md:flex-row md:items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all group">
                                 {/* Col 1 */}
-                                <div className="flex items-center gap-5 min-w-[250px]">
-                                    <div className="bg-blue-50 p-4 rounded-2xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                        <FileText className="w-7 h-7" />
+                                <div className="flex items-center gap-3 min-w-[200px]">
+                                    <div className="bg-blue-50 p-2.5 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                        <FileText className="w-4 h-4" />
                                     </div>
                                     <div className="flex flex-col">
-                                        <h4 className="font-bold text-gray-900 text-lg leading-tight">{template.name}</h4>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <p className="text-xs text-gray-400 font-semibold">{template.lastUpdated}</p>
+                                        <div className="flex items-center gap-2">
+                                            <h4 className="font-bold text-gray-900 text-sm leading-tight">{template.name}</h4>
+                                            <span className="bg-gray-100 text-gray-500 text-[9px] font-bold px-1.5 py-0.5 rounded">ID: {template.id}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 mt-0.5">
+                                            <p className="text-[10px] text-gray-400 font-semibold">{template.lastUpdated}</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Col 2 */}
-                                <div className="flex flex-col gap-3 flex-1">
-                                    <div className="flex items-center gap-2 text-blue-700 bg-blue-50/50 px-4 py-2 rounded-xl border border-blue-50 w-fit">
-                                        <Heading1 className="w-4 h-4" />
-                                        <span className="text-xs font-bold truncate max-w-[200px]">{template.reportTitle || 'No Title'}</span>
+                                <div className="flex flex-col gap-1.5 flex-1">
+                                    <div className="flex items-center gap-2 text-blue-700 bg-blue-50/50 px-3 py-1 rounded-lg border border-blue-50 w-fit">
+                                        <Heading1 className="w-3 h-3" />
+                                        <span className="text-[10px] font-bold truncate max-w-[200px]">{template.reportTitle || 'No Title'}</span>
                                     </div>
-                                    <div className="flex flex-wrap gap-3">
-                                        <span className="bg-gray-50 text-gray-600 px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-2 border border-gray-100">
-                                            <Server className="w-4 h-4 text-gray-400" /> {template.hosts.length} Hosts
+                                    <div className="flex flex-wrap gap-2">
+                                        <span className="bg-gray-50 text-gray-600 px-3 py-0.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 border border-gray-100">
+                                            <Server className="w-3.5 h-3.5 text-gray-400" /> {template.hosts.length} Hosts
                                         </span>
-                                        <span className="bg-gray-50 text-gray-600 px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-2 border border-gray-100">
-                                            <BarChart3 className="w-4 h-4 text-gray-400" /> {template.charts.length} Charts
+                                        <span className="bg-gray-50 text-gray-600 px-3 py-0.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 border border-gray-100">
+                                            <BarChart3 className="w-3.5 h-3.5 text-gray-400" /> {template.charts.length} Charts
                                         </span>
                                     </div>
                                 </div>
 
                                 {/* Col 3 */}
-                                <div className="flex flex-wrap items-center gap-3">
+                                <div className="flex flex-wrap items-center gap-2">
                                     <button
                                         onClick={() => handleGenerateReport(template)}
-                                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white text-blue-600 border border-blue-100 px-5 py-3 rounded-xl text-xs font-bold hover:bg-blue-50 transition-all shadow-sm"
+                                        className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-white text-blue-600 border border-blue-100 px-4 py-2 rounded-lg text-[10px] font-bold hover:bg-blue-50 transition-all shadow-sm"
                                     >
-                                        <FileText className="w-4 h-4" /> Preview
+                                        <FileText className="w-3.5 h-3.5" /> Preview
                                     </button>
                                     <button
                                         onClick={() => { setSelectedTemplateForBg(template); setIsBackgroundModalOpen(true); }}
-                                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gray-900 text-white px-5 py-3 rounded-xl text-xs font-bold hover:bg-gray-800 transition-all shadow-lg"
+                                        className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-gray-900 text-white px-4 py-2 rounded-lg text-[10px] font-bold hover:bg-gray-800 transition-all shadow-md"
                                     >
-                                        <Zap className="w-4 h-4 text-yellow-400" /> Start Batch
+                                        <Zap className="w-3.5 h-3.5 text-yellow-400" /> Start
                                     </button>
                                     <div className="relative">
-                                        <button onClick={() => setActiveDropdown(activeDropdown === template.id ? null : template.id)} className="p-3 hover:bg-gray-100 rounded-xl transition-all border border-transparent hover:border-gray-200"><MoreVertical className="w-5 h-5 text-gray-400" /></button>
+                                        <button onClick={() => setActiveDropdown(activeDropdown === template.id ? null : template.id)} className="p-2 hover:bg-gray-100 rounded-lg transition-all border border-transparent hover:border-gray-200"><MoreVertical className="w-4 h-4 text-gray-400" /></button>
                                         {activeDropdown === template.id && (
-                                            <div className="absolute right-0 top-full mt-2 w-40 bg-white rounded-2xl border border-gray-100 shadow-2xl z-[60] overflow-hidden p-1.5 animate-ease-in">
-                                                <button onClick={() => { handleEditTemplate(template); setActiveDropdown(null); }} className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-all">
-                                                    <Edit2 className="w-4 h-4" /> Edit Template
+                                            <div className="absolute right-0 top-full mt-1 w-32 bg-white rounded-xl border border-gray-100 shadow-xl z-[60] overflow-hidden p-1 animate-ease-in">
+                                                <button onClick={() => { handleEditTemplate(template); setActiveDropdown(null); }} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] font-bold text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all">
+                                                    <Edit2 className="w-3.5 h-3.5" /> Edit
                                                 </button>
-                                                <button onClick={() => { handleDeleteTemplate(template.id); setActiveDropdown(null); }} className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all">
-                                                    <Trash2 className="w-4 h-4" /> Delete
+                                                <button onClick={() => { handleDeleteTemplate(template.id); setActiveDropdown(null); }} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] font-bold text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                                    <Trash2 className="w-3.5 h-3.5" /> Delete
                                                 </button>
                                             </div>
                                         )}
@@ -514,65 +517,62 @@ const BatchReportPage = () => {
             </div>
 
             {/* Background Jobs Section */}
-            <div className="pt-10 space-y-8">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-yellow-100 rounded-2xl text-yellow-600">
-                            <Activity size={24} />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900 tracking-tight">Batch Job Status</h3>
+            <div className="pt-4 space-y-3">
+                <div className="flex items-center justify-between px-2">
+                    <div className="flex items-center gap-2 text-gray-900">
+                        <Activity size={16} className="text-yellow-600" />
+                        <h3 className="text-xs font-bold">Batch Job Status</h3>
                     </div>
-                    <span className="bg-gray-900 text-white px-5 py-2 rounded-full text-xs font-bold shadow-lg shadow-gray-200">{backgroundJobs.length} Recent Jobs</span>
+                    <span className="bg-gray-900 text-white px-3 py-1 rounded-full text-[9px] font-bold">{backgroundJobs.length} Recent Jobs</span>
                 </div>
 
-                <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+                <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse min-w-[800px]">
+                        <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-gray-50/50 text-xs font-bold text-gray-400 border-b border-gray-100">
-                                    <th className="px-8 py-6">Request Time</th>
-                                    <th className="px-8 py-6">Template Name</th>
-                                    <th className="px-8 py-6">Status / Progress</th>
-                                    <th className="px-8 py-6 text-right">Actions</th>
+                                <tr className="bg-gray-50/50 text-[9px] font-bold text-gray-400 border-b border-gray-100">
+                                    <th className="px-4 py-3">Time</th>
+                                    <th className="px-4 py-3">Template</th>
+                                    <th className="px-4 py-3">Status / Progress</th>
+                                    <th className="px-4 py-3 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
                                 {backgroundJobs.length > 0 ? (
                                     [...backgroundJobs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).map((job) => (
                                         <tr key={job.id} className="hover:bg-gray-50/30 transition-colors">
-                                            <td className="px-8 py-6 text-xs font-semibold text-gray-500">{job.timestamp}</td>
-                                            <td className="px-8 py-6">
-                                                <p className="font-bold text-gray-900 text-sm leading-tight mb-1">{job.templateName}</p>
-                                                <p className="text-[10px] text-gray-400 font-medium">Job: {job.id.slice(0, 8)}</p>
+                                            <td className="px-4 py-3 text-[10px] font-semibold text-gray-500">{job.timestamp}</td>
+                                            <td className="px-4 py-3">
+                                                <p className="font-bold text-gray-900 text-[10px] leading-tight">{job.templateName}</p>
+                                                <p className="text-[9px] text-gray-400 font-medium">Job: {job.id.slice(0, 8)}</p>
                                             </td>
-                                            <td className="px-8 py-6">
-                                                <div className="flex flex-col gap-2.5">
-                                                    <div className="flex items-center gap-2">
-                                                        {job.status === 'processing' && <Loader2 className="w-4 h-4 animate-spin text-blue-600" />}
-                                                        {job.status === 'completed' && <CheckCircle className="w-4 h-4 text-green-500" />}
-                                                        {job.status === 'failed' && <AlertCircle className="w-4 h-4 text-red-500" />}
-                                                        <span className={`text-xs font-bold capitalize ${job.status === 'completed' ? 'text-green-600' :
+                                            <td className="px-4 py-3">
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="flex items-center gap-1.5">
+                                                        {job.status === 'processing' && <Loader2 className="w-3 h-3 animate-spin text-blue-600" />}
+                                                        {job.status === 'completed' && <CheckCircle className="w-3 h-3 text-green-500" />}
+                                                        {job.status === 'failed' && <AlertCircle className="w-3 h-3 text-red-500" />}
+                                                        <span className={`text-[10px] font-bold capitalize ${job.status === 'completed' ? 'text-green-600' :
                                                             job.status === 'failed' ? 'text-red-600' : 'text-blue-600'
                                                             }`}>{job.status === 'processing' ? `Processing ${job.progress}%` : job.status}</span>
                                                     </div>
-                                                    <div className="w-48 h-2 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                                                    <div className="w-24 h-1 bg-gray-100 rounded-full overflow-hidden shadow-inner">
                                                         <div className={`h-full transition-all duration-700 ease-out ${job.status === 'completed' ? 'bg-green-500' :
-                                                            job.status === 'failed' ? 'bg-red-500' : 'bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.4)]'
+                                                            job.status === 'failed' ? 'bg-red-500' : 'bg-blue-600'
                                                             }`} style={{ width: `${job.progress}%` }}></div>
                                                     </div>
-                                                    {job.message && <p className="text-[11px] text-gray-400 font-medium italic max-w-xs truncate">{job.message}</p>}
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-6 text-right">
-                                                <div className="flex justify-end gap-2">
+                                            <td className="px-4 py-3 text-right">
+                                                <div className="flex justify-end gap-1.5">
                                                     {job.status === 'completed' && job.pdfPath ? (
                                                         <>
                                                             <a
                                                                 href={`/api/run-report/download?filePath=${encodeURIComponent(job.pdfPath)}`}
                                                                 download
-                                                                className="inline-flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-green-600 hover:text-white transition-all border border-green-100 shadow-sm"
+                                                                className="inline-flex items-center gap-1 bg-green-50 text-green-600 px-2 py-1 rounded-lg text-[9px] font-bold hover:bg-green-600 hover:text-white transition-all border border-green-100 shadow-sm"
                                                             >
-                                                                <Download className="w-4 h-4" /> Download
+                                                                <Download className="w-3 h-3" /> Download
                                                             </a>
                                                             <button
                                                                 onClick={async () => {
@@ -584,15 +584,15 @@ const BatchReportPage = () => {
                                                                         showToast("Failed to delete file", 'error');
                                                                     }
                                                                 }}
-                                                                className="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm"
+                                                                className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm"
                                                                 title="Delete File"
                                                             >
-                                                                <Trash2 className="w-4 h-4" />
+                                                                <Trash2 className="w-3 h-3" />
                                                             </button>
                                                         </>
                                                     ) : (
-                                                        <div className="px-4 py-2.5 bg-gray-50 text-gray-400 rounded-xl text-xs font-bold border border-gray-100 opacity-60 flex items-center gap-2">
-                                                            <Clock className="w-4 h-4" /> Pending
+                                                        <div className="px-2 py-1 bg-gray-50 text-gray-400 rounded-lg text-[9px] font-bold border border-gray-100 opacity-60 flex items-center gap-1">
+                                                            <Clock className="w-3 h-3" /> Pending
                                                         </div>
                                                     )}
                                                 </div>
@@ -601,12 +601,7 @@ const BatchReportPage = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={4} className="px-8 py-24 text-center">
-                                            <div className="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                                                <Activity className="w-8 h-8 text-gray-200" />
-                                            </div>
-                                            <p className="text-sm font-bold text-gray-400">No batch jobs found in the last 24 hours</p>
-                                        </td>
+                                        <td colSpan={4} className="px-4 py-8 text-center text-[10px] text-gray-400">No batch jobs</td>
                                     </tr>
                                 )}
                             </tbody>

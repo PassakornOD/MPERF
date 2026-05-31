@@ -98,43 +98,43 @@ const InventoryList = () => {
       ) : (
         <div className="grid grid-cols-1 gap-6">
           {filteredHostgroups?.map((hg: any) => (
-            <div key={hg.hostgroup_id} className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm transition-all hover:shadow-xl hover:border-blue-100 group overflow-hidden">
+            <div key={hg.hostgroup_id} className="bg-white rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-blue-100 group overflow-hidden">
               <div 
-                className="p-8 cursor-pointer flex items-center justify-between gap-4"
+                className="p-5 cursor-pointer flex items-center justify-between gap-4"
                 onClick={() => toggleGroup(hg.hostgroup_id)}
               >
-                <div className="flex-1 min-w-0 flex items-center gap-5">
-                    <div className={`w-14 h-14 rounded-[1.25rem] flex items-center justify-center transition-colors ${expandedGroupIds.includes(hg.hostgroup_id) ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600 group-hover:bg-blue-100'}`}>
-                        <Server className="w-6 h-6" />
+                <div className="flex-1 min-w-0 flex items-center gap-4">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${expandedGroupIds.includes(hg.hostgroup_id) ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600 group-hover:bg-blue-100'}`}>
+                        <Server className="w-5 h-5" />
                     </div>
                     <div>
                         <h4 className="font-bold text-gray-900">
-                          {hg.hostgroup} <span className="text-gray-400 font-medium text-sm ml-2">ID: {hg.hostgroup_id}</span>
+                          {hg.hostgroup} <span className="text-gray-400 font-medium text-xs ml-2">ID: {hg.hostgroup_id}</span>
                         </h4>
-                        <div className="flex items-center gap-4 mt-1">
-                          <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
-                              <User className="w-3.5 h-3.5 text-blue-500/70" /> {hg.owner || 'No Owner'}
+                        <div className="flex items-center gap-3 mt-0.5">
+                          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-gray-400">
+                              <User className="w-3 h-3 text-blue-500/70" /> {hg.owner || 'No Owner'}
                           </div>
-                          <div className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg">
+                          <div className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
                             {hg.hostnames?.length || 0} Hosts
                           </div>
                         </div>
                     </div>
                 </div>
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${expandedGroupIds.includes(hg.hostgroup_id) ? 'bg-gray-900 text-white rotate-180' : 'bg-gray-100 text-gray-400'}`}>
-                  <ChevronDown className="w-5 h-5" />
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${expandedGroupIds.includes(hg.hostgroup_id) ? 'bg-gray-900 text-white rotate-180' : 'bg-gray-100 text-gray-400'}`}>
+                  <ChevronDown className="w-4 h-4" />
                 </div>
               </div>
               
               {expandedGroupIds.includes(hg.hostgroup_id) && (
-                <div className="px-8 pb-8 animate-ease-in">
-                    <div className="overflow-x-auto border border-gray-100 rounded-3xl shadow-inner bg-gray-50/30">
+                <div className="px-5 pb-5 animate-ease-in">
+                    <div className="overflow-x-auto border border-gray-100 rounded-2xl shadow-inner bg-gray-50/30">
                         {hg.hostnames?.length > 0 ? (
-                          <table className="w-full text-sm text-left border-collapse">
+                          <table className="w-full text-xs text-left border-collapse">
                               <thead>
                                   <tr className="border-b border-gray-100">
                                       {columns.map(col => (
-                                        <th key={col} className="px-6 py-5 text-gray-400 font-bold text-[10px] uppercase tracking-wider">{col}</th>
+                                        <th key={col} className="px-5 py-3 text-gray-400 font-bold text-[9px] uppercase tracking-wider">{col}</th>
                                       ))}
                                   </tr>
                               </thead>
@@ -144,7 +144,7 @@ const InventoryList = () => {
                                           {columns.map(col => {
                                               const key = Object.keys(h).find(k => k.toLowerCase() === col.toLowerCase());
                                               return (
-                                                <td key={col} className="px-6 py-4 font-semibold text-gray-700 whitespace-nowrap">
+                                                <td key={col} className="px-5 py-3 font-semibold text-gray-700 whitespace-nowrap">
                                                   {key ? h[key] : '-'}
                                                 </td>
                                               );
@@ -154,7 +154,7 @@ const InventoryList = () => {
                               </tbody>
                           </table>
                         ) : (
-                          <div className="py-12 text-center text-gray-400 font-semibold text-sm">No hosts registered in this group.</div>
+                          <div className="py-8 text-center text-gray-400 font-semibold text-xs">No hosts registered in this group.</div>
                         )}
                     </div>
                 </div>
