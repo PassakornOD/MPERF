@@ -5,7 +5,6 @@ import path from 'path';
 
 export default async function IngestionManualPage() {
   const filePath = path.resolve(process.cwd(), '..', 'INGESTION_MANUAL.md');
-  console.log('Resolving INGESTION_MANUAL.md at:', filePath);
   
   if (!fs.existsSync(filePath)) {
     // If not found, maybe we are in the root directory already?

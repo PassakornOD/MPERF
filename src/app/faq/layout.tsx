@@ -11,9 +11,6 @@ export default function FaqLayout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
   const username = (session?.user as any)?.name;
   
-  // Debug log for troubleshooting
-  console.log('FAQ Layout - Current User:', username);
-  
   const isAuthorized = username && ['sysreport', 'mfadmin'].includes(username.toLowerCase());
 
   const tabs = [

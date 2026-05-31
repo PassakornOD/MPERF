@@ -246,7 +246,6 @@ const BatchReportPage = () => {
                                         }
                                         const res = await axios.get(endpoint, { params });
                                         const metrics = res.data.data || res.data;
-                                        console.log(`[PreviewPDF] host=${host.name}, host.mem=${host.mem}, report=${report.id}`);
                                         chartsData.push({
                                             hostId: host.id,
                                             reportId: report.id,
@@ -563,7 +562,6 @@ const BatchReportPage = () => {
                                                         onClick={async () => {
                                                             try {
                                                                 const response = await axios.delete('/api/run-report/delete-file', { data: { filePath: job.pdfPath } });
-                                                                console.log(response.data.message);
                                                                 showToast("ลบไฟล์เรียบร้อยแล้ว", 'success');
                                                                 queryClient.invalidateQueries({ queryKey: ['background_jobs_status'] });
                                                             } catch (error: any) {

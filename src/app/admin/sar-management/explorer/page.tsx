@@ -36,9 +36,8 @@ const SarManagementPage = () => {
       queryKey: ['sar-summary', type, selectedGroup, selectedHostnameId, year, month],
       queryFn: async () => {
           if (!selectedGroup) return [];
-          console.log('Fetching summary for:', { type, hostgroup: selectedGroup, hostname_id: selectedHostnameId, year, month });
+
           const res = await axios.get('/api/admin/sar-summary', { params: { type, hostgroup: selectedGroup, hostname_id: selectedHostnameId, year, month } });
-          console.log('Summary response:', res.data);
           setSummaryData(res.data.data);
           return res.data.data;
       },

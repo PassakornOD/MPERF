@@ -1,9 +1,9 @@
-const mysql = require('mysql2/promise');
-const dotenv = require('dotenv');
-const path = require('path');
+import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
+import path from 'path';
 
 // Load environment variables
-dotenv.config({ path: path.join(__dirname, '../.env') });
+dotenv.config({ path: path.join(process.cwd(), '.env') });
 
 const pool = mysql.createPool({
   host: 'localhost',

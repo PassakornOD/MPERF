@@ -116,7 +116,7 @@ const CpuDailyPage = () => {
     const hasNice = metrics[0]?.hasOwnProperty('nice');
 
     // Define X-axis based on chart type
-    let xAxis: Highcharts.XAxisOptions = {
+    const xAxis: Highcharts.XAxisOptions = {
       labels: { rotation: -45, align: 'right', style: { font: 'normal 10px Verdana, sans-serif' } }
     };
 
@@ -171,7 +171,7 @@ const CpuDailyPage = () => {
       }
     }
 
-    let options: any = {
+    const options: any = {
       chart: { type: 'area', shadow: false, backgroundColor: undefined },
       title: { text: `Sar ${startDate} To ${endDate}` },
       subtitle: { text: `Hostname : ${getHostnameLabel()} Type : ${type}` },

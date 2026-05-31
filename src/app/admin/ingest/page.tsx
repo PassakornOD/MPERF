@@ -17,11 +17,20 @@ import {
 } from 'lucide-react';
 import DashboardWrapper from '@/components/layout/DashboardWrapper';
 import { useToast } from '@/components/common/Toast';
+import { HostGroup, Hostname } from '@/types/report';
+
+interface IngestionPayload {
+  os?: string;
+  hostgroup?: string;
+  hostname?: string;
+  day?: string;
+  month?: string;
+}
 
 const IngestPage = () => {
   const { showToast } = useToast();
-  const [hostgroups, setHostgroups] = useState<any[]>([]);
-  const [hostnames, setHostnames] = useState<any[]>([]);
+  const [hostgroups, setHostgroups] = useState<HostGroup[]>([]);
+  const [hostnames, setHostnames] = useState<Hostname[]>([]);
   const [loading, setLoading] = useState(true);
   const [ingesting, setIngesting] = useState(false);
   const [results, setResults] = useState<string[]>([]);
@@ -45,8 +54,8 @@ const IngestPage = () => {
   const fetchMetadata = async () => {
     try {
       const [hgRes, hnRes] = await Promise.all([
-        axios.get('/api/inventory/hostgroups'),
-        axios.get('/api/inventory/hostnames')
+        axios.get<HostGroup[]>('/api/inventory/hostgroups'),
+        axios.get<Hostname[]>('/api/inventory/hostnames')
       ]);
       setHostgroups(hgRes.data);
       setHostnames(hnRes.data);
@@ -66,7 +75,7 @@ const IngestPage = () => {
     setIngesting(true);
     setResults([]);
     
-    const payload: any = {
+    const payload: IngestionPayload = {
       os: formData.os === 'All' ? undefined : formData.os
     };
 
@@ -101,10 +110,11 @@ const IngestPage = () => {
       const response = await axios.post('/api/admin/ingest', payload);
       setResults(response.data.results || ['Ingestion completed with no logs.']);
       showToast('Ingestion task completed', 'success');
-    } catch (err: any) {
-      console.error('Ingestion failed:', err);
-      showToast(err.response?.data?.error || 'Ingestion failed', 'error');
-      setResults([`Error: ${err.response?.data?.error || err.message}`]);
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } }; message: string };
+      console.error('Ingestion failed:', error);
+      showToast(error.response?.data?.error || 'Ingestion failed', 'error');
+      setResults([`Error: ${error.response?.data?.error || error.message}`]);
     } finally {
       setIngesting(false);
     }

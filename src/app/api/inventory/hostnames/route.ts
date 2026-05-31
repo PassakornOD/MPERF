@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
     const memTable = `${hostname}:r`;
 
     const isRedHat = OS.toLowerCase().includes('red hat') || OS.toLowerCase().includes('redhat');
-    let createCpuSql = isRedHat 
+    const createCpuSql = isRedHat 
         ? "CREATE TABLE `" + cpuTable + "` (`time` datetime NOT NULL, `usr` float NOT NULL, `nice` float NOT NULL, `sys` float NOT NULL, `wio` float NOT NULL, `steal` float NOT NULL, `idle` float NOT NULL, `hostname_id` int NOT NULL, PRIMARY KEY (`time`, `hostname_id`)) ENGINE=InnoDB"
         : "CREATE TABLE `" + cpuTable + "` (`time` datetime NOT NULL, `usr` float NOT NULL, `sys` float NOT NULL, `wio` float NOT NULL, `idle` float NOT NULL, `hostname_id` int NOT NULL, PRIMARY KEY (`time`, `hostname_id`)) ENGINE=InnoDB";
 
@@ -139,7 +139,6 @@ export async function POST(req: NextRequest) {
 
             fs.mkdirSync(cpuDirPath, { recursive: true });
             fs.mkdirSync(memDirPath, { recursive: true });
-            console.log(`Directories created for ${hostname}: ${cpuDirPath}, ${memDirPath}`);
         }
     } catch (fsError) {
         console.error('Failed to create directories:', fsError);

@@ -13,24 +13,17 @@ export async function GET() {
         console.error('Invalid User ID in session:', (session.user as any).id);
         return NextResponse.json({ error: 'Invalid User ID' }, { status: 400 });
     }
-    console.log('--- TEMPLATE FETCH DEBUG ---');
-    console.log('User Name:', session.user?.name);
-    console.log('Raw User ID from session:', (session.user as any).id);
-    console.log('Parsed User ID:', userId);
-    console.log('User Role:', (session.user as any).role);
 
-    let query = `
+    const query = `
       SELECT rt.*, u.username as owner_name 
       FROM report_templates rt 
       JOIN user u ON rt.user_id = u.user_id 
       WHERE rt.user_id = ? 
       ORDER BY rt.created_at DESC
     `;
-    let params = [userId];
+    const params = [userId];
 
     const [rows]: any = await pool.query(query, params);
-    console.log(`DB Result: Found ${rows.length} rows`);
-    console.log('---------------------------');
     
     return NextResponse.json(rows);
   } catch (error: any) {
@@ -47,8 +40,6 @@ export async function POST(req: NextRequest) {
     if (isNaN(userId)) {
         return NextResponse.json({ error: 'Invalid User ID' }, { status: 400 });
     }
-    console.log('--- TEMPLATE CREATE DEBUG ---');
-    console.log('User ID:', userId);
     
     const body = await req.json();
     const { name, config } = body;
@@ -71,9 +62,6 @@ export async function POST(req: NextRequest) {
       'INSERT INTO report_templates (name, config, user_id) VALUES (?, ?, ?)',
       [name, JSON.stringify(config), userId]
     );
-
-    console.log('Template created with ID:', result.insertId);
-    console.log('-----------------------------');
 
     return NextResponse.json({ id: result.insertId, name, config, user_id: userId });
   } catch (error: any) {

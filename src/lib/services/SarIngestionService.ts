@@ -16,7 +16,7 @@ export class SarIngestionService {
 
   static async ingest(options: IngestOptions, user: any) {
     const { hostgroup, hostname, month, day, os, dataType } = options;
-    console.log(`[Ingest Debug] Received options: hostgroup=${hostgroup}, hostname=${hostname}, dataType=${dataType}`);
+
     const currentYear = new Date().getFullYear();
     let targetDateStr = ''; // YYYY-MM-DD
     const username = user?.email || 'system';
@@ -40,15 +40,7 @@ export class SarIngestionService {
     const osDirs = ['data_RedHat', 'data_Solaris'].filter(d => !os || d.toLowerCase().includes(os.toLowerCase()));
     const results: string[] = [];
 
-    console.log(`[Ingest] Scanning directories for OS: ${os || 'All'}`);
 
-    // Cleanup logs older than 90 days
-    try {
-        await pool.query('DELETE FROM insertion_logs WHERE timestamp < DATE_SUB(NOW(), INTERVAL 90 DAY)');
-        console.log('[Ingest] Cleaned up logs older than 90 days.');
-    } catch (err: any) {
-        console.error(`[Ingest] Cleanup error: ${err.message}`);
-    }
 
     for (const osDir of osDirs) {
       const possiblePaths = [
@@ -65,12 +57,7 @@ export class SarIngestionService {
           }
       }
 
-      if (!actualOsPath) {
-          console.log(`[Ingest] OS directory not found: ${osDir}`);
-          continue;
-      }
-      
-      console.log(`[Ingest] Found OS path: ${actualOsPath}`);
+
 
       const isSolaris = osDir.includes('Solaris');
       const hostgroups = fs.readdirSync(actualOsPath).filter(d => fs.statSync(path.join(actualOsPath, d)).isDirectory());
@@ -84,12 +71,10 @@ export class SarIngestionService {
         for (const hn of hostnames) {
           if (hostname && hn !== hostname) continue;
 
-          console.log(`[Ingest] Processing Host: ${hn} (${hg})`);
 
           // Get hostname info from DB
           const [rows]: any = await pool.query('SELECT hostname_id, mem, Pagesize FROM hostname WHERE hostname = ?', [hn]);
           if (rows.length === 0) {
-              console.log(`[Ingest] Hostname ${hn} not found in DB`);
               continue;
           }
           const hostInfo = rows[0];
@@ -217,14 +202,9 @@ export class SarIngestionService {
 
     for (let i = startLine; i < lines.length; i++) {
         const line = lines[i];
-        if (line.startsWith('Average') || line.startsWith('HP-UX') || line.startsWith('DATE')) {
-            console.log(`[Debug] Skipped Header/Summary line: ${line}`);
-            continue;
-        }
 
         const cols = line.split(/\s+/);
         if (cols.length < 2) {
-            console.log(`[Debug] Skipped empty/short line: ${line}`);
             continue;
         }
 
@@ -281,7 +261,7 @@ export class SarIngestionService {
                 }
             }
         } else {
-            let rawMem = parseFloat(cols[1]);
+            const rawMem = parseFloat(cols[1]);
             if (isFinite(rawMem)) {
                 let finalMem = 0;
                 if (!isSolaris) {

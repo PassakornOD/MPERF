@@ -41,3 +41,14 @@ export interface ReportPayload {
   generatedDate: string;
   hostgroups: HostGroupData[];
 }
+
+export interface HostGroup {
+  hostgroup_id: number;
+  hostgroup: string;
+}
+
+export interface Hostname {
+  hostname_id: number;
+  hostname: string;
+  hostgroup_id: number;
+}

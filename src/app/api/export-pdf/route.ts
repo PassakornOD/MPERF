@@ -9,9 +9,6 @@ export async function POST(req: NextRequest) {
 
     if (!payload || !payload.hostgroups) throw new Error('Invalid payload structure');
 
-    const payloadSize = JSON.stringify(payload).length;
-    console.log(`[PDF Export] Payload size: ${(payloadSize / 1024 / 1024).toFixed(2)} MB`);
-
     const pdfBuffer = await PdfGeneratorService.generatePdfBuffer(payload);
 
     return new NextResponse(new Uint8Array(pdfBuffer), {

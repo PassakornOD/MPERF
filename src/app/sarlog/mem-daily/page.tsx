@@ -116,7 +116,7 @@ const MemDailyPage = () => {
     const hostnameInfo = hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.find(h => String(h.hostname_id) === selectedHostnameId);
     const totalMem = (hostnameInfo as any)?.mem || 16;
 
-    let xAxis: Highcharts.XAxisOptions = {
+    const xAxis: Highcharts.XAxisOptions = {
       labels: { rotation: -45, align: 'right', style: { font: 'normal 10px Verdana, sans-serif' } }
     };
     let series: any[] = [];
@@ -148,7 +148,7 @@ const MemDailyPage = () => {
       }];
     }
 
-    let options: any = {
+    const options: any = {
       chart: { shadow: false },
       title: { text: `Sar ${startDate} To ${endDate}` },
       subtitle: { text: `Hostname : ${getHostnameLabel()} Type : ${type}` },

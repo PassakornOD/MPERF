@@ -26,7 +26,6 @@ export async function POST(request: Request) {
     const log = (msg: string) => {
         const entry = `[${new Date().toISOString()}] ${msg}\n`;
         fs.appendFileSync(logFile, entry);
-        console.log(msg);
     };
 
     log(`[POST] Triggering job ${jobId} for Template: ${templateId}, Month: ${month}, Year: ${year}`);

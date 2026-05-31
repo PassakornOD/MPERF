@@ -32,7 +32,6 @@ export class AutomationService {
   }
 
   static async generateFullMonthlyReport(month: number, year: number, templateId?: number, jobId?: string): Promise<string> {
-    console.log(`[Automation] generateFullMonthlyReport started. Month: ${month}, Year: ${year}, Template: ${templateId}, Job: ${jobId}`);
     const reportDate = new Date(year, month - 1);
     const monthName = reportDate.toLocaleString('en-US', { month: 'long' });
     const generatedDate = new Date().toLocaleDateString();
@@ -51,7 +50,6 @@ export class AutomationService {
 
     // If templateId provided, load template config
     if (templateId) {
-      console.log(`[Automation] Loading template ${templateId}...`);
       try {
         const [rows]: any = await pool.query('SELECT * FROM report_templates WHERE id = ?', [templateId]);
         if (rows.length > 0) {
@@ -59,7 +57,6 @@ export class AutomationService {
           reportTitle = config.reportTitle || rows[0].name;
           reportTypes = (config.charts || config.activeReports || []).filter((c: any) => c.enabled !== false);
           targetHosts = config.hosts || config.selectedHostnames || [];
-          console.log(`[Automation] Template loaded: ${targetHosts.length} hosts, ${reportTypes.length} charts`);
         }
       } catch (e: any) {
         console.error(`[Automation] Failed to load template ${templateId}:`, e);
@@ -102,7 +99,6 @@ export class AutomationService {
     }
 
     // Phase 0: Pre-calculate TOC Pages
-    console.log(`[Automation] Pre-calculating TOC pages...`);
     const mockTOCPayload: ReportPayload = {
         reportMonth: `${monthName} ${year}`,
         reportTitle: reportTitle,
@@ -117,7 +113,6 @@ export class AutomationService {
     });
     const mockTOCDoc = await PDFDocument.load(mockTOCBuffer);
     const tocOffset = mockTOCDoc.getPageCount();
-    console.log(`[Automation] TOC occupies ${tocOffset} pages. Offset set to ${tocOffset}`);
 
     const intermediatePdfPaths: string[] = [];
     const hostgroupPageMap: Record<string, number> = {};
@@ -131,7 +126,6 @@ export class AutomationService {
     // Phase 1: Generate all content chunks and track page counts PRECISELY
     for (let i = 0; i < hostgroups.length; i++) {
       const group = hostgroups[i];
-      console.log(`[Automation] Processing group ${i + 1}/${hostgroups.length}: ${group.name}`);
       
       // 1. Hostgroup Cover
       const coverPayload: ReportPayload = {
@@ -191,7 +185,6 @@ export class AutomationService {
       // 3. Charts for EACH host individually
       for (let hi = 0; hi < group.hosts.length; hi++) {
           const host = group.hosts[hi];
-          console.log(`[Automation] Rendering charts for host ${hi + 1}/${group.hosts.length}: ${host.name}`);
           
           const hostCharts = await Promise.all(reportTypes.map(async (report: any) => {
               let metrics: any[] = []; let totalAvg = 0;
@@ -233,7 +226,6 @@ export class AutomationService {
     }
 
     // Phase 2: Generate Cover and TOC PDF
-    console.log(`[Automation] Generating Cover and Table of Contents...`);
     if (jobId) this.updateStatus(jobId, { progress: 90, message: 'Generating Table of Contents...' });
 
     const fullStructurePayload: ReportPayload = {
@@ -259,7 +251,6 @@ export class AutomationService {
     fs.writeFileSync(coverPath, coverTocBuffer);
 
     // Phase 3: Final Merge
-    console.log(`[Automation] Final Merge...`);
     if (jobId) this.updateStatus(jobId, { progress: 95, message: 'Finalizing PDF...' });
 
     const mergedPdf = await PDFDocument.create();
@@ -291,7 +282,6 @@ export class AutomationService {
     const webPath = `/public/reports/monthly/${year}_${String(month).padStart(2, '0')}/${finalFileName}`;
     if (jobId) this.updateStatus(jobId, { status: 'completed', progress: 100, message: 'Report generated successfully', pdfPath: webPath });
 
-    console.log(`[Automation] Full report saved to: ${finalPath}`);
     return finalPath;
   }
 }

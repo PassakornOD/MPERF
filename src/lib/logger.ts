@@ -9,5 +9,4 @@ export const logSecurityEvent = (message: string, context?: any) => {
   
   // ในโปรดักชันจริงแนะนำให้ใช้บริการอย่าง Winston หรือไฟล์ Log บน Cloud
   fs.appendFileSync(logFilePath, logEntry);
-  console.log(logEntry);
 };

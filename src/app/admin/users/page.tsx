@@ -34,7 +34,7 @@ const AdminUsersPage = () => {
   const [expandedPgs, setExpandedPgs] = useState<number[]>([]);
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
 
-  useEffect(() => { console.log("DEBUG_GROUPS_STATE:", groups); }, [groups]);
+  useEffect(() => { }, [groups]);
 
   useEffect(() => { fetchData(); }, []);
 
@@ -53,12 +53,10 @@ const AdminUsersPage = () => {
       setUsers(u.data);
       setRoles(r.data.roles);
       setGroups(g.data);
-      console.log("DEBUG_GROUPS:", g.data);
       setUserMappings(m.data);
       setPgs(p.data.pgs);
       setPgh(p.data.pgh);
       setUgPgs(ugpg.data);
-      console.log("DEBUG_UGPGS:", ugpg.data);
       setAllHostgroups(hg.data);
     } catch (err) { console.error(err); } finally { setLoading(false); }
   };

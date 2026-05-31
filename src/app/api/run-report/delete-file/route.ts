@@ -15,18 +15,15 @@ export async function DELETE(request: Request) {
     // ค้นหาแบบ recursive ว่าไฟล์ชื่อนี้อยู่ไหน
     const findFile = (dir: string, name: string): string | null => {
         if (!fs.existsSync(dir)) {
-            console.log(`[Debug] Dir does not exist: ${dir}`);
             return null;
         }
         const files = fs.readdirSync(dir);
-        console.log(`[Debug] Dir: ${dir}, Files found: ${JSON.stringify(files)}`);
         for (const file of files) {
             const fullPath = path.join(dir, file);
             if (fs.statSync(fullPath).isDirectory()) {
                 const found = findFile(fullPath, name);
                 if (found) return found;
             } else if (file === name) {
-                console.log(`[Debug] File found! ${fullPath}`);
                 return fullPath;
             }
         }
@@ -52,7 +49,6 @@ export async function DELETE(request: Request) {
                         // ใช้ filePath เดิมจาก request body
                         if (jobContent.pdfPath === filePath) {
                             fs.unlinkSync(jobPath);
-                            console.log(`[Delete] Deleted corresponding status file: ${jobPath}`);
                         }
                     }
                 }

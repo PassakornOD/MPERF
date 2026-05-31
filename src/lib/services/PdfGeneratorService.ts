@@ -91,7 +91,6 @@ export class PdfGeneratorService {
     const getLogicalFooter = (id: string, isReportingPage: boolean = true) => {
       if (!pageMap[id]) return '';
       const logicalPage = pageMap[id] - offset;
-      console.log(`DEBUG: id=${id}, pageMap[id]=${pageMap[id]}, offset=${offset}, logicalPage=${logicalPage}`);
       // Allow pages even if logicalPage <= 0 if they are part of the report structure, 
       // but only number them if they are > 0.
       if (logicalPage <= 0) return '';
