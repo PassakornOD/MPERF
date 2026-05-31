@@ -5,8 +5,10 @@ import React, { useState } from 'react';
 import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { useToast } from '@/components/common/Toast';
 
 const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
+  const { showToast } = useToast();
   const [hostgroup, setHostgroup] = useState('');
   const [queryEnabled, setQueryEnabled] = useState(false);
 
@@ -48,7 +50,7 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
 
   const handleQuery = () => {
     if (!hostgroup) {
-        alert("Please select a hostgroup");
+        showToast("Please select a hostgroup", 'info');
         return;
     }
     setQueryEnabled(true);

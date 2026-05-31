@@ -18,6 +18,7 @@ import HostSelector from '@/components/report/HostSelector';
 import ReportConfiguration from '@/components/report/ReportConfiguration';
 import ChartLayoutOrder from '@/components/report/ChartLayoutOrder';
 import FloatingInput from '@/components/common/FloatingInput';
+import { useToast } from '@/components/common/Toast';
 
 interface Template {
     id: number;
@@ -34,6 +35,7 @@ const Highcharts = typeof window !== 'undefined' ? require('highcharts') : null;
 import { getChartOptions } from '@/components/charts/chartUtils';
 
 const ReportExportPage = () => {
+    const { showToast } = useToast();
     const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
     const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
     const [selectedHostnames, setSelectedHostnames] = useState<{ id: string, name: string, group: string, mem?: number }[]>([]);
@@ -235,7 +237,7 @@ const ReportExportPage = () => {
             setPdfUrl(window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' })));
         } catch (e: any) {
             console.error(e);
-            alert('Error: ' + (e.response?.data?.error || e.message));
+            showToast('Error: ' + (e.response?.data?.error || e.message), 'error');
         } finally {
             setIsFetchingPDF(false);
             setExportStatus('');
@@ -244,7 +246,7 @@ const ReportExportPage = () => {
 
     const handleSaveTemplate = async () => {
         if (!newTemplateName) {
-            alert('Please enter a template name');
+            showToast('Please enter a template name', 'info');
             return;
         }
         if (selectedHostnames.length > 50) {
@@ -261,12 +263,12 @@ const ReportExportPage = () => {
                     charts: activeReports.filter(r => r.enabled)
                 })
             });
-            alert('Template created successfully!');
+            showToast('Template created successfully!', 'success');
             setNewTemplateName('');
             setActiveAction(null);
             refetchTemplates();
         } catch (e) {
-            alert('Failed to create template');
+            showToast('Failed to create template', 'error');
         }
     };
 

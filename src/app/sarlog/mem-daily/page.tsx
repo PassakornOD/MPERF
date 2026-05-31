@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { useToast } from '@/components/common/Toast';
 
 const SarChart = dynamic(() => import('@/components/charts/SarChart'), {
   ssr: false,
@@ -24,6 +25,7 @@ interface HostGroup {
 }
 
 const MemDailyPage = () => {
+  const { showToast } = useToast();
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [selectedHostnameId, setSelectedHostnameId] = useState<string>('');
   const [type, setType] = useState<'Peak' | 'Normal'>('Normal');
@@ -101,7 +103,7 @@ const MemDailyPage = () => {
       link.remove();
     } catch (e) {
       console.error('Export failed:', e);
-      alert('PDF Export failed.');
+      showToast('PDF Export failed.', 'error');
     } finally {
       setIsExporting(false);
     }

@@ -7,6 +7,7 @@ import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
+import { useToast } from '@/components/common/Toast';
 
 const SarChart = dynamic(() => import('@/components/charts/SarChart'), {
   ssr: false,
@@ -17,6 +18,7 @@ interface HostName { hostname_id: number; hostname: string; }
 interface HostGroup { hostgroup_id: number; hostgroup: string; hostnames: HostName[]; }
 
 const CpuDailyPage = () => {
+  const { showToast } = useToast();
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [selectedHostnameId, setSelectedHostnameId] = useState<string>('');
   const [type, setType] = useState<'Peak' | 'Normal' | 'Average'>('Normal');
@@ -104,7 +106,7 @@ const CpuDailyPage = () => {
       link.remove();
     } catch (e) {
       console.error('Export failed:', e);
-      alert('PDF Export failed.');
+      showToast('PDF Export failed.', 'error');
     } finally {
       setIsExporting(false);
     }
