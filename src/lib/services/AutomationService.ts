@@ -7,6 +7,30 @@ import { ReportPayload, HostGroupData, HostData } from '@/types/report';
 import pool from '@/lib/db';
 
 export class AutomationService {
+  static init() {
+    const statusDir = this.getStatusDir();
+    if (!fs.existsSync(statusDir)) return;
+
+    fs.readdirSync(statusDir).forEach(file => {
+      if (file.endsWith('.json')) {
+        const filePath = path.join(statusDir, file);
+        try {
+          const job = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+          if (job.status === 'processing') {
+            console.log(`[Automation] Marking interrupted job ${job.id || file} as failed.`);
+            fs.writeFileSync(filePath, JSON.stringify({
+              ...job,
+              status: 'failed',
+              message: 'Job interrupted due to unexpected service restart.'
+            }));
+          }
+        } catch (e) {
+          console.error(`[Automation] Failed to check status of ${file}:`, e);
+        }
+      }
+    });
+  }
+
   private static getStatusDir() {
     let projectRoot = process.cwd();
     if (fs.existsSync(path.join(projectRoot, 'MPERF/package.json'))) {

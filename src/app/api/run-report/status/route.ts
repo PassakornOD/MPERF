@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { AutomationService } from '@/lib/services/AutomationService';
 
 export async function GET() {
+    AutomationService.init();
+
     let projectRoot = process.cwd();
     // Detect if we are in the workspace root instead of MPERF dir
     if (fs.existsSync(path.join(projectRoot, 'MPERF/package.json'))) {

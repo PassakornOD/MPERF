@@ -577,7 +577,7 @@ const BatchReportPage = () => {
                                                             <button
                                                                 onClick={async () => {
                                                                     try {
-                                                                        await axios.delete('/api/run-report/delete-file', { data: { filePath: job.pdfPath } });
+                                                                        await axios.delete(`/api/run-report/status/${job.id}`);
                                                                         showToast("File deleted successfully", 'success');
                                                                         queryClient.invalidateQueries({ queryKey: ['background_jobs_status'] });
                                                                     } catch (error: any) {
@@ -590,9 +590,41 @@ const BatchReportPage = () => {
                                                                 <Trash2 className="w-3 h-3" />
                                                             </button>
                                                         </>
+                                                    ) : job.status === 'failed' ? (
+                                                        <>
+                                                            <button
+                                                                onClick={async () => {
+                                                                    try {
+                                                                        await axios.post('/api/run-report/retry', { jobId: job.id });
+                                                                        showToast("Retry started", 'success');
+                                                                        queryClient.invalidateQueries({ queryKey: ['background_jobs_status'] });
+                                                                    } catch (error: any) {
+                                                                        showToast("Failed to retry job", 'error');
+                                                                    }
+                                                                }}
+                                                                className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-1 rounded-lg text-[9px] font-bold hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm"
+                                                            >
+                                                                <Zap className="w-3 h-3" /> Retry
+                                                            </button>
+                                                            <button
+                                                                onClick={async () => {
+                                                                    try {
+                                                                        await axios.delete(`/api/run-report/status/${job.id}`);
+                                                                        showToast("Job deleted", 'success');
+                                                                        queryClient.invalidateQueries({ queryKey: ['background_jobs_status'] });
+                                                                    } catch (error: any) {
+                                                                        showToast("Failed to delete job", 'error');
+                                                                    }
+                                                                }}
+                                                                className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm"
+                                                                title="Delete Job"
+                                                            >
+                                                                <Trash2 className="w-3 h-3" />
+                                                            </button>
+                                                        </>
                                                     ) : (
                                                         <div className="px-2 py-1 bg-gray-50 text-gray-400 rounded-lg text-[9px] font-bold border border-gray-100 opacity-60 flex items-center gap-1">
-                                                            <Clock className="w-3 h-3" /> Pending
+                                                            <Clock className="w-3 h-3" /> {job.status === 'pending' ? 'Pending' : '...'}
                                                         </div>
                                                     )}
                                                 </div>

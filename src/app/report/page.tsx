@@ -363,7 +363,10 @@ const ReportExportPage = () => {
                                             <Layers className="w-4 h-4" />
                                         </div>
                                         <div className="min-w-0">
-                                            <h4 className="font-bold text-gray-900 text-xs truncate mb-0.5">{template.name}</h4>
+                                            <div className="flex items-center gap-2 mb-0.5">
+                                                <h4 className="font-bold text-gray-900 text-xs truncate">{template.name}</h4>
+                                                <span className="bg-gray-100 text-gray-500 text-[9px] font-bold px-1.5 py-0.5 rounded">ID: {template.id}</span>
+                                            </div>
                                             <div className="flex items-center gap-1.5 text-[9px] font-semibold text-gray-400">
                                                 <Clock className="w-3 h-3" /> {template.lastUpdated}
                                             </div>
