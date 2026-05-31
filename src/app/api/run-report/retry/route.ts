@@ -27,7 +27,7 @@ export async function POST(request: Request) {
         id: newJobId,
         status: 'pending',
         progress: 0,
-        timestamp: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false }),
+        timestamp: new Date().toISOString(),
         message: `Retrying from job ${jobId}`
     };
     

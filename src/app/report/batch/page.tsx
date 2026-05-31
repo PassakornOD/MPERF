@@ -30,7 +30,7 @@ interface Template {
 interface BackgroundJob {
     id: string;
     templateName: string;
-    status: 'pending' | 'processing' | 'completed' | 'failed';
+    status: 'pending' | 'processing' | 'completed' | 'failed' | 'stale';
     progress: number;
     message: string;
     timestamp: string;
@@ -551,9 +551,9 @@ const BatchReportPage = () => {
                                                     <div className="flex items-center gap-1.5">
                                                         {job.status === 'processing' && <Loader2 className="w-3 h-3 animate-spin text-blue-600" />}
                                                         {job.status === 'completed' && <CheckCircle className="w-3 h-3 text-green-500" />}
-                                                        {job.status === 'failed' && <AlertCircle className="w-3 h-3 text-red-500" />}
+                                                        {(job.status === 'failed' || job.status === 'stale') && <AlertCircle className="w-3 h-3 text-red-500" />}
                                                         <span className={`text-[10px] font-bold capitalize ${job.status === 'completed' ? 'text-green-600' :
-                                                            job.status === 'failed' ? 'text-red-600' : 'text-blue-600'
+                                                            (job.status === 'failed' || job.status === 'stale') ? 'text-red-600' : 'text-blue-600'
                                                             }`}>{job.status === 'processing' ? `Processing ${job.progress}%` : job.status}</span>
                                                     </div>
                                                     <div className="w-24 h-1 bg-gray-100 rounded-full overflow-hidden shadow-inner">
@@ -590,7 +590,7 @@ const BatchReportPage = () => {
                                                                 <Trash2 className="w-3 h-3" />
                                                             </button>
                                                         </>
-                                                    ) : job.status === 'failed' ? (
+                                                    ) : (job.status === 'failed' || job.status === 'stale') ? (
                                                         <>
                                                             <button
                                                                 onClick={async () => {

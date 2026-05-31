@@ -9,26 +9,19 @@ import pool from '@/lib/db';
 export class AutomationService {
   static init() {
     const statusDir = this.getStatusDir();
-    if (!fs.existsSync(statusDir)) return;
+    const lockFile = path.join(statusDir, '.init.lock');
+    if (fs.existsSync(lockFile)) return;
 
-    fs.readdirSync(statusDir).forEach(file => {
-      if (file.endsWith('.json')) {
-        const filePath = path.join(statusDir, file);
-        try {
-          const job = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-          if (job.status === 'processing') {
-            console.log(`[Automation] Marking interrupted job ${job.id || file} as failed.`);
-            fs.writeFileSync(filePath, JSON.stringify({
-              ...job,
-              status: 'failed',
-              message: 'Job interrupted due to unexpected service restart.'
-            }));
-          }
-        } catch (e) {
-          console.error(`[Automation] Failed to check status of ${file}:`, e);
-        }
-      }
-    });
+    try {
+      fs.writeFileSync(lockFile, new Date().toISOString());
+      
+      // Cleanup: Only remove the lockfile in case of a hard crash previously
+      // We don't auto-fail jobs here to avoid false positives.
+    } catch (e) {
+      console.error('[Automation] Init failed:', e);
+    } finally {
+      if (fs.existsSync(lockFile)) fs.unlinkSync(lockFile);
+    }
   }
 
   private static getStatusDir() {
@@ -48,7 +41,11 @@ export class AutomationService {
     if (!fs.existsSync(statusFile)) return;
     try {
       const current = JSON.parse(fs.readFileSync(statusFile, 'utf8'));
-      const next = { ...current, ...update };
+      const next = { 
+        ...current, 
+        ...update, 
+        timestamp: new Date().toISOString() 
+      };
       fs.writeFileSync(statusFile, JSON.stringify(next));
     } catch (e) {
       console.error(`[Automation] Failed to update status for job ${jobId}:`, e);

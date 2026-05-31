@@ -24,7 +24,17 @@ export async function GET() {
             .map(f => {
                 try {
                     const content = fs.readFileSync(path.join(statusDir, f), 'utf8');
-                    return JSON.parse(content);
+                    const job = JSON.parse(content);
+                    
+                    // Stale detection
+                    if (job.status === 'processing') {
+                        const lastUpdated = new Date(job.timestamp).getTime();
+                        if (Date.now() - lastUpdated > 5 * 60 * 1000) {
+                            job.status = 'stale';
+                            job.message = 'Job appears to be stuck (no updates for > 5 minutes).';
+                        }
+                    }
+                    return job;
                 } catch (e) {
                     return null;
                 }
