@@ -20,6 +20,8 @@ interface HostSelectorProps {
     searchTerm: string;
     onSearchTermChange: (term: string) => void;
     onToggleExpand: (groupName: string) => void;
+    onExpandAll: () => void;
+    onCollapseAll: () => void;
     onToggleGroup: (groupName: string) => void;
     onToggleHostname: (host: Host) => void;
     selectedGroups: string[];
@@ -32,6 +34,8 @@ const HostSelector: React.FC<HostSelectorProps> = ({
     searchTerm,
     onSearchTermChange,
     onToggleExpand,
+    onExpandAll,
+    onCollapseAll,
     onToggleGroup,
     onToggleHostname,
     selectedGroups,
@@ -41,14 +45,20 @@ const HostSelector: React.FC<HostSelectorProps> = ({
             <span className="absolute -top-4 left-6 bg-white px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 border border-gray-100 rounded-full shadow-sm flex items-center gap-2">
                 <Monitor className="w-3.5 h-3.5" /> Select Hosts
             </span>
-            <div className="relative mb-6">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                    className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold placeholder:text-gray-400 shadow-inner"
-                    placeholder="Search Hostname..."
-                    value={searchTerm}
-                    onChange={e => onSearchTermChange(e.target.value)}
-                />
+            <div className="flex justify-between items-center mb-4">
+                <div className="relative flex-grow mr-2">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                        className="w-full pl-11 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold placeholder:text-gray-400 shadow-inner"
+                        placeholder="Search Hostname..."
+                        value={searchTerm}
+                        onChange={e => onSearchTermChange(e.target.value)}
+                    />
+                </div>
+                <div className="flex gap-1">
+                    <button onClick={onExpandAll} className="px-3 py-2 bg-gray-100 text-gray-600 rounded-xl text-[9px] font-black uppercase hover:bg-gray-200">All</button>
+                    <button onClick={onCollapseAll} className="px-3 py-2 bg-gray-100 text-gray-600 rounded-xl text-[9px] font-black uppercase hover:bg-gray-200">None</button>
+                </div>
             </div>
             <div className="space-y-1 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                 {groups.map((g: any) => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { Cpu, MemoryStick, List, Settings, BarChart3 } from 'lucide-react';
+import { Cpu, MemoryStick, List, Settings, BarChart3, FileText } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 const IconMap: { [key: string]: any } = {
@@ -9,7 +9,8 @@ const IconMap: { [key: string]: any } = {
   MemoryStick: MemoryStick,
   List: List,
   Settings: Settings,
-  BarChart3: BarChart3
+  BarChart3: BarChart3,
+  FileText: FileText
 };
 
 interface Tab {

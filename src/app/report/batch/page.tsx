@@ -37,7 +37,7 @@ interface BackgroundJob {
     pdfPath?: string;
 }
 
-const ReportTemplatesPage = () => {
+const BatchReportPage = () => {
     const { data: session } = useSession();
     const user = session?.user as any;
     const { showToast } = useToast();
@@ -64,9 +64,7 @@ const ReportTemplatesPage = () => {
                         charts: config.charts || config.activeReports || [],
                         lastUpdated: new Date(t.updated_at || t.created_at).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false })
                     };
-                } catch (e) {
-                    return null;
-                }
+                } catch (e) { return null; }
             }).filter((t: any) => t !== null);
         },
         enabled: !!user
@@ -330,6 +328,22 @@ const ReportTemplatesPage = () => {
     }, [hostGroupsRaw, searchTerm]);
 
     const toggleExpand = (groupName: string) => setExpandedGroups(prev => prev.includes(groupName) ? prev.filter(g => g !== groupName) : [...prev, groupName]);
+    const handleExpandAll = () => {
+        if (hostGroupsRaw) {
+            setSearchTerm('');
+            setExpandedGroups(hostGroupsRaw.map((g: any) => g.hostgroup));
+            setSelectedGroups(hostGroupsRaw.map((g: any) => g.hostgroup));
+            setSelectedHostnames(hostGroupsRaw.flatMap((g: any) => g.hostnames.map((h: any) => ({ id: String(h.hostname_id), name: h.hostname, group: g.hostgroup, mem: h.mem }))));
+            // Update preview states if the generation modal is open
+            setPreviewSelectedHosts(hostGroupsRaw.flatMap((g: any) => g.hostnames.map((h: any) => ({ id: String(h.hostname_id), name: h.hostname, group: g.hostgroup, mem: h.mem }))));
+        }
+    };
+    const handleCollapseAll = () => {
+        setExpandedGroups([]);
+        setSelectedGroups([]);
+        setSelectedHostnames([]);
+        setPreviewSelectedHosts([]);
+    };
 
     const toggleGroup = (groupName: string) => {
         const isSelected = selectedGroups.includes(groupName);
@@ -412,8 +426,8 @@ const ReportTemplatesPage = () => {
         <div className="max-w-6xl mx-auto p-6 space-y-8">
             <div className="flex justify-between items-center bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                 <div>
-                    <h2 className="text-2xl font-black text-gray-900 tracking-tight uppercase italic underline decoration-blue-500 underline-offset-8">Report Templates</h2>
-                    <p className="text-gray-500 font-medium mt-4 text-sm">Organize and manage your high-volume report generation configurations.</p>
+                    <h2 className="text-2xl font-black text-gray-900 tracking-tight uppercase italic underline decoration-blue-500 underline-offset-8">Batch Report</h2>
+                    <p className="text-gray-500 font-medium mt-4 text-sm">Select a template and trigger background batch report generation jobs.</p>
                 </div>
                 <button onClick={() => { setEditingTemplateId(null); setTemplateName(''); setReportTitle(''); setSelectedHostnames([]); setStep(1); setIsModalOpen(true); }} className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold text-sm transition-all hover:bg-slate-800 shadow-lg group">
                     <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" /> Create New Template
@@ -434,11 +448,6 @@ const ReportTemplatesPage = () => {
                                 <h4 className="font-black text-gray-900 text-sm truncate">{template.name}</h4>
                                 <div className="flex items-center gap-2">
                                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{template.lastUpdated}</p>
-                                    {user?.role === 'admin' && template.ownerName && (
-                                        <span className="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter">
-                                            Owner: {template.ownerName}
-                                        </span>
-                                    )}
                                 </div>
                             </div>
                         </div>
@@ -470,7 +479,7 @@ const ReportTemplatesPage = () => {
                                 onClick={() => { setSelectedTemplateForBg(template); setIsBackgroundModalOpen(true); }}
                                 className="flex items-center gap-2 bg-slate-100 text-slate-600 border border-slate-200 px-5 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-slate-800 hover:text-white transition-all"
                             >
-                                <Zap className="w-4 h-4 text-yellow-500" /> Start Job
+                                <Zap className="w-4 h-4 text-yellow-500" /> Start Batch
                             </button>
                         </div>
 
@@ -498,7 +507,7 @@ const ReportTemplatesPage = () => {
             <div className="pt-10 border-t border-gray-100">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-xl font-black text-gray-900 flex items-center gap-3 uppercase italic tracking-tight underline decoration-yellow-400 underline-offset-8">
-                        <Activity className="text-yellow-500" /> Job Status
+                        <Activity className="text-yellow-500" /> Batch Job Status
                     </h3>
                     <span className="bg-slate-900 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">{backgroundJobs.length} Recent Jobs</span>
                 </div>
@@ -634,7 +643,7 @@ const ReportTemplatesPage = () => {
                             onClick={triggerBackgroundJob}
                             className="flex-1 bg-slate-900 text-white py-4 rounded-2xl font-black text-xs uppercase hover:bg-slate-800 transition-all shadow-lg tracking-widest flex items-center justify-center gap-2"
                         >
-                            <Zap className="w-4 h-4 text-yellow-400" /> Start Job
+                            <Zap className="w-4 h-4 text-yellow-400" /> Start Batch
                         </button>
                     </div>
                 </div>
@@ -664,6 +673,8 @@ const ReportTemplatesPage = () => {
                                 searchTerm={searchTerm}
                                 onSearchTermChange={setSearchTerm}
                                 onToggleExpand={toggleExpand}
+                                onExpandAll={handleExpandAll}
+                                onCollapseAll={handleCollapseAll}
                                 onToggleGroup={toggleGroup}
                                 onToggleHostname={toggleHostname}
                                 selectedGroups={selectedGroups}
@@ -712,11 +723,13 @@ const ReportTemplatesPage = () => {
                                     searchTerm={searchTerm}
                                     onSearchTermChange={setSearchTerm}
                                     onToggleExpand={toggleExpand}
+                                    onExpandAll={handleExpandAll}
+                                    onCollapseAll={handleCollapseAll}
                                     onToggleGroup={(groupName) => {
                                         const isSelected = selectedGroups.includes(groupName);
                                         const groupData = hostGroupsRaw?.find((g: any) => g.hostgroup === groupName);
                                         const groupHostnames = groupData?.hostnames.map((h: any) => ({ id: String(h.hostname_id), name: h.hostname, group: groupName, mem: h.mem })) || [];
-                                        
+
                                         if (isSelected) {
                                             setSelectedGroups(prev => prev.filter(g => g !== groupName));
                                             setPreviewSelectedHosts(prev => prev.filter(h => h.group !== groupName));
@@ -776,16 +789,9 @@ const ReportTemplatesPage = () => {
                         <div className="pt-10 border-t border-gray-100 flex justify-center gap-6">
                             <button
                                 onClick={async () => { setGeneratingTemplate(generatingTemplate); setIsGenerationModalOpen(false); setSelectedTemplateForBg(generatingTemplate); setIsBackgroundModalOpen(true); }}
-                                className="flex items-center gap-4 bg-slate-100 text-slate-700 px-10 py-5 rounded-3xl font-black text-base tracking-[0.1em] hover:bg-slate-200 transition-all uppercase"
-                            >
-                                <Zap className="w-5 h-5 text-yellow-500" /> Start Job
-                            </button>
-                            <button
-                                onClick={async () => { await handlePreviewPDF(); }}
                                 className="flex items-center gap-4 bg-slate-900 text-white px-20 py-5 rounded-3xl font-black text-xl tracking-[0.2em] hover:bg-slate-800 transition-all uppercase shadow-2xl"
                             >
-                                {isExporting ? <Loader2 className="w-7 h-7 animate-spin" /> : <FileText className="w-7 h-7" />}
-                                {isExporting ? exportStatus : 'Generate PDF'}
+                                <Zap className="w-5 h-5 text-yellow-400" /> Start Batch
                             </button>
                         </div>
                     </div>
@@ -835,4 +841,4 @@ const ReportTemplatesPage = () => {
         </div>
     );
 };
-export default ReportTemplatesPage;
+export default BatchReportPage;

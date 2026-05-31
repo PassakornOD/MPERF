@@ -9,9 +9,9 @@ export default function ReportLayout({ children }: { children: React.ReactNode }
 
   const tabs = [
     { name: 'Generate Report', href: '/report', iconKey: 'BarChart3' },
-    { name: 'Templates', href: '/report/templates', iconKey: 'List' },
+    { name: 'Batch Report', href: '/report/batch', iconKey: 'FileText' },
   ];
-  
+
   return (
     <FolderTabs tabs={tabs}>
       {children}

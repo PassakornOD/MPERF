@@ -96,6 +96,19 @@ const ReportExportPage = () => {
     const toggleExpand = (groupName: string) => {
         setExpandedGroups(prev => prev.includes(groupName) ? prev.filter(g => g !== groupName) : [...prev, groupName]);
     };
+    const handleExpandAll = () => {
+        if (hostGroupsRaw) {
+            setSearchTerm('');
+            setExpandedGroups(hostGroupsRaw.map((g: any) => g.hostgroup));
+            setSelectedGroups(hostGroupsRaw.map((g: any) => g.hostgroup));
+            setSelectedHostnames(hostGroupsRaw.flatMap((g: any) => g.hostnames.map((h: any) => ({ id: String(h.hostname_id), name: h.hostname, group: g.hostgroup, mem: h.mem }))));
+        }
+    };
+    const handleCollapseAll = () => {
+        setExpandedGroups([]);
+        setSelectedGroups([]);
+        setSelectedHostnames([]);
+    };
 
     const toggleHostname = (h: any) => {
         setSelectedHostnames(prev => {
@@ -152,6 +165,11 @@ const ReportExportPage = () => {
 
     const handlePreviewPDF = async () => {
         if (isExporting || selectedHostnames.length === 0) return;
+        if (selectedHostnames.length > 50) {
+            setLimitMessage('Maximum 50 hosts allowed per report. Please select fewer hosts.');
+            setIsLimitModalOpen(true);
+            return;
+        }
         setIsFetchingPDF(true);
         setExportStatus('Preparing report...');
         const selectedReportsList = activeReports.filter(r => r.enabled);
@@ -227,6 +245,11 @@ const ReportExportPage = () => {
     const handleSaveTemplate = async () => {
         if (!newTemplateName) {
             alert('Please enter a template name');
+            return;
+        }
+        if (selectedHostnames.length > 50) {
+            setLimitMessage('Maximum 50 hosts allowed for templates. Please select fewer hosts.');
+            setIsLimitModalOpen(true);
             return;
         }
         try {
@@ -320,7 +343,7 @@ const ReportExportPage = () => {
                     <div className="py-8 text-center text-gray-400 font-bold uppercase text-xs tracking-widest">No templates found</div>
                 ) : (
                     templates.map(template => (
-                        <div key={template.id} className="grid grid-cols-12 items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-blue-200 transition-all gap-4">
+                        <div key={template.id} className={`grid grid-cols-12 items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-blue-200 transition-all gap-4 ${template.hosts.length > 50 ? 'opacity-50 grayscale' : ''}`}>
                             <div className="col-span-4 flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                                     <Layers className="w-5 h-5" />
@@ -335,7 +358,7 @@ const ReportExportPage = () => {
                                     <FileText className="w-3.5 h-3.5 text-gray-400" />
                                     {template.reportTitle}
                                 </h4>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-4">
+                                <p className={`text-[10px] font-bold uppercase tracking-widest mt-0.5 flex items-center gap-4 ${template.hosts.length > 50 ? 'text-red-400' : 'text-gray-400'}`}>
                                     <span className="flex items-center gap-1.5"><Monitor className="w-3 h-3" /> {template.hosts.length} HOSTS</span>
                                     <span className="flex items-center gap-1.5"><Layers className="w-3 h-3" /> {template.charts.length} CHARTS</span>
                                 </p>
@@ -343,6 +366,11 @@ const ReportExportPage = () => {
                             <div className="col-span-3 flex items-center justify-end gap-2">
                                 <button 
                                     onClick={() => {
+                                        if (template.hosts.length > 50) {
+                                            setLimitMessage('This template has ' + template.hosts.length + ' hosts, which exceeds the maximum limit of 50. Please create a new template with fewer hosts.');
+                                            setIsLimitModalOpen(true);
+                                            return;
+                                        }
                                         resetConfiguration();
                                         setSelectedHostnames(template.hosts);
                                         setReportTitle(template.reportTitle || template.name);
@@ -352,18 +380,19 @@ const ReportExportPage = () => {
                                         setExpandedGroups(uniqueGroups);
                                         setActiveAction('load-template');
                                     }}
-                                    className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg font-bold text-xs hover:bg-blue-600 hover:text-white transition-all"
+                                    className={`px-4 py-2 rounded-lg font-bold text-xs transition-all ${template.hosts.length > 50 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white'}`}
                                 >
                                     LOAD
                                 </button>
                                 <button 
                                     onClick={async () => {
+                                        if (template.hosts.length > 50) return;
                                         if (confirm('Are you sure you want to delete this template?')) {
                                             await axios.delete(`/api/report-templates/${template.id}`);
                                             refetchTemplates();
                                         }
                                     }}
-                                    className="px-4 py-2 bg-red-50 text-red-500 rounded-lg font-bold text-xs hover:bg-red-600 hover:text-white transition-all"
+                                    className={`px-4 py-2 rounded-lg font-bold text-xs transition-all ${template.hosts.length > 50 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-red-50 text-red-500 hover:bg-red-600 hover:text-white'}`}
                                 >
                                     DELETE
                                 </button>
@@ -426,6 +455,8 @@ const ReportExportPage = () => {
                                 searchTerm={searchTerm}
                                 onSearchTermChange={setSearchTerm}
                                 onToggleExpand={toggleExpand}
+                                onExpandAll={handleExpandAll}
+                                onCollapseAll={handleCollapseAll}
                                 onToggleGroup={toggleGroup}
                                 onToggleHostname={toggleHostname}
                                 selectedGroups={selectedGroups}
