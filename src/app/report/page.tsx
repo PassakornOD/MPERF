@@ -19,6 +19,7 @@ import ReportConfiguration from '@/components/report/ReportConfiguration';
 import ChartLayoutOrder from '@/components/report/ChartLayoutOrder';
 import FloatingInput from '@/components/common/FloatingInput';
 import { useToast } from '@/components/common/Toast';
+import ConfirmModal from '@/components/common/ConfirmModal';
 
 interface Template {
     id: number;
@@ -48,6 +49,7 @@ const ReportExportPage = () => {
     const [reportTitle, setReportTitle] = useState('Monthly Performance Report');
     const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
     const [limitMessage, setLimitMessage] = useState('');
+    const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean, templateId: number | null }>({ isOpen: false, templateId: null });
 
     const getPrevMonthDates = () => {
         const now = new Date();
@@ -387,12 +389,9 @@ const ReportExportPage = () => {
                                     LOAD
                                 </button>
                                 <button 
-                                    onClick={async () => {
+                                    onClick={() => {
                                         if (template.hosts.length > 50) return;
-                                        if (confirm('Are you sure you want to delete this template?')) {
-                                            await axios.delete(`/api/report-templates/${template.id}`);
-                                            refetchTemplates();
-                                        }
+                                        setDeleteConfirm({ isOpen: true, templateId: template.id });
                                     }}
                                     className={`px-4 py-2 rounded-lg font-bold text-xs transition-all ${template.hosts.length > 50 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-red-50 text-red-500 hover:bg-red-600 hover:text-white'}`}
                                 >
@@ -532,6 +531,24 @@ const ReportExportPage = () => {
                     </button>
                 </div>
             </Modal>
+
+            <ConfirmModal 
+                isOpen={deleteConfirm.isOpen}
+                onClose={() => setDeleteConfirm({ isOpen: false, templateId: null })}
+                title="DELETE TEMPLATE"
+                message="Are you sure you want to delete this template? This action cannot be undone."
+                onConfirm={async () => {
+                    if (deleteConfirm.templateId) {
+                        try {
+                            await axios.delete(`/api/report-templates/${deleteConfirm.templateId}`);
+                            showToast('Template deleted successfully', 'success');
+                            refetchTemplates();
+                        } catch (e) {
+                            showToast('Failed to delete template', 'error');
+                        }
+                    }
+                }}
+            />
         </div>
     );
 };
