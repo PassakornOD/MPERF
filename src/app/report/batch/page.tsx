@@ -1,13 +1,11 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import Highcharts from 'highcharts';
 import { Plus, FileText, Trash2, Edit2, Clock, X, Search, ChevronDown, ChevronRight, ArrowUp, ArrowDown, Heading1, Server, BarChart3, Loader2, Calendar, Layout, GripVertical, Monitor, PlusCircle, Zap, Activity, CheckCircle, Download, AlertCircle, MoreVertical, Layers } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { ReportPayload } from '@/types/report';
 import SarChart from '@/components/charts/SarChart';
 import { getChartOptions } from '@/components/charts/chartUtils';
 import { useToast } from '@/components/common/Toast';
@@ -172,134 +170,8 @@ const BatchReportPage = () => {
     ]);
 
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-    const [isExporting, setIsFetchingPDF] = useState(false);
-    const [exportStatus, setExportStatus] = useState('');
     const [renderCharts, setRenderCharts] = useState(false);
     const [hiddenChartsData, setHiddenChartsData] = useState<any[]>([]);
-
-    const handlePreviewPDF = async () => {
-        if (isExporting || previewSelectedHosts.length === 0) return;
-        setIsFetchingPDF(true); setExportStatus('Preparing report...');
-        const selectedReportsList = previewActiveReports.filter(r => r.enabled);
-
-        const getChartSVG = (id: string) => {
-            const el = document.getElementById(id);
-            if (!el) return "";
-            const chart = (Highcharts as any).charts.find((c: any) => c && (c.renderTo === el?.querySelector('.highcharts-container')?.parentElement || el?.contains(c.renderTo)));
-            if (!chart) return "";
-            try {
-                const svg = chart.getSVG({ chart: { backgroundColor: '#ffffff', style: { fontFamily: 'sans-serif' } } });
-                return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
-            } catch (e) { return ""; }
-        };
-
-        try {
-            setExportStatus('Fetching performance metrics...');
-            const chartsData: any[] = [];
-            const hostgroupsWithData = await Promise.all(
-                Object.values(
-                    previewSelectedHosts.reduce((acc: any, host) => {
-                        let groupName = host.group;
-                        if (!groupName && hostGroupsRaw) {
-                            const foundGroup = hostGroupsRaw.find((g: any) =>
-                                g.hostnames.some((h: any) => String(h.hostname_id) === String(host.id))
-                            );
-                            if (foundGroup) groupName = foundGroup.hostgroup;
-                        }
-                        if (!groupName) return acc;
-                        if (!acc[groupName]) acc[groupName] = { name: groupName, hosts: [] };
-                        acc[groupName].hosts.push({ ...host, group: groupName });
-                        return acc;
-                    }, {})
-                )
-                    .sort((a: any, b: any) => a.name.localeCompare(b.name))
-                    .map(async (group: any) => {
-                        const hostsWithStats = await Promise.all(
-                            group.hosts.map(async (host: any) => {
-                                const apiParams = {
-                                    hostgroup: group.name,
-                                    hostnameId: String(host.id),
-                                    month: String(month),
-                                    year: String(year),
-                                };
-                                const summaryRes = await axios.get('/api/metrics/summary', { params: apiParams });
-                                const { cpuStats, memStats } = summaryRes.data;
-
-                                const hostCharts = await Promise.all(
-                                    selectedReportsList.map(async (report) => {
-                                        let endpoint = '';
-                                        const params: any = { hostgroup: group.name, hostnameId: host.id, month, year };
-
-                                        if (report.type === 'cpu-daily') {
-                                            endpoint = '/api/metrics/cpu-daily';
-                                            params.type = report.mode;
-                                            params.startDate = startDate;
-                                            params.endDate = endDate;
-                                        } else if (report.type === 'cpu-monthly') {
-                                            endpoint = '/api/metrics/monthly';
-                                        } else if (report.type === 'mem-daily') {
-                                            endpoint = '/api/metrics/mem-daily';
-                                            params.type = report.mode;
-                                            params.startDate = startDate;
-                                            params.endDate = endDate;
-                                        } else if (report.type === 'mem-monthly') {
-                                            endpoint = '/api/metrics/monthly';
-                                            params.type = 'r';
-                                        }
-                                        const res = await axios.get(endpoint, { params });
-                                        const metrics = res.data.data || res.data;
-                                        chartsData.push({
-                                            hostId: host.id,
-                                            reportId: report.id,
-                                            hostname: host.name,
-                                            hostMem: host.mem || 0, // Fallback to 0 if undefined
-                                            metrics,
-                                            report,
-                                            totalAvg: res.data.totalAvg,
-                                        });
-                                        return { label: report.label, metrics };
-                                    })
-                                );
-                                return { id: host.id, name: host.name, mem: host.mem, cpuStats, memStats, hostCharts };
-                            })
-                        );
-                        return { id: group.name, name: group.name, hosts: hostsWithStats };
-                    })
-            );
-
-            setExportStatus('Rendering chart visualisations...');
-            setHiddenChartsData(chartsData); setRenderCharts(true);
-            await new Promise(r => setTimeout(r, 5000));
-
-            setExportStatus('Compiling PDF document...');
-            const finalHostgroups = hostgroupsWithData.map((group: any) => ({
-                id: group.id || group.name,
-                name: group.name,
-                hosts: group.hosts.map((host: any) => ({
-                    id: host.id,
-                    name: host.name,
-                    mem: host.mem,
-                    cpuStats: host.cpuStats,
-                    memStats: host.memStats,
-                    charts: selectedReportsList.map(report => ({ label: report.label, data: getChartSVG(`host-item-${host.id}-${report.id}`) }))
-                }))
-            }));
-
-            const payload: ReportPayload = {
-                reportMonth: new Date(parseInt(year), parseInt(month) - 1).toLocaleString('en-US', { month: 'long', year: 'numeric' }),
-                reportTitle: generatingTemplate?.reportTitle || reportTitle,
-                targetMonth: parseInt(month), targetYear: parseInt(year), generatedDate: new Date().toLocaleDateString(),
-                hostgroups: finalHostgroups as any
-            };
-
-            const response = await axios.post('/api/export-pdf', payload, { responseType: 'blob' });
-            setPdfUrl(window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' })));
-        } catch (e: any) {
-            setIsGenerationModalOpen(false);
-            showToast('Error: ' + e.message, 'error');
-        }
-        finally { setIsFetchingPDF(false); setExportStatus(''); setRenderCharts(false); setHiddenChartsData([]); }
-    };
 
     const toggleReport = (id: string) => setActiveReports(prev => prev.map(r => r.id === id ? { ...r, enabled: !r.enabled } : r));
 

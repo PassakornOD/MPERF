@@ -340,7 +340,7 @@ const ReportExportPage = () => {
                             <CheckCircle2 className="w-5 h-5" />
                         </div>
                         <div>
-                            <p className="text-[9px] font-black text-slate-400 capitalize  leading-none mb-1">Scope</p>
+                            <p className="text-[9px] font-black text-slate-400 capitalize  leading-none mb-1">Selected</p>
                             <p className="text-xs font-black text-slate-900 leading-none">{selectedHostnames.length} Nodes</p>
                         </div>
                     </div>
@@ -408,7 +408,7 @@ const ReportExportPage = () => {
                                                 }}
                                                 className="px-8 py-3 bg-blue-600 text-white rounded-xl font-black text-xs capitalize  shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all active:scale-95"
                                             >
-                                                Initialize
+                                                Details
                                             </button>
                                             <button
                                                 onClick={() => setDeleteConfirm({ isOpen: true, templateId: template.id })}
@@ -519,7 +519,7 @@ const ReportExportPage = () => {
                             <button
                                 onClick={handlePreviewPDF}
                                 disabled={isExporting || selectedHostnames.length === 0 || activeReports.filter(r => r.enabled).length === 0}
-                                className="px-16 py-4 bg-slate-900 hover:bg-black text-white rounded-xl font-black text-[11px] capitalize  transition-all shadow-xl shadow-slate-900/20 disabled:opacity-30 flex items-center gap-3 group active:scale-95"
+                                className="px-16 py-4 bg-slate-900 hover:bg-black text-white rounded-xl font-black text-xl capitalize  transition-all shadow-xl shadow-slate-900/20 disabled:opacity-30 flex items-center gap-3 group active:scale-95"
                             >
                                 <FileText className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
                                 Generate PDF

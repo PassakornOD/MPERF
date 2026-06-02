@@ -25,7 +25,7 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        showToast('Invalid operator identity or access token', 'error');
+        showToast('Authentication failed: Please verify your credentials.', 'error');
       } else {
         router.push('/');
       }
@@ -96,7 +96,7 @@ export default function LoginPage() {
             <div className="pt-4">
               <button
                 disabled={isLoading}
-                className="w-full bg-slate-900 text-white py-5 rounded-xl font-black text-[11px] capitalize  hover:bg-black transition-all shadow-2xl shadow-slate-200 active:scale-[0.98] group flex items-center justify-center gap-3 disabled:opacity-50"
+                className="w-full bg-slate-900 text-white py-5 rounded-xl font-black text-xl capitalize  hover:bg-black transition-all shadow-2xl shadow-slate-200 active:scale-[0.98] group flex items-center justify-center gap-3 disabled:opacity-50"
               >
                 {isLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
