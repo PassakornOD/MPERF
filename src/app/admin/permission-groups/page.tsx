@@ -4,7 +4,7 @@ import axios from 'axios';
 import TabbedModal from '@/components/common/TabbedModal';
 import Modal from '@/components/common/Modal';
 import ConfirmModal from '@/components/common/ConfirmModal';
-import { Loader2, Plus, ShieldCheck, X, ChevronDown, ChevronRight, Server, Search, Trash2, Edit2, Users, MoreVertical } from 'lucide-react';
+import { Loader2, Plus, ShieldCheck, X, ChevronDown, ChevronRight, Server, Search, Trash2, Edit2, Users, MoreVertical, PlusCircle } from 'lucide-react';
 import { useToast } from '@/components/common/Toast';
 import FloatingInput from '@/components/common/FloatingInput';
 
@@ -28,8 +28,6 @@ const PermissionGroupsPage = () => {
   const [expandedPgId, setExpandedPgId] = useState<string | null>(null);
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
 
-  useEffect(() => { fetchData(); }, []);
-
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -48,6 +46,8 @@ const PermissionGroupsPage = () => {
       setAllHostnames(hostnamesRes.data || []);
     } catch (err) { console.error(err); } finally { setLoading(false); }
   };
+
+  useEffect(() => { fetchData(); }, []);
 
   const [createError, setCreateError] = useState("");
 
@@ -115,93 +115,109 @@ const PermissionGroupsPage = () => {
   if (loading) return <div className="p-10 text-center"><Loader2 className="animate-spin w-8 h-8 mx-auto text-blue-600" /></div>;
 
   return (
-    <div className="admin-container space-y-8">
-      {/* Top Section: Permission Groups (2 columns) */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="p-6 space-y-6">
-            <div className="flex justify-between items-center border-b border-gray-100 pb-4">
-                <div className="flex items-center gap-3">
-                    <div className="bg-green-600 p-1.5 rounded-lg text-white shadow-sm"><ShieldCheck className="w-4 h-4" /></div>
-                    <h3 className="font-bold text-gray-700 text-xs">Permission Groups</h3>
+    <div className="space-y-8 animate-ease-in">
+      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden transition-all hover:shadow-md">
+        <div className="p-8 space-y-8">
+            <div className="flex justify-between items-center border-b border-slate-50 pb-6">
+                <div className="flex items-center gap-4">
+                    <div className="bg-blue-600 p-3 rounded-2xl text-white shadow-lg shadow-blue-500/20"><ShieldCheck className="w-6 h-6" /></div>
+                    <div>
+                        <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Resource Permissions</h3>
+                        <p className="text-xs font-bold text-slate-400 capitalize mt-0.5">Map server hostgroups to access levels</p>
+                    </div>
                 </div>
-                <button onClick={() => setIsCreateModalOpen(true)} className="bg-slate-900 text-white p-1.5 rounded-lg hover:bg-slate-800 transition-all shadow-sm">
-                    <Plus className="w-4 h-4" />
+                <button onClick={() => setIsCreateModalOpen(true)} className="bg-slate-900 text-white px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-all shadow-md flex items-center gap-2 group">
+                    <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                    <span className="text-xs font-black capitalize tracking-widest">Create Access Group</span>
                 </button>
             </div>
 
-            <div className="grid grid-cols-4 gap-4 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {data.pgs.map((pg: any) => {
                     const groupHgs = data.pgh.filter((m: any) => m.pg_id === pg.pg_id);
+                    const associatedGroupsCount = data.ugPgs.filter((m: any) => m.pg_id === pg.pg_id).length;
+                    
                     return (
-                        <div key={pg.pg_id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="bg-green-50 p-2 rounded-lg text-green-600"><ShieldCheck className="w-4 h-4" /></div>
-                                    <h4 className="font-bold text-gray-900 text-xs">{pg.pg_name}</h4>
+                        <div key={pg.pg_id} className="bg-slate-50/30 rounded-[1.5rem] border border-slate-100 p-6 flex flex-col gap-5 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 group">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-white p-2.5 rounded-xl text-blue-600 border border-slate-100 shadow-sm group-hover:scale-110 transition-transform"><ShieldCheck className="w-5 h-5" /></div>
+                                    <h4 className="font-black text-slate-900 text-xs truncate max-w-[140px]">{pg.pg_name}</h4>
                                 </div>
                                 <div className="relative">
-                                    <button onClick={() => setActiveMenu(activeMenu === pg.pg_id ? null : pg.pg_id)} className="text-gray-400 hover:text-gray-600 p-1 rounded-lg transition-colors">
+                                    <button 
+                                        onClick={() => setActiveMenu(activeMenu === pg.pg_id ? null : pg.pg_id)} 
+                                        className={`p-2 rounded-xl transition-all ${activeMenu === pg.pg_id ? 'bg-white shadow-sm text-slate-900' : 'text-slate-300 hover:text-slate-600 hover:bg-white hover:shadow-sm'}`}
+                                    >
                                         <MoreVertical className="w-4 h-4" />
                                     </button>
                                     {activeMenu === pg.pg_id && (
-                                        <div className="absolute right-0 top-6 bg-white border border-gray-100 rounded-lg shadow-lg py-1 z-10 w-24">
-                                            <button onClick={(e) => { openEdit(e, pg, groupHgs); setActiveMenu(null); }} className="flex items-center gap-2 w-full px-3 py-1.5 text-[10px] text-gray-700 hover:bg-gray-50">
-                                                <Edit2 className="w-3 h-3" /> Edit
+                                        <div className="absolute right-0 top-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] py-2 z-20 w-32 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                                            <button onClick={(e) => { openEdit(e, pg, groupHgs); setActiveMenu(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all">
+                                                <Edit2 className="w-3.5 h-3.5" /> Edit Configuration
                                             </button>
-                                            <button onClick={(e) => { deletePg(e, pg.pg_id); setActiveMenu(null); }} className="flex items-center gap-2 w-full px-3 py-1.5 text-[10px] text-red-600 hover:bg-red-50">
-                                                <Trash2 className="w-3 h-3" /> Delete
+                                            <button onClick={(e) => { deletePg(e, pg.pg_id); setActiveMenu(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 transition-all border-t border-slate-50">
+                                                <Trash2 className="w-3.5 h-3.5" /> Remove Group
                                             </button>
                                         </div>
                                     )}
                                 </div>
                             </div>
                             
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between pt-2 border-t border-gray-50">
-                                    <div className="text-[10px] text-gray-500 font-bold uppercase">Associated</div>
-                                    <span className="bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full text-[9px] font-bold">{data.ugPgs.filter((m: any) => m.pg_id === pg.pg_id).length}</span>
-                                </div>
-                                <div className="flex flex-wrap gap-1">
-                                    {data.ugPgs.filter((m: any) => m.pg_id === pg.pg_id).map((m: any) => {
-                                        const ug = data.ugs.find((u: any) => u.ug_id === m.ug_id);
-                                        return ug ? <span key={m.ug_id} className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-bold text-[9px]">{ug.ug_name}</span> : null;
-                                    })}
+                            <div className="space-y-4 pt-4 border-t border-slate-100/50 mt-auto">
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[9px] font-black text-slate-400 capitalize tracking-widest">Associations</span>
+                                        <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-lg text-[9px] font-black tracking-tighter shadow-sm border border-blue-100">{associatedGroupsCount} Groups</span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {data.ugPgs.filter((m: any) => m.pg_id === pg.pg_id).slice(0, 2).map((m: any) => {
+                                            const ug = data.ugs.find((u: any) => u.ug_id === m.ug_id);
+                                            return ug ? <span key={m.ug_id} className="bg-white border border-slate-100 text-slate-500 px-2 py-1 rounded-lg font-bold text-[9px] shadow-sm">{ug.ug_name}</span> : null;
+                                        })}
+                                        {associatedGroupsCount > 2 && <span className="text-[9px] font-black text-blue-400 ml-1">+{associatedGroupsCount - 2} More</span>}
+                                    </div>
                                 </div>
 
-                                <div className="flex items-center justify-between pt-2 border-t border-gray-50 mb-2">
-                                    <div className="text-[10px] text-gray-500 font-bold uppercase">Hostgroups</div>
-                                    <span className="bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full text-[9px] font-bold">{groupHgs.length}</span>
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[9px] font-black text-slate-400 capitalize tracking-widest">Secured Hosts</span>
+                                        <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-lg text-[9px] font-black tracking-tighter shadow-sm border border-emerald-100">{groupHgs.length} Hostgroups</span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {groupHgs.length > 0 ? groupHgs.slice(0, 3).map((m: any) => {
+                                            const hg = hostgroups.find((h: any) => h.hostgroup_id === m.hostgroup_id);
+                                            return hg ? <span key={m.hostgroup_id} className="bg-white border border-slate-100 text-slate-500 px-2 py-1 rounded-lg font-bold text-[9px] shadow-sm">{hg.hostgroup}</span> : null;
+                                        }) : <span className="text-[9px] font-bold text-slate-300 capitalize tracking-wider italic">No hosts assigned</span>}
+                                        {groupHgs.length > 3 && <span className="text-[9px] font-black text-emerald-500 ml-1">+{groupHgs.length - 3} more</span>}
+                                    </div>
                                 </div>
-                                <div className="flex flex-wrap gap-1">
-                                    {groupHgs.slice(0, 5).map((m: any) => {
-                                        const hg = hostgroups.find((h: any) => h.hostgroup_id === m.hostgroup_id);
-                                        return hg ? <span key={m.hostgroup_id} className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-bold text-[9px]">{hg.hostgroup}</span> : null;
-                                    })}
-                                    {groupHgs.length > 5 && <span className="text-[9px] text-gray-400">+{groupHgs.length - 5}</span>}
-                                    {groupHgs.length === 0 && <span className="text-[9px] text-gray-400 italic">None</span>}
-                                </div>
-                            </div>                        </div>
+                            </div>
+                        </div>
                     );
                 })}
             </div>
             
             {availableHostgroups.length > 0 && (
-                <div className="mt-8 border-t border-gray-100 pt-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-orange-500 p-1.5 rounded-lg text-white shadow-sm"><Server className="w-4 h-4" /></div>
-                            <h3 className="font-bold text-gray-700 text-xs">Unassigned Hostgroups</h3>
+                <div className="mt-12 border-t border-slate-100 pt-10">
+                    <div className="flex justify-between items-center mb-6">
+                        <div className="flex items-center gap-4">
+                            <div className="bg-orange-500 p-2.5 rounded-xl text-white shadow-lg shadow-orange-500/20"><Server className="w-5 h-5" /></div>
+                            <div>
+                                <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Unprotected Assets</h3>
+                                <p className="text-xs font-bold text-slate-400 capitalize mt-0.5">Hostgroups not yet mapped to any permission group</p>
+                            </div>
                         </div>
-                        <div className="bg-orange-50 text-orange-600 px-2.5 py-0.5 rounded-full text-[9px] font-black border border-orange-100 uppercase tracking-widest">
-                            {availableHostgroups.length} Remaining
+                        <div className="bg-orange-50 text-orange-600 px-4 py-1.5 rounded-full text-[9px] font-black border border-orange-100 capitalize tracking-widest shadow-sm">
+                            {availableHostgroups.length} Assets Remaining
                         </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-3 p-6 bg-slate-50/50 rounded-3xl border border-slate-100 shadow-inner">
                         {availableHostgroups.map(hg => (
-                            <div key={hg.hostgroup_id} className="bg-gray-50 px-2 py-1 rounded-lg border border-gray-100 flex items-center gap-1.5 shadow-sm hover:border-orange-200 transition-all">
-                                <Server className="w-2.5 h-2.5 text-orange-500" />
-                                <span className="text-[9px] font-bold text-gray-700 truncate">{hg.hostgroup}</span>
+                            <div key={hg.hostgroup_id} className="bg-white px-4 py-2.5 rounded-xl border border-slate-100 flex items-center gap-2.5 shadow-sm hover:border-orange-300 hover:shadow-md transition-all duration-300 cursor-default group/item">
+                                <Server className="w-3.5 h-3.5 text-orange-400 group-hover/item:text-orange-500 transition-colors" />
+                                <span className="text-xs font-black text-slate-600 capitalize tracking-tight truncate max-w-[150px]">{hg.hostgroup}</span>
                             </div>
                         ))}
                     </div>
@@ -211,17 +227,17 @@ const PermissionGroupsPage = () => {
       </div>
 
       {/* Create Modal */}
-      <Modal isOpen={isCreateModalOpen} onClose={() => { setIsCreateModalOpen(false); setCreateError(""); }} title="Create New Permission Group" maxWidth="max-w-md">
-        <div className="space-y-4 pt-2">
+      <Modal isOpen={isCreateModalOpen} onClose={() => { setIsCreateModalOpen(false); setCreateError(""); }} title="New Permission Group Enrollment" maxWidth="max-w-md">
+        <div className="space-y-6 pt-2">
             <FloatingInput 
-                label="Group Name"
+                label="Access Designation Name"
                 value={newGroupName} 
                 onChange={e => { setNewGroupName(e.target.value); if(createError) setCreateError(""); }} 
-                className={createError ? "border-red-500 ring-1 ring-red-500" : ""}
+                className={createError ? "border-red-500 ring-4 ring-red-500/10" : ""}
             />
-            {createError && <p className="text-[11px] font-bold text-red-500 pl-1">{createError}</p>}
-            <button onClick={createGroup} className="w-full bg-slate-900 text-white py-3 rounded-lg font-bold text-xs capitalize hover:bg-slate-800 transition-all shadow-md mt-2 flex items-center justify-center">
-                Create Group
+            {createError && <p className="text-xs font-bold text-red-500 pl-1 italic">{createError}</p>}
+            <button onClick={createGroup} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-xs capitalize tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
+                Register Access Group <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
             </button>
         </div>
       </Modal>
@@ -230,48 +246,57 @@ const PermissionGroupsPage = () => {
       <TabbedModal
         isOpen={!!editingPg}
         onClose={() => { setEditingPg(null); setActiveTab(0); }}
-        title={`Edit Permission Group: ${editingPg?.pg_name || ''}`}
+        title={`Configure Permission Group`}
         activeTab={activeTab}
         onTabChange={setActiveTab}
         tabs={[
             { label: 'General', content: (
-                <div className="space-y-4 pt-2">
-                    <FloatingInput 
-                        label="Group Name"
-                        value={editFields.pg_name} 
-                        onChange={e => setEditFields({...editFields, pg_name: e.target.value})} 
-                    />
-                    <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
-                        <button onClick={() => savePgUpdates()} className="bg-blue-600 text-white px-6 py-2 rounded-lg text-[10px] font-bold shadow-sm hover:bg-blue-700 transition-all capitalize">Save Changes</button>
+                <div className="space-y-8 pt-2">
+                    <div className="flex gap-4 p-6 bg-slate-50/50 rounded-2xl items-center border border-slate-100 shadow-inner">
+                        <div className="bg-white p-4 rounded-2xl text-blue-600 shadow-sm border border-slate-100"><ShieldCheck className="w-8 h-8" /></div>
+                        <div>
+                            <p className="text-xs font-black text-slate-400 capitalize tracking-widest mb-0.5">Configuration</p>
+                            <p className="font-black text-xl text-slate-900 tracking-tight">{editingPg?.pg_name}</p>
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                        <FloatingInput 
+                            label="Modify Group Name"
+                            value={editFields.pg_name} 
+                            onChange={e => setEditFields({...editFields, pg_name: e.target.value})} 
+                        />
+                        <div className="flex justify-end pt-4 border-t border-slate-50">
+                            <button onClick={() => savePgUpdates()} className="bg-blue-600 text-white px-8 py-3 rounded-xl text-xs font-black capitalize tracking-[0.2em] shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all">Save Changes</button>
+                        </div>
                     </div>
                 </div>
             ) },
             { label: 'Associated', content: (
-                <div className="space-y-3 pt-4">
+                <div className="space-y-4 pt-2">
                     {editingPg && data.ugPgs && data.ugPgs.filter((m: any) => m.pg_id === editingPg.pg_id).length > 0 ? data.ugPgs.filter((m: any) => m.pg_id === editingPg.pg_id).map((m: any) => {
                         const ug = data.ugs.find((u: any) => u.ug_id === m.ug_id);
                         if (!ug) return null;
                         const members = ugUsers.filter((uu: any) => uu.ug_id === ug.ug_id);
                         const isExpanded = expandedPgId === `ug-${ug.ug_id}`;
                         return (
-                            <div key={m.ug_id} className="border border-gray-100 rounded-xl overflow-hidden shadow-sm bg-white">
-                                <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => setExpandedPgId(isExpanded ? null : `ug-${ug.ug_id}`)}>
-                                    <div className="flex items-center gap-3">
-                                        <Users className="w-4 h-4 text-green-600" />
-                                        <span className="font-bold text-xs text-gray-800">{ug.ug_name}</span>
+                            <div key={m.ug_id} className="border border-slate-100 rounded-2xl overflow-hidden shadow-sm bg-white hover:border-blue-100 transition-all">
+                                <div className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-slate-50 transition-colors" onClick={() => setExpandedPgId(isExpanded ? null : `ug-${ug.ug_id}`)}>
+                                    <div className="flex items-center gap-4">
+                                        <Users className="w-4 h-4 text-blue-600" />
+                                        <span className="font-black text-xs text-slate-800 tracking-tight">{ug.ug_name}</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border border-blue-100">{members.length} USERS</span>
-                                        {isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-gray-400" /> : <ChevronRight className="w-3.5 h-3.5 text-gray-400" />}
+                                    <div className="flex items-center gap-3">
+                                        <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg text-[9px] font-black capitalize tracking-tighter border border-blue-100">{members.length} Enrolled Users</span>
+                                        {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-300" /> : <ChevronRight className="w-4 h-4 text-slate-300" />}
                                     </div>
                                 </div>
                                 {isExpanded && (
-                                    <div className="p-3 bg-gray-50/50 border-t border-gray-100 text-[11px] text-gray-600 grid grid-cols-2 gap-2">
+                                    <div className="p-4 bg-slate-50/50 border-t border-slate-50 text-xs text-slate-600 grid grid-cols-2 gap-3 animate-in slide-in-from-top-2 duration-200">
                                         {members.map((mem: any) => {
                                             const user = data.users?.find((u: any) => u.user_id === mem.user_id);
-                                            return <div key={mem.user_id} className="bg-white p-2 rounded-lg border border-gray-100 flex items-center gap-2 shadow-sm">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-                                                {user?.username || 'Unknown'}
+                                            return <div key={mem.user_id} className="bg-white p-2.5 rounded-xl border border-slate-100 flex items-center gap-2.5 shadow-sm">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-sm shadow-blue-100" />
+                                                <span className="font-bold truncate">{user?.username || 'Unknown'}</span>
                                             </div>;
                                         })}
                                     </div>
@@ -279,63 +304,67 @@ const PermissionGroupsPage = () => {
                             </div>
                         );
                     }) : (
-                        <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl">
-                            <p className="text-xs text-gray-400 font-bold italic">No associated user groups.</p>
+                        <div className="py-20 text-center border border-slate-100 rounded-[2rem] bg-slate-50/30">
+                            <Users className="w-12 h-12 text-slate-100 mx-auto mb-3" />
+                            <p className="text-xs text-slate-300 font-black capitalize tracking-widest italic">No associated user groups</p>
                         </div>
                     )}
                 </div>
             ) },
             { label: 'Hostgroups', content: (
-                <div className="space-y-3 pt-3">
+                <div className="space-y-6 pt-2">
                     <div className="flex justify-end">
-                        <button onClick={() => setIsAddingHg(true)} className="flex items-center gap-1 text-blue-600 hover:text-blue-700 font-bold text-[9px] capitalize">
-                            <Plus className="w-3 h-3" /> Add Hostgroup
+                        <button onClick={() => setIsAddingHg(true)} className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-black text-xs capitalize tracking-widest transition-all">
+                            <PlusCircle className="w-4 h-4" /> Assign Hostgroup
                         </button>
                     </div>
 
-                    <div className="relative border border-gray-100 rounded-lg p-3 pt-5 bg-white shadow-sm">
-                        <span className="absolute -top-2 left-3 bg-white px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-blue-600 border border-gray-100 rounded-full shadow-sm flex items-center gap-1">
-                            <Server className="w-3 h-3" /> Assigned Hostgroups
-                            <span className="bg-blue-50 text-blue-600 px-1.5 rounded-full text-[9px] font-black">{editFields.hostgroup_ids.length}</span>
+                    <div className="relative border border-slate-100 rounded-3xl p-6 pt-10 bg-slate-50/20 shadow-inner">
+                        <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-blue-600 border border-slate-100 rounded-full shadow-sm flex items-center gap-2">
+                            <Server className="w-3.5 h-3.5" /> Secured Assets
                         </span>
 
                         {editFields.hostgroup_ids.length > 0 ? (
-                            <div className="flex flex-wrap gap-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {editFields.hostgroup_ids.map(hgId => {
                                     const hg = hostgroups.find((h: any) => h.hostgroup_id === hgId);
                                     const hostCount = allHostnames.filter((h: any) => h.hostgroup_id === hgId).length;
                                     return hg ? (
-                                        <div key={hgId} className="bg-white px-2 py-1 rounded-lg border border-gray-100 flex items-center gap-1.5 shadow-sm hover:border-blue-200 transition-all">
-                                            <Server className="w-2.5 h-2.5 text-blue-600" />
-                                            <span className="text-[10px] font-bold text-gray-700">{hg.hostgroup}</span>
-                                            <span className="text-[9px] bg-gray-100 text-gray-500 px-1 rounded-full font-black">{hostCount}</span>
+                                        <div key={hgId} className="bg-white p-3 rounded-2xl border border-slate-100 flex items-center justify-between shadow-sm group/item hover:border-blue-200 transition-all">
+                                            <div className="flex items-center gap-3 overflow-hidden">
+                                                <div className="bg-slate-50 p-2 rounded-xl group-hover/item:scale-110 transition-transform flex-shrink-0"><Server className="w-4 h-4 text-blue-600" /></div>
+                                                <div className="flex flex-col truncate">
+                                                    <span className="text-[11px] font-black text-slate-700 truncate capitalize tracking-tight">{hg.hostgroup}</span>
+                                                    <span className="text-[8px] font-black text-slate-400 capitalize tracking-widest">{hostCount} Hosts</span>
+                                                </div>
+                                            </div>
                                             <button onClick={async () => { 
                                                 const nextHgs = editFields.hostgroup_ids.filter(i => i !== hgId);
                                                 setEditFields({...editFields, hostgroup_ids: nextHgs});
                                                 await axios.post('/api/admin/permission-groups/update', { pg_id: editingPg.pg_id, ...editFields, hostgroup_ids: nextHgs });
                                                 fetchData();
-                                            }} className="text-gray-400 hover:text-red-500 ml-1"><X className="w-3 h-3" /></button>
+                                            }} className="text-slate-300 hover:text-red-500 hover:bg-red-50 p-2 rounded-xl transition-all"><X className="w-4 h-4" /></button>
                                         </div>
                                     ) : null;
                                 })}
                             </div>
                         ) : (
-                            <div className="text-center py-4">
-                                <p className="text-[10px] text-gray-400 font-bold italic">No hostgroups assigned.</p>
+                            <div className="py-12 text-center">
+                                <Server className="w-12 h-12 text-slate-100 mx-auto mb-3" />
+                                <p className="text-xs text-slate-300 font-black capitalize tracking-widest italic">No assets assigned to this group</p>
                             </div>
                         )}
                     </div>
 
                     {isAddingHg && (
-                        <div className="relative border border-dashed border-blue-100 rounded-lg p-3 pt-6 bg-blue-50/10 mt-8 animate-in fade-in slide-in-from-top-1 duration-200">
-                            <span className="absolute -top-2 left-3 bg-white px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-blue-600 border border-blue-50 rounded-full shadow-sm flex items-center gap-1">
-                                <Plus className="w-3 h-3" /> Available Hostgroups
-                                <span className="bg-blue-100 text-blue-700 px-1.5 rounded-full text-[9px] font-black">{availableHostgroups.length}</span>
+                        <div className="relative border-2 border-dashed border-blue-100 rounded-3xl p-6 pt-10 bg-blue-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
+                            <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
+                                <Plus className="w-3.5 h-3.5" /> Available Assets
                             </span>
-                            <button onClick={() => setIsAddingHg(false)} className="absolute top-1 right-1 p-1 text-gray-400 hover:text-gray-600 transition-colors"><X className="w-3 h-3" /></button>
+                            <button onClick={() => setIsAddingHg(false)} className="absolute top-2 right-2 p-2 text-slate-300 hover:text-slate-900 transition-colors"><X className="w-4 h-4" /></button>
                             
                             {availableHostgroups.length > 0 ? (
-                                <div className="flex flex-wrap gap-2 max-h-[200px] overflow-y-auto pr-1">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
                                     {availableHostgroups.map(hg => {
                                         const hostCount = allHostnames.filter((h: any) => h.hostgroup_id === hg.hostgroup_id).length;
                                         return (
@@ -344,15 +373,17 @@ const PermissionGroupsPage = () => {
                                             setEditFields({...editFields, hostgroup_ids: nextHgs});
                                             await axios.post('/api/admin/permission-groups/update', { pg_id: editingPg.pg_id, ...editFields, hostgroup_ids: nextHgs });
                                             fetchData();
-                                        }} className="bg-white px-2 py-1 rounded-lg border border-gray-100 flex items-center gap-1.5 shadow-sm hover:border-blue-300 transition-all">
-                                            <Plus className="w-2.5 h-2.5 text-blue-600" />
-                                            <span className="text-[9px] font-black uppercase tracking-tight text-gray-700">{hg.hostgroup}</span>
-                                            <span className="text-[8px] bg-gray-100 text-gray-500 px-1 rounded-full font-black">{hostCount}</span>
+                                        }} className="bg-white p-3 rounded-2xl border border-slate-100 flex items-center gap-3 shadow-sm hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all text-left group/btn">
+                                            <div className="bg-slate-50 p-1.5 rounded-lg group-hover/btn:bg-blue-500 transition-colors shadow-inner"><Plus className="w-3.5 h-3.5 text-blue-600 group-hover/btn:text-white" /></div>
+                                            <div className="flex flex-col truncate">
+                                                <span className="text-xs font-black capitalize tracking-tight truncate">{hg.hostgroup}</span>
+                                                <span className="text-[8px] font-bold opacity-60 capitalize">{hostCount} Hosts</span>
+                                            </div>
                                         </button>
                                     )})}
                                 </div>
                             ) : (
-                                <p className="text-center py-1 text-[10px] text-gray-400 font-bold italic">All assigned.</p>
+                                <p className="text-center py-4 text-xs text-slate-300 font-black capitalize tracking-widest italic">All assets already secured</p>
                             )}
                         </div>
                     )}

@@ -18,10 +18,10 @@ export default function DashboardWrapper({ children }: { children: React.ReactNo
   const mainClass = "flex-1 overflow-y-auto px-6 sm:px-16 lg:px-32 xl:px-44 py-12 w-full max-w-[1450px] mx-auto transition-all duration-300";
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50/50 selection:bg-blue-100 selection:text-blue-700">
+    <div className="min-h-screen flex flex-col bg-slate-50 selection:bg-blue-600 selection:text-white">
       {!isModalOpen && <Navbar />}
       <main className={mainClass}>
-        <div className="animate-ease-in">
+        <div className="animate-ease-in pb-20">
           {children}
         </div>
       </main>

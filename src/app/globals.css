@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f9fafb;
-  --foreground: #111827;
+  --background: #f8fafc; /* slate-50 */
+  --foreground: #0f172a; /* slate-900 */
   --card: #ffffff;
-  --border: #e5e7eb;
-  --primary: #2563eb;
+  --border: #f1f5f9; /* slate-100 */
+  --primary: #2563eb; /* blue-600 */
   --primary-foreground: #ffffff;
-  --muted: #6b7280;
-  --radius: 1rem;
+  --muted: #64748b; /* slate-500 */
+  --radius: 1.5rem; /* 24px */
 }
 
 @theme inline {
@@ -46,13 +46,26 @@ body {
 .modern-card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-2xl);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  transition: all 0.2s ease-in-out;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modern-card:hover {
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+  transform: translateY(-2px);
+}
+
+.inner-shadow {
+  box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+}
+
+.black-label {
+  font-weight: 900;
+  text-transform: capitalize;
+  letter-spacing: 0.05em;
+  font-size: 0.625rem; /* 10px */
+  color: var(--muted);
 }
 
 .responsive-container {
@@ -71,6 +84,25 @@ body {
   .responsive-container { padding-left: 2rem; padding-right: 2rem; }
 }
 
+/* Scrollbar Customization */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0; /* slate-200 */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1; /* slate-300 */
+}
+
 /* Typography Helpers */
 .title-case {
   text-transform: capitalize;
@@ -81,10 +113,6 @@ body {
   line-height: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.025em;
-}
-
-@media (min-width: 768px) {
-  .heading-lg { font-size: 1.25rem; line-height: 1.75rem; }
 }
 
 /* Highcharts Style Protection */

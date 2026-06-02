@@ -15,30 +15,33 @@ const UnifiedAdminDashboard = () => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto py-8">
-      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 px-4">
-        <div className="space-y-1">
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">Admin Dashboard</h1>
-          <p className="text-sm font-medium text-gray-400 mt-1">Centralized administration for users, groups, and permissions</p>
+    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6">
+      <div className="mb-12 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+        <div className="space-y-2">
+          <h1 className="text-2xl font-black text-slate-900 capitalize italic tracking-tight leading-none">Admin Control</h1>
+          <p className="text-sm font-medium text-slate-400">Centralized governance for users, groups, and resource permissions</p>
         </div>
         
         {/* Tabs */}
-        <div className="bg-gray-100 p-1 rounded-2xl flex w-fit shadow-inner">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-                activeTab === tab.id ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              <tab.icon className="w-4 h-4" /> {tab.label}
-            </button>
-          ))}
+        <div className="bg-slate-100 p-1 rounded-2xl inner-shadow flex w-fit border border-slate-200/50">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-6 py-2.5 rounded-xl text-xs font-black capitalize tracking-widest transition-all duration-300 flex items-center gap-2.5 ${
+                  isActive ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'
+                }`}
+              >
+                <tab.icon className={`w-3.5 h-3.5 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} /> {tab.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      <div className="mt-6">
+      <div className="animate-ease-in">
         {activeTab === 'users' && <AdminUsersPage />}
         {activeTab === 'groups' && <ManageUserGroups />}
         {activeTab === 'permissions' && <PermissionGroupsPage />}

@@ -29,7 +29,7 @@ export default function SarManagementLayout({ children }: { children: React.Reac
               <button
                 key={tab.name}
                 onClick={() => router.push(tab.href)}
-                className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
+                className={`px-6 py-2.5 rounded-xl text-xs font-black capitalize tracking-widest transition-all flex items-center gap-2 ${
                   isActive ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                 }`}
               >

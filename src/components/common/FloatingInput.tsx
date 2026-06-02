@@ -11,7 +11,7 @@ const FloatingInput = ({ label, value, onFocus, onBlur, ...props }: FloatingInpu
   const hasValue = value !== undefined && value !== null && value !== '';
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full group">
       <input
         {...props}
         value={value}
@@ -24,17 +24,17 @@ const FloatingInput = ({ label, value, onFocus, onBlur, ...props }: FloatingInpu
           onBlur?.(e);
         }}
         className={`
-          peer w-full border border-gray-100 p-3 pt-5 pb-1 rounded-lg text-xs font-bold bg-gray-50 
-          focus:bg-white focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder-transparent
+          peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-2xl text-xs font-bold bg-slate-50/50 
+          focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all placeholder-transparent
           ${props.className || ''}
         `}
       />
       <label
         className={`
-          absolute left-4 transition-all pointer-events-none font-bold capitalize tracking-normal
+          absolute left-4 transition-all pointer-events-none font-black capitalize tracking-widest
           ${(isFocused || hasValue) 
-            ? 'top-1 text-[8px] text-blue-600' 
-            : 'top-1/2 -translate-y-1/2 text-[10px] text-gray-400'}
+            ? 'top-2 text-[9px] text-blue-600' 
+            : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}
         `}
       >
         {label}

@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Loader2, Server, User, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, Server, User, ChevronDown, ChevronUp, Search, Monitor, Settings2 } from 'lucide-react';
 
 const InventoryList = () => {
   const { data: hostgroups, isFetching } = useQuery({
@@ -21,15 +21,15 @@ const InventoryList = () => {
     if (!hostgroups) return [];
     const term = searchTerm.toLowerCase();
     return hostgroups
-        .map((hg: any) => ({
-            ...hg,
-            hostnames: hg.hostnames?.filter((h: any) => 
-                h.hostname?.toLowerCase().includes(term) || h.IP?.toLowerCase().includes(term)
-            ) || []
-        }))
-        .filter((hg: any) => 
-            hg.hostgroup.toLowerCase().includes(term) || hg.hostnames.length > 0
-        );
+      .map((hg: any) => ({
+        ...hg,
+        hostnames: hg.hostnames?.filter((h: any) =>
+          h.hostname?.toLowerCase().includes(term) || h.IP?.toLowerCase().includes(term)
+        ) || []
+      }))
+      .filter((hg: any) =>
+        hg.hostgroup.toLowerCase().includes(term) || hg.hostnames.length > 0
+      );
   }, [hostgroups, searchTerm]);
 
   const toggleGroup = (id: number) => {
@@ -44,126 +44,142 @@ const InventoryList = () => {
   };
 
   return (
-    <div className="space-y-8 animate-ease-in">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-1">
-            <h2 className="text-xl font-bold text-gray-900 tracking-tight">Server Inventory</h2>
-            <p className="text-sm font-medium text-gray-400">Manage and browse your infrastructure assets</p>
+    <div className="space-y-10 animate-ease-in">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-black text-slate-900 capitalize italic tracking-tight leading-none">Global Inventory</h2>
+          <p className="text-sm font-medium text-slate-400 tracking-tight">Full-stack visibility of managed infrastructure nodes</p>
+        </div>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 transition-colors" />
+            <input
+              type="text"
+              placeholder="Search Node or Group..."
+              className="bg-white border border-slate-100 rounded-2xl pl-12 pr-6 py-3.5 text-xs font-black capitalize tracking-tight w-full sm:w-80 shadow-sm focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all shadow-inner"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <div className="relative group">
-              <input 
-                  type="text" 
-                  placeholder="Search Hostgroup or Hostname..."
-                  className="bg-white border border-gray-200 rounded-2xl px-5 py-3 text-sm font-semibold w-full sm:w-72 shadow-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <button onClick={expandAll} className="flex-1 sm:flex-none bg-gray-100 text-gray-700 px-5 py-3 rounded-2xl text-xs font-bold hover:bg-gray-200 transition-colors">Expand All</button>
-              <button onClick={collapseAll} className="flex-1 sm:flex-none bg-gray-100 text-gray-700 px-5 py-3 rounded-2xl text-xs font-bold hover:bg-gray-200 transition-colors">Collapse All</button>
-            </div>
-            <div className="relative">
-                <button 
-                    onClick={() => setIsColumnDropdownOpen(!isColumnDropdownOpen)}
-                    className="w-full sm:w-auto bg-blue-600 text-white px-5 py-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all"
-                >
-                    Customize <ChevronDown className={`w-4 h-4 transition-transform ${isColumnDropdownOpen ? 'rotate-180' : ''}`} />
-                </button>
-                {isColumnDropdownOpen && (
-                    <div className="absolute right-0 mt-3 bg-white border border-gray-100 rounded-3xl shadow-2xl p-5 w-64 z-50 grid grid-cols-1 gap-3 animate-ease-in">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Visible Columns</p>
-                        <div className="max-h-64 overflow-y-auto pr-2 space-y-1.5 custom-scrollbar">
-                          {allColumns.map(col => (
-                              <label key={col} className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors group">
-                                  <input 
-                                      type="checkbox" 
-                                      checked={columns.includes(col)}
-                                      onChange={() => toggleColumn(col)}
-                                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-all"
-                                  />
-                                  <span className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 capitalize">{col}</span>
-                              </label>
-                          ))}
-                        </div>
-                    </div>
-                )}
-            </div>
+          <div className="flex items-center gap-2">
+            <button onClick={expandAll} className="flex-1 sm:flex-none bg-slate-900 text-white px-6 py-3.5 rounded-2xl text-xs font-black capitalize tracking-widest hover:bg-black transition-all shadow-lg shadow-slate-200">Expand All</button>
+            <button onClick={collapseAll} className="flex-1 sm:flex-none bg-slate-50 text-slate-400 border border-slate-100 px-6 py-3.5 rounded-2xl text-xs font-black capitalize tracking-widest hover:bg-white hover:text-slate-600 transition-all shadow-sm">Collapse</button>
           </div>
-      </div>
-      
-      {isFetching ? (
-        <div className="text-center py-20 bg-white rounded-[2rem] border border-gray-100 shadow-sm"><Loader2 className="w-10 h-10 animate-spin mx-auto text-blue-600" /><p className="mt-4 text-sm font-bold text-gray-400">Loading Inventory...</p></div>
-      ) : (
-        <div className="grid grid-cols-1 gap-6">
-          {filteredHostgroups?.map((hg: any) => (
-            <div key={hg.hostgroup_id} className="bg-white rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-blue-100 group overflow-hidden">
-              <div 
-                className="p-5 cursor-pointer flex items-center justify-between gap-4"
-                onClick={() => toggleGroup(hg.hostgroup_id)}
-              >
-                <div className="flex-1 min-w-0 flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${expandedGroupIds.includes(hg.hostgroup_id) ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600 group-hover:bg-blue-100'}`}>
-                        <Server className="w-5 h-5" />
-                    </div>
-                    <div>
-                        <h4 className="font-bold text-gray-900">
-                          {hg.hostgroup} <span className="text-gray-400 font-medium text-xs ml-2">ID: {hg.hostgroup_id}</span>
-                        </h4>
-                        <div className="flex items-center gap-3 mt-0.5">
-                          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-gray-400">
-                              <User className="w-3 h-3 text-blue-500/70" /> {hg.owner || 'No Owner'}
-                          </div>
-                          <div className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
-                            {hg.hostnames?.length || 0} Hosts
-                          </div>
-                        </div>
-                    </div>
-                </div>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${expandedGroupIds.includes(hg.hostgroup_id) ? 'bg-gray-900 text-white rotate-180' : 'bg-gray-100 text-gray-400'}`}>
-                  <ChevronDown className="w-4 h-4" />
+          <div className="relative">
+            <button
+              onClick={() => setIsColumnDropdownOpen(!isColumnDropdownOpen)}
+              className={`p-3 rounded-2xl border transition-all ${isColumnDropdownOpen ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-900 shadow-sm'}`}
+              title="Grid Configuration"
+            >
+              <Settings2 className="w-5 h-5" />
+            </button>
+            {isColumnDropdownOpen && (
+              <div className="absolute right-0 mt-4 bg-white border border-slate-100 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] p-6 w-72 z-50 animate-in fade-in zoom-in duration-300">
+                <p className="text-[9px] font-black text-slate-400 capitalize tracking-[0.2em] mb-4 px-2">Visibility Engine</p>
+                <div className="max-h-72 overflow-y-auto pr-2 space-y-1.5 custom-scrollbar">
+                  {allColumns.map(col => (
+                    <label key={col} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 cursor-pointer transition-all group border border-transparent hover:border-slate-100">
+                      <span className="text-[11px] font-black text-slate-600 capitalize tracking-tight group-hover:text-blue-600 transition-colors">{col}</span>
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          checked={columns.includes(col)}
+                          onChange={() => toggleColumn(col)}
+                          className="w-4 h-4 rounded-lg border-slate-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                        />
+                      </div>
+                    </label>
+                  ))}
                 </div>
               </div>
-              
-              {expandedGroupIds.includes(hg.hostgroup_id) && (
-                <div className="px-5 pb-5 animate-ease-in">
-                    <div className="overflow-x-auto border border-gray-100 rounded-2xl shadow-inner bg-gray-50/30">
-                        {hg.hostnames?.length > 0 ? (
-                          <table className="w-full text-xs text-left border-collapse">
-                              <thead>
-                                  <tr className="border-b border-gray-100">
-                                      {columns.map(col => (
-                                        <th key={col} className="px-5 py-3 text-gray-400 font-bold text-[9px] uppercase tracking-wider">{col}</th>
-                                      ))}
-                                  </tr>
-                              </thead>
-                              <tbody className="divide-y divide-gray-50">
-                                  {hg.hostnames?.map((h: any) => (
-                                      <tr key={h.hostname_id} className="hover:bg-blue-50/30 transition-colors">
-                                          {columns.map(col => {
-                                              const key = Object.keys(h).find(k => k.toLowerCase() === col.toLowerCase());
-                                              return (
-                                                <td key={col} className="px-5 py-3 font-semibold text-gray-700 whitespace-nowrap">
-                                                  {key ? h[key] : '-'}
-                                                </td>
-                                              );
-                                          })}
-                                      </tr>
-                                  ))}
-                              </tbody>
-                          </table>
-                        ) : (
-                          <div className="py-8 text-center text-gray-400 font-semibold text-xs">No hosts registered in this group.</div>
-                        )}
+            )}
+          </div>
+        </div>
+      </div>
+
+      {isFetching ? (
+        <div className="text-center py-40 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm">
+          <Loader2 className="w-16 h-16 animate-spin mx-auto text-blue-600 opacity-20" />
+          <p className="mt-8 text-xs font-black text-slate-300 capitalize tracking-[0.3em]">Synching with Infrastructure...</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6">
+          {filteredHostgroups?.map((hg: any) => {
+            const isExpanded = expandedGroupIds.includes(hg.hostgroup_id);
+            return (
+              <div key={hg.hostgroup_id} className={`bg-white rounded-[2rem] border transition-all duration-500 group overflow-hidden ${isExpanded ? 'border-blue-100 shadow-xl shadow-blue-500/5' : 'border-slate-100 shadow-sm hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-200'}`}>
+                <div
+                  className={`p-6 cursor-pointer flex items-center justify-between gap-6 transition-colors duration-300 ${isExpanded ? 'bg-slate-50/30 border-b border-slate-50' : 'bg-white'}`}
+                  onClick={() => toggleGroup(hg.hostgroup_id)}
+                >
+                  <div className="flex-1 min-w-0 flex items-center gap-6">
+                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/30 rotate-3' : 'bg-slate-50 text-blue-600 group-hover:bg-blue-50'}`}>
+                      <Server className="w-7 h-7" />
                     </div>
+                    <div className="space-y-1">
+                      <h4 className="font-black text-slate-900 text-lg capitalize tracking-tight leading-none">
+                        {hg.hostgroup} <span className="text-slate-300 font-bold text-xs ml-3">ID: {hg.hostgroup_id}</span>
+                      </h4>
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 text-xs font-black text-slate-400 capitalize tracking-widest">
+                          <User className="w-3.5 h-3.5 text-blue-500 opacity-50" /> {hg.owner || 'ORPHAN_NODE'}
+                        </div>
+                        <div className="h-3 w-px bg-slate-200"></div>
+                        <div className="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-100 capitalize tracking-tighter">
+                          {hg.hostnames?.length || 0} Nodes Enrolled
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-slate-900 text-white rotate-180' : 'bg-slate-50 text-slate-300 group-hover:text-slate-500'}`}>
+                    <ChevronDown className="w-5 h-5" />
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+
+                {isExpanded && (
+                  <div className="p-8 animate-in fade-in slide-in-from-top-4 duration-500 bg-white">
+                    <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-3xl shadow-inner bg-slate-50/20">
+                      {hg.hostnames?.length > 0 ? (
+                        <table className="w-full text-xs text-left border-collapse">
+                          <thead>
+                            <tr className="bg-white border-b border-slate-100">
+                              {columns.map(col => (
+                                <th key={col} className="px-6 py-5 text-slate-400 font-black text-[9px] capitalize tracking-widest whitespace-nowrap">{col}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100/50">
+                            {hg.hostnames?.map((h: any) => (
+                              <tr key={h.hostname_id} className="hover:bg-blue-50/40 transition-all duration-200 group/row">
+                                {columns.map(col => {
+                                  const key = Object.keys(h).find(k => k.toLowerCase() === col.toLowerCase());
+                                  const isMain = col.toLowerCase() === 'hostname' || col.toLowerCase() === 'ip';
+                                  return (
+                                    <td key={col} className={`px-6 py-4 font-bold whitespace-nowrap transition-colors ${isMain ? 'text-slate-900 font-black group-hover/row:text-blue-700' : 'text-slate-500'}`}>
+                                      {key ? h[key] : '---'}
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <div className="py-16 text-center">
+                          <Monitor className="w-12 h-12 text-slate-100 mx-auto mb-4" />
+                          <p className="text-xs text-slate-300 font-black capitalize tracking-[0.2em] italic">No Nodes registered in this sector</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
           {filteredHostgroups?.length === 0 && (
-            <div className="py-20 text-center bg-white rounded-[2rem] border border-gray-100 shadow-sm">
-              <p className="text-gray-400 font-bold">No results found for "{searchTerm}"</p>
+            <div className="py-40 text-center bg-white rounded-[2.5rem] border border-slate-100 shadow-sm">
+              <Search className="w-16 h-16 text-slate-100 mx-auto mb-6" />
+              <p className="text-sm font-black text-slate-300 capitalize tracking-[0.3em]">No match found for query: "{searchTerm}"</p>
             </div>
           )}
         </div>

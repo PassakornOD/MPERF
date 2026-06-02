@@ -1,11 +1,11 @@
 
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import DashboardWrapper from "@/components/layout/DashboardWrapper";
 import Providers from "@/components/Providers";
 
-const inter = Inter({ subsets: ["latin"] });
+const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700"] });
 
 export const metadata: Metadata = {
   title: "Metrisar - Admin Dashboard",
@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-gray-50 text-gray-900`}>
+      <body className={`${roboto.className} bg-gray-50 text-gray-900`}>
         <Providers>
           <DashboardWrapper>
             {children}

@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useToast } from '@/components/common/Toast';
-import { Loader2, Download, Activity } from 'lucide-react';
+import { Loader2, Download, Activity, ChevronDown, AlertCircle } from 'lucide-react';
 
 const SarChart = dynamic(() => import('@/components/charts/SarChart'), {
   ssr: false,
@@ -213,57 +213,88 @@ const CpuDailyPage = () => {
   };
 
   return (
-    <Block title="Sar Statistics" subtitle="Daily CPU Utilization Analysis" tabs={[]}>
-      <div className="bg-gray-50/80 p-4 sm:p-5 rounded-3xl border border-gray-100 mb-2 flex flex-wrap gap-3 items-end justify-start lg:justify-center transition-all">
-        <div className="w-44">
-          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Hostgroup</label>
-          <select className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
-            <option value="">Select Hostgroup</option>
-            {hostGroups?.map(g => <option key={g.hostgroup_id} value={g.hostgroup}>{g.hostgroup}</option>)}
-          </select>
+    <Block title="CPU Performance Metrics" subtitle="Daily Processor Utilization Analysis" tabs={[]}>
+      <div className="bg-slate-50/50 p-6 rounded-3xl border border-slate-100 mb-8 flex flex-nowrap gap-3 items-end justify-center transition-all shadow-inner">
+        <div className="flex-1 min-w-[180px]">
+          <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Hostgroup</label>
+          <div className="relative group">
+            <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
+              <option value="">Select Group</option>
+              {hostGroups?.map(g => <option key={g.hostgroup_id} value={g.hostgroup}>{g.hostgroup}</option>)}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
+          </div>
         </div>
-        <div className="w-44">
-          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Hostname</label>
-          <select className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm disabled:opacity-50" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
-            <option value="">Select Hostname</option>
-            {hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.map(h => <option key={h.hostname_id} value={h.hostname_id}>{h.hostname}</option>)}
-          </select>
+        <div className="flex-1 min-w-[180px]">
+          <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Hostname</label>
+          <div className="relative group">
+            <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm disabled:opacity-30" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
+              <option value="">Select Node</option>
+              {hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.map(h => <option key={h.hostname_id} value={String(h.hostname_id)}>{h.hostname}</option>)}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
+          </div>
         </div>
-        <div className="w-28">
-          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Type</label>
-          <select className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={type} onChange={(e) => setType(e.target.value as any)}>
-            <option value="Peak">Peak</option>
-            <option value="Normal">Normal</option>
-            <option value="Average">Average</option>
-          </select>
+        <div className="w-32">
+          <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Type</label>
+          <div className="relative group">
+            <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm" value={type} onChange={(e) => setType(e.target.value as any)}>
+              <option value="Peak">Peak</option>
+              <option value="Normal">Normal</option>
+              <option value="Average">Average</option>
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
+          </div>
         </div>
-        <div className="w-36">
-          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Start Date</label>
-          <input type="date" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+        <div className="w-40">
+          <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Start Cycle</label>
+          <input type="date" className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-black capitalize outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
         </div>
-        <div className="w-36">
-          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Stop Date</label>
-          <input type="date" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+        <div className="w-40">
+          <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Stop Cycle</label>
+          <input type="date" className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-black capitalize outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
         </div>
-        <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-blue-600 text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 disabled:opacity-50 h-[38px]" disabled={!selectedGroup || !selectedHostnameId}>Query</button>
+        <div className="flex items-end">
+          <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-slate-900 text-white px-4 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-slate-200 disabled:opacity-30 h-[42px] active:scale-95 whitespace-nowrap" disabled={!selectedGroup || !selectedHostnameId}>Execute</button>
+        </div>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center mb-6 px-2">
+        <div className="flex items-center gap-3">
+          <div className={`w-2 h-2 rounded-full ${isFetching ? 'bg-blue-500 animate-pulse' : metrics ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300'}`}></div>
+          <span className="text-xs font-black text-slate-400 capitalize tracking-widest">{isFetching ? 'Stream Incoming' : metrics ? 'Data Link Online' : 'System Ready'}</span>
+        </div>
         {metrics && metrics.length > 0 && (
-          <button onClick={handleExport} className="flex items-center gap-2 bg-emerald-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100 disabled:opacity-50" disabled={isExporting}>
-            {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-            {isExporting ? 'Exporting...' : 'Export PDF Report'}
+          <button onClick={handleExport} className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl text-xs font-black capitalize tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50 active:scale-95" disabled={isExporting}>
+            {isExporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+            {isExporting ? 'Compiling...' : 'Acquire PDF'}
           </button>
         )}
       </div>
 
-      <div id="container" className="min-h-[435px] bg-white rounded-3xl border border-gray-50 shadow-inner p-4">
-        {isFetching ? <div className="text-center py-32"><div className="animate-spin rounded-full h-14 w-14 border-b-2 border-blue-600 mx-auto"></div><p className="mt-6 text-sm font-bold text-gray-400">Fetching metrics...</p></div> : queryEnabled ? (
-          metrics && metrics.length > 0 ? <SarChart ref={chartRef} options={getChartOptions()} /> : <div className="text-center py-32 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200"><p className="text-gray-400 font-bold">No performance records found for this period.</p></div>
+      <div id="container" className="min-h-[500px] bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-10 animate-ease-in relative overflow-hidden">
+        {isFetching ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm z-10">
+            <Loader2 className="w-16 h-16 animate-spin text-blue-600 opacity-20" />
+            <p className="mt-8 text-xs font-black text-slate-400 capitalize tracking-[0.3em]">Synchronizing Nodes...</p>
+          </div>
+        ) : null}
+
+        {queryEnabled ? (
+          metrics && metrics.length > 0 ? (
+            <div className="animate-in fade-in zoom-in-95 duration-700">
+              <SarChart ref={chartRef} options={getChartOptions()} />
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-40 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100">
+              <AlertCircle className="w-12 h-12 text-slate-200 mb-4" />
+              <p className="text-xs font-black text-slate-300 capitalize tracking-[0.2em]">No performance metrics retrieved for cycle</p>
+            </div>
+          )
         ) : (
-          <div className="flex flex-col items-center justify-center py-32 text-gray-300">
-            <Activity size={64} className="mb-4 opacity-20" />
-            <p className="font-bold text-lg">Select filters and click Query to visualize data</p>
+          <div className="flex flex-col items-center justify-center py-40">
+            <Activity size={80} className="mb-8 text-slate-100 animate-pulse" />
+            <p className="text-xs font-black text-slate-300 capitalize tracking-[0.3em]">Awaiting Instruction Set</p>
           </div>
         )}
       </div>

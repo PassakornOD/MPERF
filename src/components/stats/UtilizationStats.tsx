@@ -6,7 +6,7 @@ import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useToast } from '@/components/common/Toast';
-import { Loader2, Activity } from 'lucide-react';
+import { Loader2, Activity, ChevronDown, AlertCircle } from 'lucide-react';
 
 const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
   const { showToast } = useToast();
@@ -60,70 +60,91 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
 
   return (
     <Block title={`${type} Utilization`} subtitle={`Long-term ${type === 'CPU' ? 'Processor' : 'Memory'} usage stats (Last 12 Months)`}>
-      <div className="bg-gray-50/80 p-6 sm:p-8 rounded-3xl border border-gray-100 mb-2 flex flex-wrap gap-6 items-end justify-start sm:justify-center transition-all">
+      <div className="bg-slate-50/50 p-6 sm:p-8 rounded-3xl border border-slate-100 mb-8 flex flex-wrap gap-6 items-end justify-start sm:justify-center transition-all shadow-inner">
         <div className="flex-1 min-w-[250px]">
-          <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Hostgroup</label>
-          <select className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={hostgroup} onChange={(e) => setHostgroup(e.target.value)}>
-            <option value="">Select Hostgroup</option>
-            {hostGroups?.map((g: any) => <option key={g.hostgroup_id} value={g.hostgroup}>{g.hostgroup}</option>)}
-          </select>
+          <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Hostgroup Scope</label>
+          <div className="relative group">
+            <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm" value={hostgroup} onChange={(e) => setHostgroup(e.target.value)}>
+              <option value="">Select Target</option>
+              {hostGroups?.map((g: any) => <option key={g.hostgroup_id} value={g.hostgroup}>{g.hostgroup}</option>)}
+            </select>
+            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
+          </div>
         </div>
-        <button onClick={handleQuery} className="bg-blue-600 text-white px-10 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 h-[42px]">
-          Query
+        <button onClick={handleQuery} className="bg-slate-900 text-white px-10 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-slate-200 h-[42px] active:scale-95">
+          Execute Query
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-inner overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden animate-ease-in">
+        <div className="overflow-x-auto custom-scrollbar">
           {isFetching ? (
             <div className="text-center py-32">
-              <div className="animate-spin rounded-full h-14 w-14 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-6 text-sm font-bold text-gray-400">Fetching statistics...</p>
+              <Loader2 className="w-16 h-16 animate-spin mx-auto text-blue-600 opacity-20" />
+              <p className="mt-8 text-xs font-black text-slate-300 capitalize tracking-[0.3em]">Processing Annual Aggregates...</p>
             </div>
           ) : queryEnabled ? (
             stats && stats.length > 0 ? (
-              <table className="w-full text-sm text-left border-collapse">
+              <table className="w-full text-xs text-left border-collapse">
                 <thead>
-                  <tr className="bg-gray-50/50 border-b border-gray-100">
-                    <th className="px-6 py-5 text-gray-400 font-bold text-[10px] uppercase tracking-wider">Hostname</th>
+                  <tr className="bg-slate-50/50 border-b border-slate-100">
+                    <th className="px-8 py-6 text-slate-400 font-black text-[9px] capitalize tracking-widest">Hostname</th>
                     {months.map(m => (
-                      <th key={`${m.month}-${m.year}`} className="px-2 py-5 text-center text-gray-400 font-bold text-[10px] uppercase tracking-wider">
-                        {m.label}{String(m.year).slice(-2)}
+                      <th key={`${m.month}-${m.year}`} className="px-3 py-6 text-center text-slate-400 font-black text-[9px] capitalize tracking-widest">
+                        {m.label} {String(m.year).slice(-2)}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-slate-50">
                   {hostnames.map((hn: any) => (
-                    <tr key={hn} className="hover:bg-blue-50/30 transition-colors">
-                      <td className="px-6 py-4 font-bold text-gray-700 whitespace-nowrap">{hn}</td>
+                    <tr key={hn} className="hover:bg-blue-50/30 transition-all duration-200 group">
+                      <td className="px-8 py-5 font-black text-slate-800 capitalize tracking-tight whitespace-nowrap group-hover:text-blue-700">{hn}</td>
                       {months.map(m => {
                         const val = stats?.find((s: any) => s.hostname === hn && s.month === m.month && s.year === m.year);
                         let displayVal = '-';
+                        let isHigh = false;
                         if (val) {
                           if (type === 'CPU') {
                             const idle = parseFloat(val.avg_idle);
-                            if (!isNaN(idle)) displayVal = (100 - idle).toFixed(2);
+                            if (!isNaN(idle)) {
+                              const utilization = 100 - idle;
+                              displayVal = utilization.toFixed(2);
+                              isHigh = utilization > 80;
+                            }
                           } else {
                             const v = parseFloat(val.val);
-                            if (!isNaN(v)) displayVal = v.toFixed(2);
+                            if (!isNaN(v)) {
+                              displayVal = v.toFixed(2);
+                              // For memory, we don't necessarily know the total here without more lookup, 
+                              // but we could color based on absolute value if we wanted.
+                            }
                           }
                         }
-                        return <td key={`${m.month}-${m.year}`} className="px-2 py-4 text-center font-semibold text-gray-600">{displayVal}</td>
+                        return (
+                          <td key={`${m.month}-${m.year}`} className="px-3 py-5 text-center whitespace-nowrap">
+                            <span className={`px-2 py-1 rounded-lg font-bold tabular-nums text-[11px] ${displayVal === '-' ? 'text-slate-300 font-medium' :
+                              isHigh ? 'bg-red-50 text-red-600' : 'text-slate-600'
+                              }`}>
+                              {displayVal}
+                            </span>
+                          </td>
+                        )
                       })}
                     </tr>
                   ))}
                 </tbody>
               </table>
             ) : (
-              <div className="text-center py-32 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
-                <p className="text-gray-400 font-bold">No records found for this hostgroup.</p>
+              <div className="flex flex-col items-center justify-center py-40 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100 mx-10 my-10">
+                <AlertCircle className="w-12 h-12 text-slate-200 mb-4" />
+                <p className="text-xs font-black text-slate-300 capitalize tracking-[0.2em]">No operational records found for sector</p>
               </div>
             )
           ) : (
-            <div className="flex flex-col items-center justify-center py-32 text-gray-300">
-              <Activity size={64} className="mb-4 opacity-20" />
-              <p className="font-bold text-lg">Select a hostgroup and click Query</p>
+            <div className="flex flex-col items-center justify-center py-40">
+              <Activity size={80} className="mb-8 text-slate-100 animate-pulse" />
+              <p className="text-xs font-black text-slate-300 capitalize tracking-[0.3em]">Awaiting Vector Selection</p>
             </div>
           )}
         </div>

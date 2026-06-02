@@ -121,32 +121,34 @@ const IngestPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10 animate-ease-in">
         {/* Main Controls Card */}
-        <div className="bg-white rounded-[32px] border border-gray-100 shadow-sm p-8 transition-all hover:shadow-md">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="modern-card p-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             
             {/* 1. Selection Mode */}
-            <div className="space-y-4">
-              <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
-                <Clock className="w-3 h-3" /> Ingestion Mode
+            <div className="space-y-6">
+              <label className="flex items-center gap-2.5 text-xs font-black text-slate-400 capitalize tracking-[0.2em] px-1">
+                <Clock className="w-3.5 h-3.5" /> Ingestion Strategy
               </label>
-              <div className="grid grid-cols-1 gap-2">
+              <div className="grid grid-cols-1 gap-2.5">
                 {[
-                  { id: 'yesterday', label: 'Yesterday', icon: Clock },
-                  { id: 'specific', label: 'Specific Date', icon: Calendar },
-                  { id: 'month', label: 'Full Month', icon: Calendar }
+                  { id: 'yesterday', label: 'Rolling Yesterday', icon: Clock },
+                  { id: 'specific', label: 'Target Date', icon: Calendar },
+                  { id: 'month', label: 'Full Month Archival', icon: Calendar }
                 ].map((m) => (
                   <button
                     key={m.id}
                     onClick={() => setFormData({ ...formData, mode: m.id })}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition-all text-xs font-bold ${
+                    className={`flex items-center gap-3.5 px-5 py-4 rounded-2xl border-2 transition-all text-xs font-black capitalize tracking-wider ${
                       formData.mode === m.id 
-                      ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-sm' 
-                      : 'border-gray-50 bg-gray-50 text-gray-500 hover:border-gray-200'
+                      ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm' 
+                      : 'border-slate-50 bg-slate-50/30 text-slate-400 hover:border-slate-200 hover:bg-slate-50'
                     }`}
                   >
-                    <m.icon className={`w-4 h-4 ${formData.mode === m.id ? 'text-blue-600' : 'text-gray-400'}`} />
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${formData.mode === m.id ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'bg-white border border-slate-100 text-slate-300'}`}>
+                        <m.icon className="w-4 h-4" />
+                    </div>
                     {m.label}
                   </button>
                 ))}
@@ -154,19 +156,19 @@ const IngestPage = () => {
             </div>
 
             {/* 2. Filters */}
-            <div className="space-y-4">
-              <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
-                <Layers className="w-3 h-3" /> Target Filter
+            <div className="space-y-6">
+              <label className="flex items-center gap-2.5 text-xs font-black text-slate-400 capitalize tracking-[0.2em] px-1">
+                <Layers className="w-3.5 h-3.5" /> Granular Filtering
               </label>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="relative group">
-                  <Layers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                  <Layers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 transition-colors" />
                   <select
                     value={formData.hostgroup}
                     onChange={(e) => setFormData({ ...formData, hostgroup: e.target.value, hostname: '' })}
-                    className="w-full bg-gray-50 border-2 border-gray-50 rounded-2xl py-3.5 pl-12 pr-4 text-xs font-bold text-gray-900 outline-none focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer"
+                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner"
                   >
-                    <option value="">All Hostgroups</option>
+                    <option value="">Global Scan (All Groups)</option>
                     {hostgroups.map(hg => (
                       <option key={hg.hostgroup_id} value={hg.hostgroup_id}>{hg.hostgroup}</option>
                     ))}
@@ -174,13 +176,13 @@ const IngestPage = () => {
                 </div>
 
                 <div className="relative group">
-                  <Server className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                  <Server className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 transition-colors" />
                   <select
                     value={formData.hostname}
                     onChange={(e) => setFormData({ ...formData, hostname: e.target.value })}
-                    className="w-full bg-gray-50 border-2 border-gray-50 rounded-2xl py-3.5 pl-12 pr-4 text-xs font-bold text-gray-900 outline-none focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer"
+                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner"
                   >
-                    <option value="">All Hostnames</option>
+                    <option value="">Consolidated Scan (All Hosts)</option>
                     {filteredHostnames.map(hn => (
                       <option key={hn.hostname_id} value={hn.hostname}>{hn.hostname}</option>
                     ))}
@@ -188,67 +190,74 @@ const IngestPage = () => {
                 </div>
 
                 <div className="relative group">
-                  <Database className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                  <Database className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 transition-colors" />
                   <select
                     value={formData.os}
                     onChange={(e) => setFormData({ ...formData, os: e.target.value })}
-                    className="w-full bg-gray-50 border-2 border-gray-50 rounded-2xl py-3.5 pl-12 pr-4 text-xs font-bold text-gray-900 outline-none focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer"
+                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner"
                   >
-                    <option value="All">All Operating Systems</option>
-                    <option value="RedHat">RedHat Only</option>
-                    <option value="Solaris">Solaris Only</option>
+                    <option value="All">Unified Platforms</option>
+                    <option value="RedHat">RedHat Enterprise Linux</option>
+                    <option value="Solaris">Oracle Solaris / SunOS</option>
                   </select>
                 </div>
               </div>
             </div>
 
             {/* 3. Date Configuration */}
-            <div className="space-y-4">
-              <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
-                <Calendar className="w-3 h-3" /> Date Configuration
+            <div className="space-y-6">
+              <label className="flex items-center gap-2.5 text-xs font-black text-slate-400 capitalize tracking-[0.2em] px-1">
+                <Calendar className="w-3.5 h-3.5" /> Timeline Context
               </label>
               
-              <div className="space-y-3 p-4 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+              <div className="space-y-4 p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 shadow-inner flex flex-col justify-center min-h-[160px]">
                 {formData.mode === 'yesterday' && (
-                  <div className="text-center py-6">
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Targeting</p>
-                    <p className="text-sm font-black text-blue-600 uppercase tracking-tight">Yesterday's SAR Files</p>
+                  <div className="text-center py-4 space-y-2">
+                    <p className="text-xs font-black text-slate-400 capitalize tracking-[0.2em]">Targeting Window</p>
+                    <p className="text-sm font-black text-blue-600 capitalize tracking-widest italic animate-pulse">Yesterday's Operational Logs</p>
                   </div>
                 )}
 
                 {formData.mode === 'specific' && (
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="number"
-                      min="1"
-                      max="31"
-                      placeholder="Day"
-                      value={formData.day}
-                      onChange={(e) => setFormData({ ...formData, day: e.target.value })}
-                      className="w-full bg-white border-2 border-gray-100 rounded-xl py-2 px-3 text-xs font-bold outline-none focus:border-blue-200"
-                    />
-                    <select
-                      value={formData.month}
-                      onChange={(e) => setFormData({ ...formData, month: e.target.value })}
-                      className="w-full bg-white border-2 border-gray-100 rounded-xl py-2 px-3 text-xs font-bold outline-none focus:border-blue-200"
-                    >
-                      <option value="">Month</option>
-                      {months.map(m => <option key={m} value={m}>{m}</option>)}
-                    </select>
-                    <div className="col-span-2 text-center py-2">
-                      <span className="text-[10px] font-bold text-gray-400">Year: {new Date().getFullYear()}</span>
+                  <div className="grid grid-cols-2 gap-3 animate-in fade-in zoom-in duration-300">
+                    <div className="space-y-1">
+                        <label className="text-[9px] font-black text-slate-400 capitalize ml-1">Day</label>
+                        <input
+                            type="number"
+                            min="1"
+                            max="31"
+                            placeholder="DD"
+                            value={formData.day}
+                            onChange={(e) => setFormData({ ...formData, day: e.target.value })}
+                            className="w-full bg-white border border-slate-100 rounded-xl py-3 px-4 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all"
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-[9px] font-black text-slate-400 capitalize ml-1">Month</label>
+                        <select
+                            value={formData.month}
+                            onChange={(e) => setFormData({ ...formData, month: e.target.value })}
+                            className="w-full bg-white border border-slate-100 rounded-xl py-3 px-4 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all appearance-none"
+                        >
+                            <option value="">Select</option>
+                            {months.map(m => <option key={m} value={m}>{m}</option>)}
+                        </select>
+                    </div>
+                    <div className="col-span-2 text-center pt-2">
+                      <span className="text-xs font-black text-slate-300 capitalize tracking-widest">Active Cycle: {new Date().getFullYear()}</span>
                     </div>
                   </div>
                 )}
 
                 {formData.mode === 'month' && (
-                  <div className="space-y-2">
+                  <div className="space-y-1 animate-in fade-in zoom-in duration-300">
+                    <label className="text-[9px] font-black text-slate-400 capitalize ml-1">Archive Month</label>
                     <select
                       value={formData.month}
                       onChange={(e) => setFormData({ ...formData, month: e.target.value })}
-                      className="w-full bg-white border-2 border-gray-100 rounded-xl py-3 px-4 text-xs font-bold outline-none focus:border-blue-200"
+                      className="w-full bg-white border border-slate-100 rounded-xl py-4 px-5 text-xs font-black capitalize tracking-widest outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all appearance-none"
                     >
-                      <option value="">Select Month</option>
+                      <option value="">Select Target Month</option>
                       {months.map(m => <option key={m} value={m}>{m}</option>)}
                     </select>
                   </div>
@@ -258,15 +267,15 @@ const IngestPage = () => {
               <button
                 disabled={ingesting || loading}
                 onClick={handleStartIngestion}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-200 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg shadow-blue-200 disabled:shadow-none uppercase tracking-widest text-xs"
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-500/20 disabled:shadow-none capitalize tracking-[0.2em] text-xs"
               >
                 {ingesting ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Ingesting Data...
+                    <Loader2 className="w-4 h-4 animate-spin" /> Commencing Ingestion...
                   </>
                 ) : (
                   <>
-                    <Play className="w-4 h-4" /> Start Ingestion
+                    <Play className="w-4 h-4" /> Start Ingestion Cycle
                   </>
                 )}
               </button>
@@ -276,37 +285,37 @@ const IngestPage = () => {
         </div>
 
         {/* Results Log Section */}
-        <div className="bg-gray-900 rounded-[32px] border border-gray-800 shadow-xl overflow-hidden min-h-[400px] flex flex-col">
-          <div className="px-8 py-4 bg-gray-800/50 border-b border-gray-800 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Process Log</span>
+        <div className="bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col transition-all">
+          <div className="px-10 py-5 bg-slate-800/50 border-b border-slate-800 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className={`w-2.5 h-2.5 rounded-full ${ingesting ? 'bg-blue-500 animate-pulse' : results.length > 0 ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-slate-600'}`}></div>
+              <span className="text-xs font-black text-slate-400 capitalize tracking-[0.2em]">Operational Stream Log</span>
             </div>
             {results.length > 0 && (
               <button 
                 onClick={() => setResults([])}
-                className="text-[10px] font-bold text-gray-500 hover:text-white transition-colors uppercase"
+                className="text-xs font-black text-slate-500 hover:text-white transition-all capitalize tracking-widest bg-slate-700/50 px-3 py-1 rounded-lg"
               >
-                Clear Log
+                Flush Log
               </button>
             )}
           </div>
           
-          <div className="p-6 font-mono text-[11px] space-y-1 overflow-y-auto max-h-[500px]">
+          <div className="p-10 font-mono text-[11px] space-y-1.5 overflow-y-auto max-h-[500px] custom-scrollbar">
             {results.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-gray-600 py-20">
-                <Database className="w-12 h-12 mb-4 opacity-20" />
-                <p>Waiting for ingestion task to start...</p>
+              <div className="h-full flex flex-col items-center justify-center text-slate-700 py-32 space-y-4">
+                <Database className="w-16 h-12 mb-2 opacity-10" />
+                <p className="text-xs font-black capitalize tracking-[0.3em] opacity-40">System ready for data intake</p>
               </div>
             ) : (
               results.map((line, idx) => (
-                <div key={idx} className="flex gap-4 border-b border-gray-800/50 py-1 last:border-0 hover:bg-white/5 transition-colors group">
-                  <span className="text-gray-600 w-8 text-right select-none">{idx + 1}</span>
+                <div key={idx} className="flex gap-6 border-b border-slate-800/30 py-2 last:border-0 hover:bg-white/5 transition-all group rounded-lg px-2 -mx-2">
+                  <span className="text-slate-600 w-10 text-right select-none font-bold tabular-nums">{(idx + 1).toString().padStart(3, '0')}</span>
                   <span className={`
-                    ${line.includes('[Success]') ? 'text-green-400' : ''}
-                    ${line.includes('[Error]') ? 'text-red-400' : ''}
-                    ${line.includes('[Skip]') ? 'text-amber-400 font-bold' : ''}
-                    ${line.startsWith('Error') ? 'text-red-500 font-black text-xs' : 'text-gray-300'}
+                    ${line.includes('[Success]') ? 'text-emerald-400 font-bold' : ''}
+                    ${line.includes('[Error]') ? 'text-red-400 font-bold bg-red-500/10 px-2 rounded' : ''}
+                    ${line.includes('[Skip]') ? 'text-amber-400 font-bold italic opacity-80' : ''}
+                    ${line.startsWith('Error') ? 'text-red-500 font-black text-xs' : 'text-slate-300'}
                   `}>
                     {line}
                   </span>

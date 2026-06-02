@@ -109,69 +109,94 @@ const SarManagementPage = () => {
   const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <div className="space-y-8 animate-ease-in pb-20">
-      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 sm:p-10 transition-all hover:shadow-md">
-        <div className="flex flex-wrap gap-3 mb-10">
-          <button onClick={() => setType('cpu')} className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${type === 'cpu' ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>CPU Analytics</button>
-          <button onClick={() => setType('mem')} className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${type === 'mem' ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>Memory Analytics</button>
+    <div className="space-y-10 animate-ease-in pb-20">
+      <div className="modern-card p-10">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12">
+            <div className="space-y-1">
+                <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Analytics Scope</h3>
+                <p className="text-xs font-bold text-slate-400 capitalize">Select metric dimension for exploration</p>
+            </div>
+            <div className="flex bg-slate-100 p-1 rounded-2xl inner-shadow w-fit border border-slate-200/50">
+              <button 
+                onClick={() => setType('cpu')} 
+                className={`px-8 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] transition-all duration-300 ${type === 'cpu' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
+              >
+                CPU Analytics
+              </button>
+              <button 
+                onClick={() => setType('mem')} 
+                className={`px-8 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] transition-all duration-300 ${type === 'mem' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
+              >
+                Memory Analytics
+              </button>
+            </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5 items-end justify-center">
-          <div className="space-y-1.5">
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Hostgroup</label>
-            <select className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
-              <option value="">Select Hostgroup</option>
-              {hostGroups?.map((g: any) => <option key={g.hostgroup} value={g.hostgroup}>{g.hostgroup}</option>)}
-            </select>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-end">
+          <div className="space-y-2">
+            <label className="text-xs font-black text-slate-400 capitalize tracking-widest ml-1">Hostgroup</label>
+            <div className="relative group">
+                <select className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3.5 px-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
+                  <option value="">Select Target</option>
+                  {hostGroups?.map((g: any) => <option key={g.hostgroup} value={g.hostgroup}>{g.hostgroup}</option>)}
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
+            </div>
           </div>
           
-          <div className="space-y-1.5">
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Hostname</label>
-            <select className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner disabled:opacity-50" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
-              <option value="">All Hostnames</option>
-              {hostGroups?.find((g: any) => g.hostgroup === selectedGroup)?.hostnames.map((h: any) => (
-                <option key={h.hostname_id} value={h.hostname_id}>{h.hostname}</option>
-              ))}
-            </select>
+          <div className="space-y-2">
+            <label className="text-xs font-black text-slate-400 capitalize tracking-widest ml-1">Hostname</label>
+            <div className="relative group">
+                <select className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3.5 px-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner disabled:opacity-30" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
+                  <option value="">Consolidated (All)</option>
+                  {hostGroups?.find((g: any) => g.hostgroup === selectedGroup)?.hostnames.map((h: any) => (
+                    <option key={h.hostname_id} value={h.hostname_id}>{h.hostname}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
+            </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Filter Level</label>
-            <select className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" value={filterLevel} onChange={(e) => setFilterLevel(e.target.value as any)}>
-              <option value="all">All Records</option>
-              <option value="year">By Year</option>
-              <option value="month">By Month</option>
-              <option value="day">By Day</option>
-            </select>
+          <div className="space-y-2">
+            <label className="text-xs font-black text-slate-400 capitalize tracking-widest ml-1">Filter Depth</label>
+            <div className="relative group">
+                <select className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3.5 px-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner" value={filterLevel} onChange={(e) => setFilterLevel(e.target.value as any)}>
+                  <option value="all">Unfiltered (All)</option>
+                  <option value="year">Annual View</option>
+                  <option value="month">Monthly View</option>
+                  <option value="day">Daily Detail</option>
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
+            </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Period Selection</label>
+          <div className="space-y-2">
+            <label className="text-xs font-black text-slate-400 capitalize tracking-widest ml-1">Timeline</label>
             <div className="flex gap-2">
               {filterLevel !== 'all' && (
-                  <select className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-3 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" value={year} onChange={(e) => setYear(e.target.value)}>
+                  <select className="flex-1 bg-slate-50/50 border border-slate-100 rounded-xl py-3 px-2 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center" value={year} onChange={(e) => setYear(e.target.value)}>
                       {years.map(y => <option key={y} value={y}>{y}</option>)}
                   </select>
               )}
               {(filterLevel === 'month' || filterLevel === 'day') && (
-                  <select className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-3 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" value={month} onChange={(e) => setMonth(e.target.value)}>
+                  <select className="flex-1 bg-slate-50/50 border border-slate-100 rounded-xl py-3 px-2 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center" value={month} onChange={(e) => setMonth(e.target.value)}>
                       {months.map(m => <option key={m.val} value={m.val}>{m.name}</option>)}
                   </select>
               )}
               {filterLevel === 'day' && (
-                  <select className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-3 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" value={day} onChange={(e) => setDay(e.target.value)}>
+                  <select className="flex-1 bg-slate-50/50 border border-slate-100 rounded-xl py-3 px-2 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center" value={day} onChange={(e) => setDay(e.target.value)}>
                       {Array.from({ length: getDaysInMonth(month, year) }, (_, i) => String(i + 1).padStart(2, '0')).map(d => <option key={d} value={d}>{d}</option>)}
                   </select>
               )}
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <button onClick={() => handleQuery(1)} className="flex-1 bg-gray-900 hover:bg-black text-white rounded-xl px-6 py-3 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-200">
-                {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Search className="w-4 h-4" />} Query
+          <div className="flex gap-2 h-[46px]">
+            <button onClick={() => handleQuery(1)} className="flex-1 bg-slate-900 hover:bg-black text-white rounded-xl px-6 py-2 text-xs font-black capitalize tracking-[0.2em] transition-all flex items-center justify-center gap-2 shadow-xl shadow-slate-200">
+                {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin"/> : <Search className="w-3.5 h-3.5" />} Fetch
             </button>
-            <button onClick={() => setIsConfirmOpen(true)} className="flex-none bg-red-50 hover:bg-red-600 hover:text-white text-red-600 rounded-xl px-5 py-3 text-xs font-bold transition-all border border-red-100 shadow-sm">
-                Delete
+            <button onClick={() => setIsConfirmOpen(true)} className="flex-none bg-red-50 hover:bg-red-600 text-red-600 hover:text-white rounded-xl px-4 py-2 text-xs font-black capitalize tracking-widest transition-all border border-red-100 shadow-sm">
+                Purge
             </button>
           </div>
         </div>
@@ -181,17 +206,24 @@ const SarManagementPage = () => {
           isOpen={isConfirmOpen} 
           onClose={() => setIsConfirmOpen(false)} 
           onConfirm={handleDelete}
-          title="Confirm Data Deletion"
-          message={`Are you sure you want to permanently delete SAR ${type.toUpperCase()} data for ${selectedGroup} / ${selectedHostnameId} at the ${filterLevel} level? This action cannot be undone.`}
+          title="Security Override Required"
+          message={`Permanent deletion of SAR ${type.toUpperCase()} records for ${selectedGroup}${selectedHostnameId ? ` / ${selectedHostnameId}` : ''} at ${filterLevel} resolution. This action cannot be reversed.`}
       />
 
       {filterLevel === 'month' && summaryData.length > 0 && (
-          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 sm:p-10 space-y-6 transition-all hover:shadow-lg">
-            <div className="flex items-center gap-3 border-b border-gray-50 pb-4">
-                <Calendar className="text-blue-500 w-5 h-5" />
-                <h3 className="text-sm font-bold text-gray-900">Data Availability Summary ({year}-{month})</h3>
+          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-10 space-y-10 transition-all hover:shadow-lg">
+            <div className="flex items-center justify-between border-b border-slate-50 pb-6">
+                <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">
+                        <Calendar className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Availability Summary</h3>
+                        <p className="text-xs font-bold text-slate-400 capitalize mt-0.5">Inventory of records for cycle {year}-{month}</p>
+                    </div>
+                </div>
             </div>
-            <div className="space-y-8">
+            <div className="space-y-10">
                 {Object.entries(summaryData.reduce((acc: any, s: any) => {
                     const key = `${s.hostname_id}|${s.hostname}`;
                     if (!acc[key]) acc[key] = [];
@@ -200,19 +232,21 @@ const SarManagementPage = () => {
                 }, {})).map(([key, records]: [string, any]) => {
                     const [id, hostname] = key.split('|');
                     return (
-                        <div key={id} className="space-y-4">
-                            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2">
-                                <Monitor size={12} /> {hostname} <span className="text-gray-300 font-medium">ID: {id}</span>
-                            </p>
-                            <div className="flex flex-wrap gap-2">
+                        <div key={id} className="space-y-5 animate-ease-in">
+                            <div className="flex items-center gap-3">
+                                <Monitor size={14} className="text-blue-500" />
+                                <span className="text-[11px] font-black text-slate-800 capitalize tracking-tight">{hostname}</span>
+                                <span className="text-[9px] font-black text-slate-300 capitalize tracking-widest">System ID: {id}</span>
+                            </div>
+                            <div className="flex flex-wrap gap-2.5 p-6 bg-slate-50/30 rounded-3xl border border-slate-100 shadow-inner">
                                 {records.map((s: any) => {
                                     const dateObj = new Date(s.date);
                                     const d = String(dateObj.getDate()).padStart(2, '0');
                                     const m = String(dateObj.getMonth() + 1).padStart(2, '0');
                                     const y = dateObj.getFullYear();
                                     return (
-                                        <div key={s.date} className="px-4 py-2 bg-gray-50 text-gray-700 rounded-xl text-[10px] font-bold border border-gray-100 shadow-sm hover:border-blue-200 transition-colors">
-                                            {d}-{m}-{y}: <span className="text-blue-600">{s.count}</span> records
+                                        <div key={s.date} className="px-4 py-2.5 bg-white text-slate-600 rounded-xl text-xs font-black border border-slate-100 shadow-sm hover:border-blue-300 hover:text-blue-600 transition-all cursor-default">
+                                            {d}-{m}-{y} &bull; <span className="text-blue-600">{s.count}</span> <span className="text-[8px] opacity-60 capitalize">Entries</span>
                                         </div>
                                     );
                                 })}
@@ -225,19 +259,19 @@ const SarManagementPage = () => {
       )}
 
       {queryData.length > 0 && (
-        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden transition-all hover:shadow-lg">
-          <div className="overflow-x-auto">
-            <table className="w-full text-[11px] text-left border-collapse">
+        <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden transition-all hover:shadow-lg animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-xs text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50/50 text-gray-400 font-bold uppercase text-[9px] border-b border-gray-100">
-                  {Object.keys(queryData[0]).map(key => <th key={key} className="px-8 py-5 tracking-wider">{key}</th>)}
+                <tr className="bg-slate-50/50 text-slate-400 font-black capitalize text-[9px] tracking-widest border-b border-slate-100">
+                  {Object.keys(queryData[0]).map(key => <th key={key} className="px-10 py-6 whitespace-nowrap">{key}</th>)}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-slate-50">
                 {queryData.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-blue-50/30 transition-colors">
+                  <tr key={idx} className="hover:bg-blue-50/30 transition-all duration-200 group">
                     {Object.entries(row).map(([key, val]: [string, any], i) => (
-                      <td key={i} className="px-8 py-4 font-semibold text-gray-600 whitespace-nowrap">
+                      <td key={i} className="px-10 py-5 font-bold text-slate-600 whitespace-nowrap group-hover:text-blue-700">
                         {key === 'time' ? new Date(val).toISOString().replace('T', ' ').substring(0, 19) : val}
                       </td>
                     ))}
@@ -246,11 +280,15 @@ const SarManagementPage = () => {
               </tbody>
             </table>
           </div>
-          <div className="px-8 py-6 bg-gray-50/30 border-t border-gray-50 flex items-center justify-between">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Showing Page {page} of {totalPages} <span className="mx-2 text-gray-200">|</span> Total {total} records</span>
+          <div className="px-10 py-8 bg-slate-50/30 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-3">
+                  <span className="text-xs font-black text-slate-400 capitalize tracking-[0.2em]">Viewing Page</span>
+                  <div className="bg-white border border-slate-200 px-3 py-1 rounded-lg font-black text-xs text-blue-600 shadow-sm">{page} <span className="text-slate-300 font-medium px-1">/</span> {totalPages}</div>
+                  <span className="text-xs font-black text-slate-300 capitalize tracking-widest ml-4">Total Population: {total.toLocaleString()} Records</span>
+              </div>
               <div className="flex gap-2">
-                  <button onClick={() => handleQuery(page - 1, true)} disabled={page <= 1} className="px-5 py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold hover:bg-gray-50 transition-all disabled:opacity-30 shadow-sm">Previous</button>
-                  <button onClick={() => handleQuery(page + 1, true)} disabled={page >= totalPages} className="px-5 py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold hover:bg-gray-50 transition-all disabled:opacity-30 shadow-sm">Next</button>
+                  <button onClick={() => handleQuery(page - 1, true)} disabled={page <= 1} className="px-6 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-black capitalize tracking-widest hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-20 shadow-sm active:scale-95">Prev</button>
+                  <button onClick={() => handleQuery(page + 1, true)} disabled={page >= totalPages} className="px-6 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-black capitalize tracking-widest hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-20 shadow-sm active:scale-95">Next</button>
               </div>
           </div>
         </div>

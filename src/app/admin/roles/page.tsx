@@ -73,16 +73,16 @@ const AdminRolesPage = () => {
   if (loading) return <div className="p-10 text-center"><Loader2 className="animate-spin w-8 h-8 mx-auto" /></div>;
 
   return (
-    <Block title="Role Permission Management" subtitle="Assign hostgroup access to roles">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="bg-white p-6 rounded-xl border shadow-sm">
-          <h3 className="font-bold mb-4 text-xs">Roles</h3>
-          <div className="space-y-1">
+    <Block title="Authorization Framework" subtitle="Global role-to-resource mapping governance">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 animate-ease-in">
+        <div className="lg:col-span-1 space-y-6">
+          <label className="text-xs font-black text-slate-400 capitalize tracking-[0.2em] ml-2 block">System Roles</label>
+          <div className="bg-white p-2 rounded-[2rem] border border-slate-100 shadow-sm space-y-1">
           {roles.map(r => (
             <button 
               key={r.role_id}
               onClick={() => handleRoleSelect(r.role_id)}
-              className={`block w-full text-left px-4 py-2.5 rounded-lg text-sm ${selectedRole === r.role_id ? 'bg-blue-600 text-white' : 'hover:bg-blue-50'}`}
+              className={`block w-full text-left px-5 py-4 rounded-2xl text-xs font-black capitalize tracking-tight transition-all duration-300 ${selectedRole === r.role_id ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 translate-x-1' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
             >
               {r.role_name}
             </button>
@@ -90,28 +90,52 @@ const AdminRolesPage = () => {
           </div>
         </div>
 
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl border shadow-sm">
-          <h3 className="font-bold mb-4 text-xs flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> Allowed Hostgroups</h3>
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            {hostgroups.map(hg => (
-              <label key={hg.hostgroup_id} className="flex items-center gap-2 p-2 border rounded hover:bg-gray-50 cursor-pointer text-sm">
-                <input 
-                  type="checkbox" 
-                  checked={selectedHostgroups.includes(hg.hostgroup_id)}
-                  onChange={() => toggleHostgroup(hg.hostgroup_id)}
-                  className="rounded text-sky-600"
-                />
-                {hg.hostgroup}
-              </label>
-            ))}
+        <div className="lg:col-span-3 space-y-6">
+          <div className="flex items-center justify-between px-2">
+            <label className="text-xs font-black text-slate-400 capitalize tracking-[0.2em] flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-500" /> Resource Matrix Authorization
+            </label>
+            {selectedRole && <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg text-[9px] font-black capitalize border border-blue-100 shadow-sm">Scope: {selectedHostgroups.length} Assets</span>}
           </div>
-          <button 
-            onClick={savePermissions}
-            disabled={!selectedRole}
-            className="bg-blue-600 text-white px-6 py-2 rounded font-bold flex items-center gap-2 hover:bg-blue-700 disabled:bg-gray-300"
-          >
-            <Save className="w-4 h-4" /> Save Permissions
-          </button>
+          
+          <div className="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-sm min-h-[400px] flex flex-col">
+            {!selectedRole ? (
+                <div className="flex-1 flex flex-col items-center justify-center text-slate-300 space-y-4">
+                    <ShieldCheck size={64} className="opacity-10" />
+                    <p className="text-xs font-black capitalize tracking-[0.3em]">Select a role to begin mapping</p>
+                </div>
+            ) : (
+                <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-10 overflow-y-auto max-h-[500px] pr-2 custom-scrollbar p-1">
+                        {hostgroups.map(hg => {
+                            const isChecked = selectedHostgroups.includes(hg.hostgroup_id);
+                            return (
+                                <label key={hg.hostgroup_id} className={`flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all group ${isChecked ? 'bg-blue-50 border-blue-200 shadow-sm' : 'bg-white border-slate-100 hover:border-slate-200 shadow-inner'}`}>
+                                    <div className="flex items-center gap-3 overflow-hidden">
+                                        <div className={`w-2 h-2 rounded-full shrink-0 ${isChecked ? 'bg-blue-600' : 'bg-slate-200'}`}></div>
+                                        <span className={`text-[11px] font-black capitalize tracking-tight truncate ${isChecked ? 'text-blue-700' : 'text-slate-500 group-hover:text-slate-700'}`}>{hg.hostgroup}</span>
+                                    </div>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={isChecked}
+                                        onChange={() => toggleHostgroup(hg.hostgroup_id)}
+                                        className="w-4 h-4 rounded-lg border-slate-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                                    />
+                                </label>
+                            )
+                        })}
+                    </div>
+                    <div className="mt-auto pt-8 border-t border-slate-50 flex justify-end">
+                        <button 
+                            onClick={savePermissions}
+                            className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black text-xs capitalize tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-black transition-all shadow-xl shadow-slate-200 group active:scale-95"
+                        >
+                            <Save className="w-4.5 h-4.5 group-hover:rotate-12 transition-transform" /> Commit Permissions
+                        </button>
+                    </div>
+                </>
+            )}
+          </div>
         </div>
       </div>
     </Block>

@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Highcharts from 'highcharts';
-import { Plus, FileText, Trash2, Edit2, Clock, X, Search, ChevronDown, ChevronRight, ArrowUp, ArrowDown, Heading1, Server, BarChart3, Loader2, Calendar, Layout, GripVertical, Monitor, PlusCircle, Zap, Activity, CheckCircle, Download, AlertCircle, MoreVertical } from 'lucide-react';
+import { Plus, FileText, Trash2, Edit2, Clock, X, Search, ChevronDown, ChevronRight, ArrowUp, ArrowDown, Heading1, Server, BarChart3, Loader2, Calendar, Layout, GripVertical, Monitor, PlusCircle, Zap, Activity, CheckCircle, Download, AlertCircle, MoreVertical, Layers } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -424,84 +424,93 @@ const BatchReportPage = () => {
     };
 
     return (
-        <div className="max-w-6xl mx-auto space-y-10 animate-ease-in">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none"><FileText size={60} /></div>
-                <div className="relative z-10 space-y-1">
-                    <h2 className="text-lg font-bold text-gray-900 tracking-tight">Batch Reports</h2>
-                    <p className="text-gray-500 font-medium text-xs">Trigger background batch report generation jobs.</p>
+        <div className="max-w-7xl mx-auto space-y-10 animate-ease-in px-4 sm:px-6">
+            <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700"><FileText size={120} /></div>
+                <div className="relative z-10 space-y-2">
+                    <h2 className="text-2xl font-black text-slate-900 capitalize italic tracking-tight leading-none">Automated Batches</h2>
+                    <p className="text-sm font-medium text-slate-400 tracking-tight">Deploy pre-configured reporting cycles for global infrastructure visibility</p>
                 </div>
-                <button onClick={() => { setEditingTemplateId(null); setTemplateName(''); setReportTitle(''); setSelectedHostnames([]); setStep(1); setIsModalOpen(true); }} className="relative z-10 flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition-all hover:bg-blue-700 shadow-sm shadow-blue-100 group">
-                    <Plus className="w-4 h-4" /> Create Template
+                <button onClick={() => { setEditingTemplateId(null); setTemplateName(''); setReportTitle(''); setSelectedHostnames([]); setStep(1); setIsModalOpen(true); }} className="relative z-10 flex items-center justify-center gap-3 bg-blue-600 text-white px-8 py-3 rounded-2xl font-black text-xs capitalize tracking-[0.2em] transition-all hover:bg-blue-700 shadow-xl shadow-blue-500/20 active:scale-95 group">
+                    <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" /> New Architecture
                 </button>
-            </div>
+            </header>
 
             <div className="space-y-6">
                 <div className="flex items-center justify-between px-4">
-                    <h3 className="text-lg font-bold text-gray-900">Available Templates</h3>
-                    <span className="text-xs font-bold text-gray-400">{templates.length} Templates</span>
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">
+                            <Layers className="w-4 h-4" />
+                        </div>
+                        <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Saved Configurations</h3>
+                    </div>
+                    <span className="bg-slate-100 text-slate-400 px-3 py-1 rounded-lg text-[9px] font-black capitalize tracking-widest border border-slate-50">{templates.length} Units</span>
                 </div>
                 {isLoadingTemplates ? (
-                    <div className="py-20 text-center bg-white rounded-[2rem] border border-gray-100 shadow-sm"><Loader2 className="w-10 h-10 animate-spin mx-auto text-blue-600" /></div>
+                    <div className="py-32 text-center bg-white rounded-[2.5rem] border border-slate-100 shadow-sm">
+                        <Loader2 className="w-16 h-16 animate-spin mx-auto text-blue-600 opacity-20" />
+                        <p className="text-xs font-black text-slate-300 capitalize tracking-[0.3em] mt-8">Synchronizing blueprints...</p>
+                    </div>
                 ) : templates.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-3">
+                    <div className="grid grid-cols-1 gap-4">
                         {templates.map((template) => (
-                            <div key={template.id} className="flex flex-col md:flex-row md:items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all group">
+                            <div key={template.id} className="flex flex-col lg:flex-row lg:items-center gap-6 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)] hover:border-blue-200 transition-all duration-500 group">
                                 {/* Col 1 */}
-                                <div className="flex items-center gap-3 min-w-[200px]">
-                                    <div className="bg-blue-50 p-2.5 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                        <FileText className="w-4 h-4" />
+                                <div className="flex items-center gap-5 min-w-[240px]">
+                                    <div className="bg-slate-50 p-4 rounded-2xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-inner">
+                                        <FileText className="w-6 h-6" />
                                     </div>
                                     <div className="flex flex-col">
-                                        <div className="flex items-center gap-2">
-                                            <h4 className="font-bold text-gray-900 text-sm leading-tight">{template.name}</h4>
-                                            <span className="bg-gray-100 text-gray-500 text-[9px] font-bold px-1.5 py-0.5 rounded">ID: {template.id}</span>
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <h4 className="font-black text-slate-900 text-sm capitalize tracking-tight leading-tight">{template.name}</h4>
+                                            <span className="bg-slate-100 text-slate-400 text-[8px] font-black capitalize px-2 py-0.5 rounded-lg border border-slate-50 tracking-widest">#{template.id}</span>
                                         </div>
-                                        <div className="flex items-center gap-2 mt-0.5">
-                                            <p className="text-[10px] text-gray-400 font-semibold">{template.lastUpdated}</p>
+                                        <div className="flex items-center gap-2">
+                                            <Clock className="w-3.5 h-3.5 text-slate-300" />
+                                            <p className="text-xs text-slate-400 font-black capitalize tracking-widest italic">{template.lastUpdated}</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Col 2 */}
-                                <div className="flex flex-col gap-1.5 flex-1">
-                                    <div className="flex items-center gap-2 text-blue-700 bg-blue-50/50 px-3 py-1 rounded-lg border border-blue-50 w-fit">
-                                        <Heading1 className="w-3 h-3" />
-                                        <span className="text-[10px] font-bold truncate max-w-[200px]">{template.reportTitle || 'No Title'}</span>
+                                <div className="flex flex-col gap-2 flex-1">
+                                    <div className="flex items-center gap-2 text-blue-700 bg-blue-50/30 px-4 py-1.5 rounded-xl border border-blue-50/50 w-fit shadow-inner">
+                                        <Heading1 className="w-3.5 h-3.5 opacity-50" />
+                                        <span className="text-xs font-black capitalize tracking-tight truncate max-w-[300px]">{template.reportTitle || 'NO_HEADING_DEFINED'}</span>
                                     </div>
-                                    <div className="flex flex-wrap gap-2">
-                                        <span className="bg-gray-50 text-gray-600 px-3 py-0.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 border border-gray-100">
-                                            <Server className="w-3.5 h-3.5 text-gray-400" /> {template.hosts.length} Hosts
+                                    <div className="flex flex-wrap gap-3">
+                                        <span className="bg-white border border-slate-100 text-slate-500 px-4 py-1 rounded-lg text-[9px] font-black capitalize tracking-widest flex items-center gap-2 shadow-sm">
+                                            <Monitor className="w-3.5 h-3.5 text-blue-500 opacity-40" /> {template.hosts.length} NODES
                                         </span>
-                                        <span className="bg-gray-50 text-gray-600 px-3 py-0.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 border border-gray-100">
-                                            <BarChart3 className="w-3.5 h-3.5 text-gray-400" /> {template.charts.length} Charts
+                                        <span className="bg-white border border-slate-100 text-slate-500 px-4 py-1 rounded-lg text-[9px] font-black capitalize tracking-widest flex items-center gap-2 shadow-sm">
+                                            <BarChart3 className="w-3.5 h-3.5 text-emerald-500 opacity-40" /> {template.charts.length} DIMENSIONS
                                         </span>
                                     </div>
                                 </div>
 
                                 {/* Col 3 */}
-                                <div className="flex flex-wrap items-center gap-2">
+                                <div className="flex flex-wrap items-center gap-3 shrink-0">
                                     <button
                                         onClick={() => handleGenerateReport(template)}
-                                        className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-white text-blue-600 border border-blue-100 px-4 py-2 rounded-lg text-[10px] font-bold hover:bg-blue-50 transition-all shadow-sm"
+                                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white text-blue-600 border border-blue-100 px-6 py-2.5 rounded-xl text-xs font-black capitalize tracking-widest hover:bg-blue-50 transition-all shadow-sm active:scale-95"
                                     >
-                                        <FileText className="w-3.5 h-3.5" /> Preview
+                                        <FileText className="w-4 h-4" /> Preview
                                     </button>
                                     <button
                                         onClick={() => { setSelectedTemplateForBg(template); setIsBackgroundModalOpen(true); }}
-                                        className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-gray-900 text-white px-4 py-2 rounded-lg text-[10px] font-bold hover:bg-gray-800 transition-all shadow-md"
+                                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-slate-900 text-white px-6 py-2.5 rounded-xl text-xs font-black capitalize tracking-widest hover:bg-black transition-all shadow-xl shadow-slate-200 active:scale-95 group"
                                     >
-                                        <Zap className="w-3.5 h-3.5 text-yellow-400" /> Start
+                                        <Zap className="w-4 h-4 text-yellow-400 group-hover:scale-125 transition-transform" /> Execute
                                     </button>
                                     <div className="relative">
-                                        <button onClick={() => setActiveDropdown(activeDropdown === template.id ? null : template.id)} className="p-2 hover:bg-gray-100 rounded-lg transition-all border border-transparent hover:border-gray-200"><MoreVertical className="w-4 h-4 text-gray-400" /></button>
+                                        <button onClick={() => setActiveDropdown(activeDropdown === template.id ? null : template.id)} className={`p-2.5 rounded-xl transition-all border ${activeDropdown === template.id ? 'bg-slate-100 border-slate-200 text-slate-900' : 'bg-white border-slate-100 text-slate-300 hover:text-slate-600 shadow-sm'}`}><MoreVertical className="w-4.5 h-4.5" /></button>
                                         {activeDropdown === template.id && (
-                                            <div className="absolute right-0 top-full mt-1 w-32 bg-white rounded-xl border border-gray-100 shadow-xl z-[60] overflow-hidden p-1 animate-ease-in">
-                                                <button onClick={() => { handleEditTemplate(template); setActiveDropdown(null); }} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] font-bold text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all">
-                                                    <Edit2 className="w-3.5 h-3.5" /> Edit
+                                            <div className="absolute right-0 top-full mt-3 w-40 bg-white rounded-2xl border border-slate-100 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] z-[60] overflow-hidden p-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                <button onClick={() => { handleEditTemplate(template); setActiveDropdown(null); }} className="w-full flex items-center gap-3 px-4 py-3 text-xs font-black capitalize tracking-widest text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-xl transition-all">
+                                                    <Edit2 className="w-3.5 h-3.5" /> Modify
                                                 </button>
-                                                <button onClick={() => { handleDeleteTemplate(template.id); setActiveDropdown(null); }} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] font-bold text-red-600 hover:bg-red-50 rounded-lg transition-all">
-                                                    <Trash2 className="w-3.5 h-3.5" /> Delete
+                                                <button onClick={() => { handleDeleteTemplate(template.id); setActiveDropdown(null); }} className="w-full flex items-center gap-3 px-4 py-3 text-xs font-black capitalize tracking-widest text-red-500 hover:bg-red-50 rounded-xl transition-all border-t border-slate-50">
+                                                    <Trash2 className="w-3.5 h-3.5" /> Purge
                                                 </button>
                                             </div>
                                         )}
@@ -511,83 +520,88 @@ const BatchReportPage = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-20 bg-white rounded-[2rem] border border-gray-100 shadow-sm">
-                        <FileText className="w-12 h-12 text-gray-100 mx-auto mb-4" />
-                        <p className="text-sm font-bold text-gray-400">No templates found. Create one to get started.</p>
+                    <div className="text-center py-40 bg-white rounded-[3rem] border border-slate-100 shadow-sm">
+                        <FileText className="w-20 h-20 text-slate-50 mx-auto mb-6" />
+                        <p className="text-xs font-black text-slate-300 capitalize tracking-[0.3em]">No architectural blueprints detected</p>
                     </div>
                 )}
             </div>
 
             {/* Background Jobs Section */}
-            <div className="pt-4 space-y-3">
-                <div className="flex items-center justify-between px-2">
-                    <div className="flex items-center gap-2 text-gray-900">
-                        <Activity size={16} className="text-yellow-600" />
-                        <h3 className="text-xs font-bold">Batch Job Status</h3>
+            <div className="pt-8 space-y-6">
+                <div className="flex items-center justify-between px-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-lg shadow-slate-200">
+                            <Activity size={16} />
+                        </div>
+                        <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest text-center">Batch Processing Engine</h3>
                     </div>
-                    <span className="bg-gray-900 text-white px-3 py-1 rounded-full text-[9px] font-bold">{backgroundJobs.length} Recent Jobs</span>
+                    <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-[9px] font-black capitalize tracking-[0.1em] shadow-lg shadow-blue-500/20">{backgroundJobs.length} Monitor Streams</span>
                 </div>
 
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                    <div className="overflow-x-auto">
+                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden transition-all hover:shadow-md animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className="overflow-x-auto custom-scrollbar">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-gray-50/50 text-[9px] font-bold text-gray-400 border-b border-gray-100">
-                                    <th className="px-4 py-3">Time</th>
-                                    <th className="px-4 py-3">Template</th>
-                                    <th className="px-4 py-3">Status / Progress</th>
-                                    <th className="px-4 py-3 text-right">Actions</th>
+                                <tr className="bg-slate-50/50 text-[9px] font-black text-slate-400 capitalize tracking-[0.2em] border-b border-slate-100">
+                                    <th className="px-8 py-5">Emission Time</th>
+                                    <th className="px-8 py-5">Process Designation</th>
+                                    <th className="px-8 py-5">Operational State</th>
+                                    <th className="px-8 py-5 text-right whitespace-nowrap">Control Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-50">
+                            <tbody className="divide-y divide-slate-50">
                                 {backgroundJobs.length > 0 ? (
                                     [...backgroundJobs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).map((job) => (
-                                        <tr key={job.id} className="hover:bg-gray-50/30 transition-colors">
-                                            <td className="px-4 py-3 text-[10px] font-semibold text-gray-500">{job.timestamp}</td>
-                                            <td className="px-4 py-3">
-                                                <p className="font-bold text-gray-900 text-[10px] leading-tight">{job.templateName}</p>
-                                                <p className="text-[9px] text-gray-400 font-medium">Job: {job.id.slice(0, 8)}</p>
+                                        <tr key={job.id} className="hover:bg-blue-50/30 transition-all duration-300 group">
+                                            <td className="px-8 py-5 text-xs font-black text-slate-400 capitalize tracking-tighter tabular-nums">{job.timestamp}</td>
+                                            <td className="px-8 py-5">
+                                                <p className="font-black text-slate-800 text-xs capitalize tracking-tight leading-tight group-hover:text-blue-700 transition-colors">{job.templateName}</p>
+                                                <p className="text-[9px] text-slate-300 font-black capitalize tracking-widest mt-0.5">Stream: {job.id.slice(0, 8)}</p>
                                             </td>
-                                            <td className="px-4 py-3">
-                                                <div className="flex flex-col gap-1">
-                                                    <div className="flex items-center justify-between gap-2 mb-0.5">
-                                                        <div className="flex items-center gap-1.5">
-                                                            {job.status === 'processing' && <Loader2 className="w-2.5 h-2.5 animate-spin text-blue-600" />}
-                                                            {job.status === 'completed' && <CheckCircle className="w-2.5 h-2.5 text-green-500" />}
-                                                            {(job.status === 'failed' || job.status === 'stale') && <AlertCircle className="w-2.5 h-2.5 text-red-500" />}
-                                                            <span className={`text-[9px] font-black uppercase tracking-wider ${job.status === 'completed' ? 'text-green-600' :
+                                            <td className="px-8 py-5">
+                                                <div className="flex flex-col gap-2 min-w-[140px]">
+                                                    <div className="flex items-center justify-between gap-3">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className={`w-2 h-2 rounded-full ${
+                                                                job.status === 'completed' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 
+                                                                (job.status === 'failed' || job.status === 'stale') ? 'bg-red-500' : 'bg-blue-500 animate-pulse'
+                                                            }`} />
+                                                            <span className={`text-[9px] font-black capitalize tracking-widest ${
+                                                                job.status === 'completed' ? 'text-emerald-600' :
                                                                 (job.status === 'failed' || job.status === 'stale') ? 'text-red-600' : 'text-blue-600'
-                                                                }`}>{job.status}</span>
+                                                            }`}>{job.status}</span>
                                                         </div>
-                                                        <span className="text-[9px] font-bold text-gray-500">{job.progress}%</span>
+                                                        <span className="text-xs font-black text-slate-400 tabular-nums">{job.progress}%</span>
                                                     </div>
-                                                    <div className="w-24 h-1 bg-gray-100 rounded-full overflow-hidden shadow-inner">
-                                                        <div className={`h-full transition-all duration-700 ease-out ${job.status === 'completed' ? 'bg-green-500' :
+                                                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden shadow-inner border border-slate-50">
+                                                        <div className={`h-full transition-all duration-1000 ease-out rounded-full ${
+                                                            job.status === 'completed' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' :
                                                             job.status === 'failed' ? 'bg-red-500' : 'bg-blue-600'
                                                             }`} style={{ width: `${job.progress}%` }}></div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-3 text-right">
-                                                <div className="flex justify-end gap-1.5">
+                                            <td className="px-8 py-5 text-right">
+                                                <div className="flex justify-end gap-2.5 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
                                                     {job.status === 'completed' && job.pdfPath ? (
                                                         <>
                                                             <a
                                                                 href={`/api/run-report/download?filePath=${encodeURIComponent(job.pdfPath)}`}
                                                                 download
-                                                                className="inline-flex items-center gap-1 bg-green-50 text-green-600 px-2 py-1 rounded-md text-[9px] font-bold hover:bg-green-600 hover:text-white transition-all border border-green-100"
+                                                                className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-[9px] font-black capitalize tracking-widest hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 shadow-sm"
                                                             >
-                                                                <Download className="w-3 h-3" /> Download
+                                                                <Download className="w-3.5 h-3.5" /> Acquire PDF
                                                             </a>
                                                             <button
                                                                 onClick={() => {
                                                                     setJobToDelete(job.id);
                                                                     setIsDeleteJobConfirmOpen(true);
                                                                 }}
-                                                                className="p-1.5 bg-red-50 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition-all border border-red-100"
-                                                                title="Delete File"
+                                                                className="p-2.5 bg-white text-slate-300 hover:text-red-600 rounded-xl hover:bg-red-50 transition-all border border-slate-100 hover:border-red-100 shadow-sm"
+                                                                title="Purge Stream Data"
                                                             >
-                                                                <Trash2 className="w-3 h-3" />
+                                                                <Trash2 className="w-4 h-4" />
                                                             </button>
                                                         </>
                                                     ) : (job.status === 'failed' || job.status === 'stale') ? (
@@ -596,30 +610,30 @@ const BatchReportPage = () => {
                                                                 onClick={async () => {
                                                                     try {
                                                                         await axios.post('/api/run-report/retry', { jobId: job.id });
-                                                                        showToast("Retry started", 'success');
+                                                                        showToast("Re-emission sequence started", 'success');
                                                                         queryClient.invalidateQueries({ queryKey: ['background_jobs_status'] });
                                                                     } catch (error: any) {
-                                                                        showToast("Failed to retry job", 'error');
+                                                                        showToast("Failed to re-trigger job", 'error');
                                                                     }
                                                                 }}
-                                                                className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-1 rounded-md text-[9px] font-bold hover:bg-blue-600 hover:text-white transition-all border border-blue-100"
+                                                                className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-xl text-[9px] font-black capitalize tracking-widest hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm"
                                                             >
-                                                                <Zap className="w-3 h-3" /> Retry
+                                                                <Zap className="w-3.5 h-3.5" /> Re-trigger
                                                             </button>
                                                             <button
                                                                 onClick={() => {
                                                                     setJobToDelete(job.id);
                                                                     setIsDeleteJobConfirmOpen(true);
                                                                 }}
-                                                                className="p-1.5 bg-red-50 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition-all border border-red-100"
-                                                                title="Delete Job"
+                                                                className="p-2.5 bg-white text-slate-300 hover:text-red-600 rounded-xl hover:bg-red-50 transition-all border border-slate-100 hover:border-red-100 shadow-sm"
+                                                                title="Purge Stream Data"
                                                             >
-                                                                <Trash2 className="w-3 h-3" />
+                                                                <Trash2 className="w-4 h-4" />
                                                             </button>
                                                         </>
                                                     ) : (
-                                                        <div className="px-2 py-1 bg-gray-50 text-gray-400 rounded-lg text-[9px] font-bold border border-gray-100 opacity-60 flex items-center gap-1">
-                                                            <Clock className="w-3 h-3" /> {job.status === 'pending' ? 'Pending' : '...'}
+                                                        <div className="px-4 py-2 bg-slate-50 text-slate-400 rounded-xl text-[9px] font-black capitalize tracking-[0.2em] border border-slate-100 flex items-center gap-2 italic opacity-60">
+                                                            <Clock className="w-3.5 h-3.5" /> Processing Sequence...
                                                         </div>
                                                     )}
                                                 </div>
@@ -628,7 +642,10 @@ const BatchReportPage = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={4} className="px-4 py-8 text-center text-[10px] text-gray-400">No batch jobs</td>
+                                        <td colSpan={4} className="px-8 py-16 text-center">
+                                            <Activity className="w-12 h-12 text-slate-50 mx-auto mb-4" />
+                                            <p className="text-xs font-black text-slate-200 capitalize tracking-[0.3em]">Operational streams are offline</p>
+                                        </td>
                                     </tr>
                                 )}
                             </tbody>
@@ -641,67 +658,88 @@ const BatchReportPage = () => {
             <Modal
                 isOpen={isBackgroundModalOpen}
                 onClose={() => setIsBackgroundModalOpen(false)}
-                title={`Trigger Run: ${selectedTemplateForBg?.name}`}
+                title={`Initiate Background Cycle: ${selectedTemplateForBg?.name}`}
                 maxWidth="max-w-md"
             >
-                <div className="p-4 space-y-6">
-                    <div className="bg-yellow-50 border border-yellow-100 p-4 rounded-2xl flex gap-4 items-start">
-                        <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                <div className="p-4 space-y-8 animate-ease-in">
+                    <div className="bg-blue-50/50 border border-blue-100/50 p-6 rounded-[2rem] flex gap-5 items-start shadow-inner">
+                        <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-500/20">
+                            <Zap className="w-5 h-5 animate-pulse" />
+                        </div>
                         <div>
-                            <p className="text-xs font-black text-yellow-800 uppercase tracking-tight">Processing</p>
-                            <p className="text-[10px] text-yellow-700 font-medium mt-1 leading-relaxed">
-                                This job will run on the server and generate a consolidated PDF for <b>{selectedTemplateForBg?.hosts.length} hosts</b>. You can track the progress in the status section below.
+                            <p className="text-xs font-black text-blue-900 capitalize tracking-widest leading-none mb-2">Process Overview</p>
+                            <p className="text-xs text-blue-700/70 font-bold leading-relaxed">
+                                This engine will execute a consolidated reporting cycle for <span className="text-blue-900 font-black underline underline-offset-4">{selectedTemplateForBg?.hosts.length} infrastructure nodes</span>. Status updates will emit to the monitoring stream.
                             </p>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1">
-                            <label className="text-[9px] font-black text-gray-400 uppercase ml-1">Target Month</label>
-                            <select
-                                value={month}
-                                onChange={e => setMonth(e.target.value)}
-                                className="w-full bg-gray-50 border border-gray-100 rounded-xl p-2.5 text-[11px] font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all shadow-inner"
-                            >
-                                {Array.from({ length: 12 }, (_, i) => <option key={i + 1} value={String(i + 1)}>{new Date(2000, i).toLocaleString('en-US', { month: 'long' })}</option>)}
-                            </select>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-[9px] font-black text-slate-400 capitalize tracking-widest ml-2">Target Dimension</label>
+                            <div className="relative group">
+                                <select
+                                    value={month}
+                                    onChange={e => setMonth(e.target.value)}
+                                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl p-4 text-xs font-black capitalize tracking-tight outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center cursor-pointer"
+                                >
+                                    {Array.from({ length: 12 }, (_, i) => <option key={i + 1} value={String(i + 1)}>{new Date(2000, i).toLocaleString('en-US', { month: 'long' })}</option>)}
+                                </select>
+                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
+                            </div>
                         </div>
-                        <div className="space-y-1">
-                            <label className="text-[9px] font-black text-gray-400 uppercase ml-1">Target Year</label>
+                        <div className="space-y-2">
+                            <label className="text-[9px] font-black text-slate-400 capitalize tracking-widest ml-2">Fiscal Cycle</label>
                             <input
                                 type="number"
                                 value={year}
                                 onChange={e => setYear(e.target.value)}
-                                className="w-full bg-gray-50 border border-gray-100 rounded-xl p-2.5 text-[11px] font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all shadow-inner"
+                                className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl p-4 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner text-center"
                             />
                         </div>
                     </div>
 
-                    <div className="pt-4 border-t border-gray-50 flex gap-3">
-                        <button onClick={() => setIsBackgroundModalOpen(false)} className="flex-1 py-2.5 rounded-xl font-black text-[10px] uppercase text-gray-500 hover:bg-gray-100 transition-all tracking-widest">Cancel</button>
+                    <div className="pt-6 border-t border-slate-50 flex gap-4">
+                        <button onClick={() => setIsBackgroundModalOpen(false)} className="flex-1 py-4 rounded-2xl font-black text-xs capitalize text-slate-300 hover:text-slate-900 transition-all tracking-[0.2em] border border-transparent hover:border-slate-100">Cancel</button>
                         <button
                             onClick={triggerBackgroundJob}
-                            className="flex-1 bg-slate-900 text-white py-2.5 rounded-xl font-black text-[10px] uppercase hover:bg-slate-800 transition-all shadow-md tracking-widest flex items-center justify-center gap-2"
+                            className="flex-1 bg-slate-900 text-white py-4 rounded-2xl font-black text-xs capitalize hover:bg-black transition-all shadow-xl shadow-slate-200 tracking-[0.2em] flex items-center justify-center gap-3 group active:scale-95"
                         >
-                            <Zap className="w-3.5 h-3.5 text-yellow-400" /> Start Batch
+                            <Zap className="w-4 h-4 text-yellow-400 group-hover:scale-125 transition-transform duration-500" /> Commence
                         </button>
                     </div>
                 </div>
             </Modal>
 
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingTemplateId ? "Edit Template" : "Add New Template"} maxWidth="max-w-4xl">
-                <div className="space-y-6 p-4">
-                    <div className="flex gap-1 bg-gray-100/50 p-1 rounded-xl border border-gray-100 shadow-inner">
-                        <button onClick={() => setStep(1)} className={`flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${step === 1 ? 'bg-white shadow-sm text-blue-600 border border-blue-50' : 'text-gray-400 hover:text-gray-900'}`}>1. Template Info</button>
-                        <button onClick={() => setStep(2)} className={`flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${step === 2 ? 'bg-white shadow-sm text-blue-600 border border-blue-50' : 'text-gray-400 hover:text-gray-900'}`}>2. Select Hosts</button>
-                        <button onClick={() => setStep(3)} className={`flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${step === 3 ? 'bg-white shadow-sm text-blue-600 border border-blue-50' : 'text-gray-400 hover:text-gray-900'}`}>3. Chart Order</button>
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingTemplateId ? "Modify Infrastructure Blueprint" : "Architect New Template"} maxWidth="max-w-4xl">
+                <div className="space-y-8 p-4">
+                    <div className="flex gap-2 bg-slate-100/50 p-1.5 rounded-[1.5rem] border border-slate-200/50 inner-shadow">
+                        {[
+                            { id: 1, label: "Core Identity" },
+                            { id: 2, label: "Asset Scope" },
+                            { id: 3, label: "Metric Sequence" }
+                        ].map(s => (
+                            <button 
+                                key={s.id}
+                                onClick={() => setStep(s.id)} 
+                                className={`flex-1 py-3 text-xs font-black capitalize tracking-[0.2em] rounded-xl transition-all duration-500 ${step === s.id ? 'bg-white shadow-lg shadow-slate-200 text-blue-600 border border-white' : 'text-slate-400 hover:text-slate-600'}`}
+                            >
+                                <span className="opacity-30 mr-1.5">{s.id}.</span> {s.label}
+                            </button>
+                        ))}
                     </div>
 
-                    <div className="min-h-[400px]">
+                    <div className="min-h-[450px] animate-in fade-in slide-in-from-bottom-4 duration-500">
                         {step === 1 && (
-                            <div className="space-y-6 max-w-xl mx-auto pt-6">
-                                <FloatingInput label="Template Name (Internal)" value={templateName} onChange={(e) => setTemplateName(e.target.value)} />
-                                <FloatingInput label="PDF Report Title (Main Heading)" value={reportTitle} onChange={(e) => setReportTitle(e.target.value)} />
+                            <div className="space-y-10 max-w-xl mx-auto pt-10">
+                                <div className="space-y-6">
+                                    <div className="flex items-center gap-3 text-blue-600 px-1">
+                                        <Heading1 className="w-5 h-5 opacity-40" />
+                                        <h4 className="text-xs font-black capitalize tracking-[0.3em]">Identification Meta</h4>
+                                    </div>
+                                    <FloatingInput label="Template Designation (Internal)" value={templateName} onChange={(e) => setTemplateName(e.target.value)} />
+                                    <FloatingInput label="Official Report Title (Main Heading)" value={reportTitle} onChange={(e) => setReportTitle(e.target.value)} />
+                                </div>
                             </div>
                         )}
 
@@ -731,19 +769,19 @@ const BatchReportPage = () => {
                         )}
                     </div>
 
-                    <div className="flex justify-between pt-6 border-t border-gray-100">
-                        <button onClick={() => setIsModalOpen(false)} className="px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest text-gray-400 hover:bg-gray-50 transition-all">Cancel</button>
-                        <div className="flex gap-2">
-                            {step > 1 && <button onClick={() => setStep(step - 1)} className="px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all">Back</button>}
+                    <div className="flex justify-between items-center pt-8 border-t border-slate-100">
+                        <button onClick={() => setIsModalOpen(false)} className="px-8 py-3 rounded-2xl font-black text-xs capitalize tracking-[0.2em] text-slate-300 hover:text-slate-900 transition-all border border-transparent hover:border-slate-100">Abort</button>
+                        <div className="flex gap-3">
+                            {step > 1 && <button onClick={() => setStep(step - 1)} className="px-8 py-3 rounded-2xl font-black text-xs capitalize tracking-[0.2em] bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-100 transition-all shadow-sm">Previous</button>}
                             {step < 3 ? (
-                                <button onClick={() => setStep(step + 1)} className="px-8 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition-all">Continue</button>
+                                <button onClick={() => setStep(step + 1)} className="px-12 py-3 rounded-2xl font-black text-xs capitalize tracking-[0.2em] bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-500/20 transition-all flex items-center gap-2 group">Continue <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></button>
                             ) : (
                                 <button
                                     onClick={handleSaveTemplate}
                                     disabled={!templateName.trim() || selectedHostnames.length === 0 || activeReports.filter(r => r.enabled).length === 0}
-                                    className="px-8 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50 transition-all shadow-md"
+                                    className="px-12 py-3 rounded-2xl font-black text-xs capitalize tracking-[0.2em] bg-slate-900 text-white hover:bg-black disabled:opacity-20 transition-all shadow-xl shadow-slate-200 flex items-center gap-3 group"
                                 >
-                                    Save Template
+                                    Commit Blueprint <CheckCircle className="w-4.5 h-4.5 text-emerald-400 group-hover:scale-110 transition-transform" />
                                 </button>
                             )}
                         </div>
@@ -751,11 +789,11 @@ const BatchReportPage = () => {
                 </div>
             </Modal>
 
-            <Modal isOpen={isGenerationModalOpen} onClose={() => setIsGenerationModalOpen(false)} title={`Generate: ${generatingTemplate?.name || ''}`} maxWidth="max-w-6xl">
+            <Modal isOpen={isGenerationModalOpen} onClose={() => setIsGenerationModalOpen(false)} title={`Execute Blueprint Sequence: ${generatingTemplate?.name || ''}`} maxWidth="max-w-6xl">
                 {generatingTemplate && (
-                    <div className="p-8 space-y-8">
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                            <div className="lg:col-span-5 space-y-6">
+                    <div className="p-10 space-y-12 animate-ease-in">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+                            <div className="lg:col-span-5 h-full">
                                 <HostSelector
                                     groups={filteredGroups}
                                     selectedHosts={previewSelectedHosts}
@@ -789,19 +827,21 @@ const BatchReportPage = () => {
                                 />
                             </div>
 
-                            <div className="lg:col-span-7 space-y-8">
-                                <ReportConfiguration
-                                    reportTitle={generatingTemplate?.reportTitle || reportTitle}
-                                    onReportTitleChange={setReportTitle}
-                                    startDate={startDate}
-                                    onStartDateChange={setStartDate}
-                                    endDate={endDate}
-                                    onEndDateChange={setEndDate}
-                                    month={month}
-                                    onMonthChange={setMonth}
-                                    year={year}
-                                    onYearChange={setYear}
-                                />
+                            <div className="lg:col-span-7 space-y-10">
+                                <div className="bg-slate-50/50 p-1 rounded-[2rem] border border-slate-100 shadow-inner">
+                                    <ReportConfiguration
+                                        reportTitle={generatingTemplate?.reportTitle || reportTitle}
+                                        onReportTitleChange={setReportTitle}
+                                        startDate={startDate}
+                                        onStartDateChange={setStartDate}
+                                        endDate={endDate}
+                                        onEndDateChange={setEndDate}
+                                        month={month}
+                                        onMonthChange={setMonth}
+                                        year={year}
+                                        onYearChange={setYear}
+                                    />
+                                </div>
 
                                 <ChartLayoutOrder
                                     availableCharts={[]}
@@ -826,12 +866,12 @@ const BatchReportPage = () => {
                             </div>
                         </div>
 
-                        <div className="pt-6 border-t border-gray-100 flex justify-center gap-6">
+                        <div className="pt-8 border-t border-slate-100 flex justify-center gap-8">
                             <button
                                 onClick={async () => { setGeneratingTemplate(generatingTemplate); setIsGenerationModalOpen(false); setSelectedTemplateForBg(generatingTemplate); setIsBackgroundModalOpen(true); }}
-                                className="flex items-center gap-2 bg-slate-900 text-white px-10 py-3 rounded-xl font-black text-xs tracking-[0.1em] hover:bg-slate-800 transition-all uppercase shadow-md"
+                                className="flex items-center gap-3 bg-slate-900 text-white px-16 py-4 rounded-2xl font-black text-[11px] capitalize tracking-[0.3em] hover:bg-black transition-all shadow-2xl shadow-slate-200 group active:scale-95"
                             >
-                                <Zap className="w-3.5 h-3.5 text-yellow-400" /> Start Batch
+                                <Zap className="w-5 h-5 text-yellow-400 group-hover:scale-125 transition-transform" /> Start Batch Engine
                             </button>
                         </div>
                     </div>
@@ -889,11 +929,11 @@ const BatchReportPage = () => {
                     <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-amber-100 shadow-sm">
                         <AlertCircle className="w-10 h-10 text-amber-500" />
                     </div>
-                    <h3 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-tight italic">Maximum 50 Hosts</h3>
+                    <h3 className="text-xl font-black text-gray-900 mb-4 capitalize tracking-tight italic">Maximum 50 Hosts</h3>
                     <p className="text-gray-600 font-medium leading-relaxed mb-8">{limitMessage}</p>
                     <button
                         onClick={() => setIsLimitModalOpen(false)}
-                        className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-sm tracking-widest transition-all shadow-lg active:scale-[0.98] uppercase"
+                        className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-sm tracking-widest transition-all shadow-lg active:scale-[0.98] capitalize"
                     >
                         Understand
                     </button>

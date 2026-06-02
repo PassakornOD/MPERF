@@ -61,7 +61,7 @@ export default function OperationsPage() {
                             </ul>
                         </div>
                         <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100 flex flex-col justify-center">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Quick Access Path</p>
+                            <p className="text-xs font-bold text-gray-400 capitalize tracking-widest mb-4">Quick Access Path</p>
                             <p className="text-base font-bold text-gray-800 mb-3">Navigate to:</p>
                             <div className="bg-white p-4 rounded-xl border border-gray-200 text-sm font-bold text-blue-600 flex items-center gap-2">
                                 Inventory <ChevronRight size={14} className="text-gray-300" /> Manage Assets
@@ -153,7 +153,7 @@ export default function OperationsPage() {
                                 { step: "Chart Layout", desc: "Select and order metrics (CPU/Mem) to define the report layout." },
                             ].map((item, idx) => (
                                 <div key={idx} className="bg-indigo-50/50 p-6 rounded-3xl border border-indigo-100 flex flex-col justify-between group hover:bg-indigo-600 transition-all duration-300">
-                                    <div className="text-[10px] font-black text-indigo-700 uppercase tracking-widest mb-4 group-hover:text-indigo-200">Step 0{idx + 1}</div>
+                                    <div className="text-xs font-black text-indigo-700 capitalize tracking-widest mb-4 group-hover:text-indigo-200">Step 0{idx + 1}</div>
                                     <div>
                                         <p className="text-sm font-bold text-indigo-900 mb-2 group-hover:text-white">{item.step}</p>
                                         <p className="text-xs text-indigo-700 font-medium leading-relaxed group-hover:text-indigo-100">{item.desc}</p>
@@ -170,13 +170,13 @@ export default function OperationsPage() {
                             <div className="absolute top-0 right-0 p-4 opacity-10"><Terminal size={100} /></div>
                             <div className="relative z-10 space-y-6">
                                 <div className="space-y-3">
-                                    <p className="text-emerald-400 font-bold uppercase text-[10px] tracking-widest flex items-center justify-between">
+                                    <p className="text-emerald-400 font-bold capitalize text-xs tracking-widest flex items-center justify-between">
                                         CLI Trigger <CopyButton text="npm run generate-monthly-report -- --templateId=5 --jobId=manual_run_001" />
                                     </p>
                                     <code className="block bg-black/40 p-4 rounded-xl border border-white/5 text-gray-300">npm run generate-monthly-report -- --templateId=5 --jobId=manual_run_001</code>
                                 </div>
                                 <div className="space-y-3">
-                                    <p className="text-amber-400 font-bold uppercase text-[10px] tracking-widest flex items-center justify-between">
+                                    <p className="text-amber-400 font-bold capitalize text-xs tracking-widest flex items-center justify-between">
                                         Cron Automation <CopyButton text="0 3 1 * * docker exec mperf-app npm run generate-monthly-report -- --templateId=5 --jobId=cron_id_$(date +%Y%m%d)" />
                                     </p>
                                     <code className="block bg-black/40 p-4 rounded-xl border border-white/5 text-gray-300 leading-relaxed whitespace-pre-wrap">0 3 1 * * docker exec mperf-app npm run generate-monthly-report -- --templateId=5 --jobId=cron_job_$(date +%Y%m%d_%H%M%S)</code>

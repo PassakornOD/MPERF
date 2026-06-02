@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Loader2, Activity } from 'lucide-react';
+import { Loader2, Activity, ChevronDown } from 'lucide-react';
 
 const SarChart = dynamic(() => import('@/components/charts/SarChart'), {
   ssr: false,
@@ -102,52 +102,74 @@ const MemMonthlyPage = () => {
   };
 
   return (
-    <Block title="Sar Statistics" subtitle="Monthly Memory Utilization Analysis" tabs={[]}>
-      <div className="bg-gray-50/80 p-5 sm:p-6 rounded-3xl border border-gray-100 mb-2 flex flex-wrap gap-4 items-end justify-start lg:justify-center transition-all">
-        <div className="flex-1 min-w-[160px]">
-          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Hostgroup</label>
-          <select className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
-            <option value="">Select Hostgroup</option>
-            {hostGroups?.map(g => <option key={g.hostgroup_id} value={g.hostgroup}>{g.hostgroup}</option>)}
-          </select>
-        </div>
-        <div className="flex-1 min-w-[160px]">
-          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Hostname</label>
-          <select className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm disabled:opacity-50" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
-            <option value="">Select Hostname</option>
-            {hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.map(h => <option key={h.hostname_id} value={h.hostname_id}>{h.hostname}</option>)}
-          </select>
-        </div>
-        <div className="w-48">
-          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Month / Year</label>
-          <div className="flex gap-2">
-            <select className="bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={month} onChange={(e) => setMonth(e.target.value)}>
-              {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+    <Block title="Memory Performance Metrics" subtitle="Monthly Resource Allocation Distribution" tabs={[]}>
+      <div className="bg-slate-50/50 p-6 rounded-3xl border border-slate-100 mb-8 flex flex-wrap gap-5 items-end justify-center transition-all shadow-inner">
+        <div className="flex-1 min-w-[180px]">
+          <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Hostgroup</label>
+          <div className="relative group">
+            <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
+              <option value="">Select Sector</option>
+              {hostGroups?.map(g => <option key={g.hostgroup_id} value={g.hostgroup}>{g.hostgroup}</option>)}
             </select>
-            <select className="bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm" value={year} onChange={(e) => setYear(e.target.value)}>
-              {years.map(y => <option key={y} value={y}>{y}</option>)}
-            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
           </div>
         </div>
-        <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-blue-600 text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 disabled:opacity-50 h-[38px]" disabled={!selectedGroup || !selectedHostnameId}>Query</button>
+        <div className="flex-1 min-w-[180px]">
+          <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Hostname</label>
+          <div className="relative group">
+            <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm disabled:opacity-30" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
+              <option value="">Select Node</option>
+              {hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.map(h => <option key={h.hostname_id} value={String(h.hostname_id)}>{h.hostname}</option>)}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
+          </div>
+        </div>
+        <div className="w-44">
+          <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Analytics Cycle</label>
+          <div className="flex gap-2">
+            <div className="relative group flex-1">
+              <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm text-center" value={month} onChange={(e) => setMonth(e.target.value)}>
+                {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+              </select>
+            </div>
+            <div className="relative group flex-1">
+              <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm text-center" value={year} onChange={(e) => setYear(e.target.value)}>
+                {years.map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+          </div>
+        </div>
+        <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-slate-900 text-white px-4 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-slate-200 disabled:opacity-30 h-[42px] active:scale-95" disabled={!selectedGroup || !selectedHostnameId}>Execute</button>
       </div>
 
-      <div id="container" className="min-h-[450px] bg-white rounded-3xl border border-gray-50 shadow-inner p-4">
+      <div className="flex items-center gap-3 mb-6 px-2">
+        <div className={`w-2 h-2 rounded-full ${isFetching ? 'bg-blue-500 animate-pulse' : metrics ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300'}`}></div>
+        <span className="text-xs font-black text-slate-400 capitalize tracking-widest">{isFetching ? 'Stream Incoming' : metrics ? 'Data Link Online' : 'System Ready'}</span>
+      </div>
+
+      <div id="container" className="min-h-[500px] bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-10 animate-ease-in relative overflow-hidden">
         {isFetching ? (
-          <div className="text-center py-32">
-            <div className="animate-spin rounded-full h-14 w-14 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-6 text-sm font-bold text-gray-400">Fetching metrics...</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm z-10">
+            <Loader2 className="w-16 h-16 animate-spin text-blue-600 opacity-20" />
+            <p className="mt-8 text-xs font-black text-slate-400 capitalize tracking-[0.3em]">Processing Monthly Aggregate...</p>
           </div>
-        ) : queryEnabled ? (
-          metrics && metrics.length > 0 ? <SarChart options={getChartOptions()} /> : (
-            <div className="text-center py-32 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
-              <p className="text-gray-400 font-bold">No performance records found for this period.</p>
+        ) : null}
+
+        {queryEnabled ? (
+          metrics && metrics.length > 0 ? (
+            <div className="animate-in fade-in zoom-in-95 duration-700">
+              <SarChart options={getChartOptions()} />
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-40 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100">
+              <Activity size={48} className="text-slate-200 mb-4" />
+              <p className="text-xs font-black text-slate-300 capitalize tracking-[0.2em]">No performance metrics retrieved for cycle</p>
             </div>
           )
         ) : (
-          <div className="flex flex-col items-center justify-center py-32 text-gray-300">
-            <Activity size={64} className="mb-4 opacity-20" />
-            <p className="font-bold text-lg">Select filters and click Query to visualize data</p>
+          <div className="flex flex-col items-center justify-center py-40">
+            <Activity size={80} className="mb-8 text-slate-100 animate-pulse" />
+            <p className="text-xs font-black text-slate-300 capitalize tracking-[0.3em]">Awaiting Instruction Set</p>
           </div>
         )}
       </div>

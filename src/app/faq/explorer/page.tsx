@@ -23,7 +23,7 @@ const CopyButton = ({ text }: { text: string }) => {
 
 const Section = ({ title, children, icon }: { title: string, children: React.ReactNode, icon?: React.ReactNode }) => (
   <section className="mb-16">
-    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+    <h3 className="text-xs font-bold text-gray-400 capitalize tracking-widest mb-8 flex items-center gap-2">
       {icon ? icon : <ChevronRight size={16} className="text-blue-500" />} {title}
     </h3>
     {children}
@@ -34,7 +34,7 @@ export default function ExplorerGuidePage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-16">
       <header className="mb-20 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 text-purple-600 text-[10px] font-black uppercase tracking-widest mb-6 border border-purple-100 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 text-purple-600 text-xs font-black capitalize tracking-widest mb-6 border border-purple-100 shadow-sm">
           <ShieldCheck size={14} /> Database Reference
         </div>
         <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight mb-4">Explorer DB Guide</h1>
@@ -65,7 +65,7 @@ export default function ExplorerGuidePage() {
                     </div>
                 </div>
                 <div className="space-y-4">
-                    <h5 className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Methods</h5>
+                    <h5 className="text-xs font-black text-gray-900 capitalize tracking-widest">Methods</h5>
                     <ul className="list-disc pl-5 space-y-2 text-xs text-gray-600">
                         <li><b>Individual Records:</b> Delete specific entries from the query result table.</li>
                         <li><b>Bulk Maintenance:</b> Use the dashboard control panel to purge data by criteria (e.g., Year, Hostgroup).</li>
@@ -81,16 +81,16 @@ export default function ExplorerGuidePage() {
           <div className="bg-[#0f172a] p-10 rounded-[40px] shadow-2xl text-gray-300 font-mono text-[11px]">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <div>
-                    <h5 className="text-sky-400 font-bold mb-6 flex items-center gap-2 text-xs uppercase tracking-wider"><Globe size={18}/> Data Retrieval</h5>
-                    <p className="text-gray-500 text-[10px] mb-4">Endpoint: <code className="bg-gray-800 px-2 py-0.5 rounded text-gray-100">GET /api/admin/sar-data</code></p>
+                    <h5 className="text-sky-400 font-bold mb-6 flex items-center gap-2 text-xs capitalize tracking-wider"><Globe size={18}/> Data Retrieval</h5>
+                    <p className="text-gray-500 text-xs mb-4">Endpoint: <code className="bg-gray-800 px-2 py-0.5 rounded text-gray-100">GET /api/admin/sar-data</code></p>
                     <div className="relative group">
                         <code className="block bg-[#1e293b] p-4 rounded-2xl text-gray-100 border border-gray-800/50">curl -X GET "https://localhost/api/admin/sar-data?hostgroup=Datawarehouse&type=cpu&level=year&year=2026"</code>
                         <CopyButton text='curl -X GET "https://localhost/api/admin/sar-data?hostgroup=Datawarehouse&type=cpu&level=year&year=2026"' />
                     </div>
                 </div>
                 <div>
-                    <h5 className="text-red-400 font-bold mb-6 flex items-center gap-2 text-xs uppercase tracking-wider"><Trash2 size={18}/> Data Deletion</h5>
-                    <p className="text-gray-500 text-[10px] mb-4">Endpoint: <code className="bg-gray-800 px-2 py-0.5 rounded text-gray-100">POST /api/admin/sar-data/delete</code></p>
+                    <h5 className="text-red-400 font-bold mb-6 flex items-center gap-2 text-xs capitalize tracking-wider"><Trash2 size={18}/> Data Deletion</h5>
+                    <p className="text-gray-500 text-xs mb-4">Endpoint: <code className="bg-gray-800 px-2 py-0.5 rounded text-gray-100">POST /api/admin/sar-data/delete</code></p>
                     <div className="relative group">
                         <code className="block bg-[#1e293b] p-4 rounded-2xl text-gray-100 border border-gray-800/50">{`{ "hostgroup": "Datawarehouse", "type": "cpu", "level": "year", "year": "2026" }`}</code>
                         <CopyButton text='{ "hostgroup": "Datawarehouse", "type": "cpu", "level": "year", "year": "2026" }' />
@@ -104,7 +104,7 @@ export default function ExplorerGuidePage() {
       <Section title="4. Parameter Reference">
         <div className="bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden">
           <table className="w-full text-left">
-            <thead className="bg-gray-50/80 border-b border-gray-100 text-gray-500 uppercase text-[10px] tracking-wider font-black">
+            <thead className="bg-gray-50/80 border-b border-gray-100 text-gray-500 capitalize text-xs tracking-wider font-black">
               <tr>
                 <th className="px-8 py-5">Parameter</th>
                 <th className="px-8 py-5">Format</th>
@@ -123,7 +123,7 @@ export default function ExplorerGuidePage() {
               ].map((row) => (
                 <tr key={row.p} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-8 py-5 font-black text-purple-600 text-xs">{row.p}</td>
-                  <td className="px-8 py-5 text-gray-900 font-mono text-[10px]">{row.f}</td>
+                  <td className="px-8 py-5 text-gray-900 font-mono text-xs">{row.f}</td>
                   <td className="px-8 py-5 text-right text-[11px] font-medium">{row.d}</td>
                 </tr>
               ))}
