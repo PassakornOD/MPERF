@@ -19,7 +19,7 @@ const CopyButton = ({ text }: { text: string }) => {
 
 const Section = ({ title, children, icon: Icon }: { title: string, children: React.ReactNode, icon?: React.ElementType }) => (
     <section className="mb-16">
-        <h3 className="font-black text-slate-400 capitalize tracking-widest text-[9px] mb-8 flex items-center gap-3">
+        <h3 className="font-black text-slate-400 capitalize  text-[9px] mb-8 flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
                 {Icon ? <Icon size={18} /> : <ChevronRight size={18} />}
             </div>
@@ -33,7 +33,7 @@ export default function OperationsPage() {
     return (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20 animate-ease-in pb-32">
             <header className="mb-20 text-center space-y-6">
-                <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-blue-50 text-blue-600 text-xs font-black border border-blue-100 shadow-sm capitalize tracking-widest">
+                <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-blue-50 text-blue-600 text-xs font-black border border-blue-100 shadow-sm capitalize ">
                     <ShieldCheck size={16} /> System Documentation
                 </div>
                 <h1 className="text-5xl font-black text-slate-900 tracking-tight capitalize italic">Operations Guide</h1>
@@ -61,7 +61,7 @@ export default function OperationsPage() {
                             </ul>
                         </div>
                         <div className="bg-slate-50/50 p-8 rounded-[2rem] border border-slate-100 flex flex-col justify-center shadow-inner">
-                            <p className="font-black text-slate-400 capitalize tracking-widest text-[9px] mb-4">Quick Access Path</p>
+                            <p className="font-black text-slate-400 capitalize  text-[9px] mb-4">Quick Access Path</p>
                             <p className="text-base font-black text-slate-800 mb-3 capitalize italic tracking-tight">Navigate to:</p>
                             <div className="bg-white p-4 rounded-xl border border-slate-200 text-xs font-black text-blue-600 flex items-center gap-2 shadow-sm">
                                 Inventory <ChevronRight size={14} className="text-slate-300" /> Manage Assets
@@ -80,7 +80,7 @@ export default function OperationsPage() {
                         </div>
                         <h4 className="text-xl font-black text-slate-900 mb-4 capitalize italic tracking-tight">Sarlog</h4>
                         <p className="text-sm text-slate-600 mb-6 leading-relaxed font-medium">Access daily and monthly performance snapshots for specific servers with high-resolution interactive charts.</p>
-                        <div className="bg-emerald-50/50 p-5 rounded-xl border border-emerald-100 text-[10px] text-emerald-800 font-black uppercase tracking-widest">
+                        <div className="bg-emerald-50/50 p-5 rounded-xl border border-emerald-100 text-[10px] text-emerald-800 font-black uppercase ">
                             Navigate to <b>Sarlog</b> tab. Select specific Hostgroup, Hostname, and Date Range.
                         </div>
                     </div>
@@ -90,7 +90,7 @@ export default function OperationsPage() {
                         </div>
                         <h4 className="text-xl font-black text-slate-900 mb-4 capitalize italic tracking-tight">Utilization</h4>
                         <p className="text-sm text-slate-600 mb-6 leading-relaxed font-medium">View long-term utilization statistics to identify resource bottlenecks and plan for capacity upgrades.</p>
-                        <div className="bg-purple-50/50 p-5 rounded-xl border border-purple-100 text-[10px] text-purple-800 font-black uppercase tracking-widest">
+                        <div className="bg-purple-50/50 p-5 rounded-xl border border-purple-100 text-[10px] text-purple-800 font-black uppercase ">
                             Navigate to <b>Utilization</b> tab. Compare CPU or Memory stats across the last 12 months.
                         </div>
                     </div>
@@ -153,7 +153,7 @@ export default function OperationsPage() {
                                 { step: "Chart Layout", desc: "Select and order metrics (CPU/Mem) to define the report layout." },
                             ].map((item, idx) => (
                                 <div key={idx} className="bg-indigo-50/50 p-6 rounded-[1.5rem] border border-indigo-100 flex flex-col justify-between group hover:bg-indigo-600 transition-all duration-300 shadow-inner">
-                                    <div className="font-black text-slate-400 capitalize tracking-widest text-[9px] mb-4 group-hover:text-indigo-200">Step 0{idx + 1}</div>
+                                    <div className="font-black text-slate-400 capitalize  text-[9px] mb-4 group-hover:text-indigo-200">Step 0{idx + 1}</div>
                                     <div>
                                         <p className="text-sm font-black text-indigo-900 mb-2 group-hover:text-white capitalize italic tracking-tight">{item.step}</p>
                                         <p className="text-xs text-indigo-700 font-medium leading-relaxed group-hover:text-indigo-100">{item.desc}</p>
@@ -170,13 +170,13 @@ export default function OperationsPage() {
                             <div className="absolute top-0 right-0 p-4 opacity-10"><Terminal size={100} /></div>
                             <div className="relative z-10 space-y-6">
                                 <div className="space-y-3">
-                                    <p className="font-black text-slate-400 capitalize tracking-widest text-[9px] flex items-center justify-between">
+                                    <p className="font-black text-slate-400 capitalize  text-[9px] flex items-center justify-between">
                                         CLI Trigger <CopyButton text="npm run generate-monthly-report -- --templateId=5 --jobId=manual_run_001" />
                                     </p>
                                     <code className="block bg-black/40 p-4 rounded-xl border border-white/5 text-slate-300">npm run generate-monthly-report -- --templateId=5 --jobId=manual_run_001</code>
                                 </div>
                                 <div className="space-y-3">
-                                    <p className="font-black text-slate-400 capitalize tracking-widest text-[9px] flex items-center justify-between">
+                                    <p className="font-black text-slate-400 capitalize  text-[9px] flex items-center justify-between">
                                         Cron Automation <CopyButton text="0 3 1 * * docker exec mperf-app npm run generate-monthly-report -- --templateId=5 --jobId=cron_id_$(date +%Y%m%d)" />
                                     </p>
                                     <code className="block bg-black/40 p-4 rounded-xl border border-white/5 text-slate-300 leading-relaxed whitespace-pre-wrap text-[10px]">0 3 1 * * docker exec mperf-app npm run generate-monthly-report -- --templateId=5 --jobId=cron_job_$(date +%Y%m%d_%H%M%S)</code>

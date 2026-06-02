@@ -42,7 +42,7 @@ const HostSelector: React.FC<HostSelectorProps> = ({
 }) => {
     return (
         <div className="relative border border-slate-100 rounded-xl p-4 pt-8 bg-white shadow-sm transition-all hover:shadow-md h-full flex flex-col">
-            <span className="absolute -top-3 left-4 bg-blue-50 text-blue-700 px-3 py-1 text-[9px] font-bold capitalize tracking-[0.1em] border border-blue-100 rounded-full shadow-sm flex items-center gap-1.5">
+            <span className="absolute -top-3 left-4 bg-blue-50 text-blue-700 px-3 py-1 text-[9px] font-bold capitalize  border border-blue-100 rounded-full shadow-sm flex items-center gap-1.5">
                 <Monitor className="w-3 h-3" /> Targets
             </span>
             

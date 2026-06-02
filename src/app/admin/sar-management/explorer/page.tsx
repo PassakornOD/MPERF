@@ -113,19 +113,19 @@ const SarManagementPage = () => {
       <div className="modern-card p-10">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12">
             <div className="space-y-1">
-                <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Analytics Scope</h3>
+                <h3 className="text-sm font-black text-slate-800 capitalize ">Analytics Scope</h3>
                 <p className="text-xs font-bold text-slate-400 capitalize">Select metric dimension for exploration</p>
             </div>
             <div className="flex bg-slate-100 p-1 rounded-xl inner-shadow w-fit border border-slate-200/50">
               <button 
                 onClick={() => setType('cpu')} 
-                className={`px-8 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] transition-all duration-300 ${type === 'cpu' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`px-8 py-2.5 rounded-xl text-xs font-black capitalize  transition-all duration-300 ${type === 'cpu' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
               >
                 CPU Analytics
               </button>
               <button 
                 onClick={() => setType('mem')} 
-                className={`px-8 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] transition-all duration-300 ${type === 'mem' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`px-8 py-2.5 rounded-xl text-xs font-black capitalize  transition-all duration-300 ${type === 'mem' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
               >
                 Memory Analytics
               </button>
@@ -134,7 +134,7 @@ const SarManagementPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-end">
           <div className="space-y-2">
-            <label className="text-xs font-black text-slate-400 capitalize tracking-widest ml-1">Hostgroup</label>
+            <label className="text-xs font-black text-slate-400 capitalize  ml-1">Hostgroup</label>
             <div className="relative group">
                 <select className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3.5 px-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
                   <option value="">Select Target</option>
@@ -145,7 +145,7 @@ const SarManagementPage = () => {
           </div>
           
           <div className="space-y-2">
-            <label className="text-xs font-black text-slate-400 capitalize tracking-widest ml-1">Hostname</label>
+            <label className="text-xs font-black text-slate-400 capitalize  ml-1">Hostname</label>
             <div className="relative group">
                 <select className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3.5 px-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner disabled:opacity-30" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
                   <option value="">Consolidated (All)</option>
@@ -158,7 +158,7 @@ const SarManagementPage = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-black text-slate-400 capitalize tracking-widest ml-1">Filter Depth</label>
+            <label className="text-xs font-black text-slate-400 capitalize  ml-1">Filter Depth</label>
             <div className="relative group">
                 <select className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3.5 px-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner" value={filterLevel} onChange={(e) => setFilterLevel(e.target.value as any)}>
                   <option value="all">Unfiltered (All)</option>
@@ -171,7 +171,7 @@ const SarManagementPage = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-black text-slate-400 capitalize tracking-widest ml-1">Timeline</label>
+            <label className="text-xs font-black text-slate-400 capitalize  ml-1">Timeline</label>
             <div className="flex gap-2">
               {filterLevel !== 'all' && (
                   <select className="flex-1 bg-slate-50/50 border border-slate-100 rounded-xl py-3 px-2 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center" value={year} onChange={(e) => setYear(e.target.value)}>
@@ -192,10 +192,10 @@ const SarManagementPage = () => {
           </div>
 
           <div className="flex gap-2 h-[46px]">
-            <button onClick={() => handleQuery(1)} className="flex-1 bg-slate-900 hover:bg-black text-white rounded-xl px-6 py-2 text-xs font-black capitalize tracking-[0.2em] transition-all flex items-center justify-center gap-2 shadow-xl shadow-slate-200">
+            <button onClick={() => handleQuery(1)} className="flex-1 bg-slate-900 hover:bg-black text-white rounded-xl px-6 py-2 text-xs font-black capitalize  transition-all flex items-center justify-center gap-2 shadow-xl shadow-slate-200">
                 {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin"/> : <Search className="w-3.5 h-3.5" />} Fetch
             </button>
-            <button onClick={() => setIsConfirmOpen(true)} className="flex-none bg-red-50 hover:bg-red-600 text-red-600 hover:text-white rounded-xl px-4 py-2 text-xs font-black capitalize tracking-widest transition-all border border-red-100 shadow-sm">
+            <button onClick={() => setIsConfirmOpen(true)} className="flex-none bg-red-50 hover:bg-red-600 text-red-600 hover:text-white rounded-xl px-4 py-2 text-xs font-black capitalize  transition-all border border-red-100 shadow-sm">
                 Purge
             </button>
           </div>
@@ -218,7 +218,7 @@ const SarManagementPage = () => {
                         <Calendar className="w-5 h-5" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Availability Summary</h3>
+                        <h3 className="text-sm font-black text-slate-800 capitalize ">Availability Summary</h3>
                         <p className="text-xs font-bold text-slate-400 capitalize mt-0.5">Inventory of records for cycle {year}-{month}</p>
                     </div>
                 </div>
@@ -236,7 +236,7 @@ const SarManagementPage = () => {
                             <div className="flex items-center gap-3">
                                 <Monitor size={14} className="text-blue-500" />
                                 <span className="text-[11px] font-black text-slate-800 capitalize tracking-tight">{hostname}</span>
-                                <span className="text-[9px] font-black text-slate-300 capitalize tracking-widest">System ID: {id}</span>
+                                <span className="text-[9px] font-black text-slate-300 capitalize ">System ID: {id}</span>
                             </div>
                             <div className="flex flex-wrap gap-2.5 p-6 bg-slate-50/30 rounded-xl border border-slate-100 shadow-inner">
                                 {records.map((s: any) => {
@@ -263,7 +263,7 @@ const SarManagementPage = () => {
           <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-xl shadow-inner bg-slate-50/20 mx-10 my-10">
             <table className="w-full text-xs text-left border-collapse">
               <thead>
-                <tr className="bg-white text-slate-400 font-black capitalize text-[9px] tracking-widest border-b border-slate-100">
+                <tr className="bg-white text-slate-400 font-black capitalize text-[9px]  border-b border-slate-100">
                   {Object.keys(queryData[0]).map(key => <th key={key} className="px-10 py-6 whitespace-nowrap">{key}</th>)}
                 </tr>
               </thead>
@@ -282,13 +282,13 @@ const SarManagementPage = () => {
           </div>
           <div className="px-10 py-8 bg-slate-50/30 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-3">
-                  <span className="text-xs font-black text-slate-400 capitalize tracking-[0.2em]">Viewing Page</span>
+                  <span className="text-xs font-black text-slate-400 capitalize ">Viewing Page</span>
                   <div className="bg-white border border-slate-200 px-3 py-1 rounded-xl font-black text-xs text-blue-600 shadow-sm">{page} <span className="text-slate-300 font-medium px-1">/</span> {totalPages}</div>
-                  <span className="text-xs font-black text-slate-300 capitalize tracking-widest ml-4">Total Population: {total.toLocaleString()} Records</span>
+                  <span className="text-xs font-black text-slate-300 capitalize  ml-4">Total Population: {total.toLocaleString()} Records</span>
               </div>
               <div className="flex gap-2">
-                  <button onClick={() => handleQuery(page - 1, true)} disabled={page <= 1} className="px-6 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-black capitalize tracking-widest hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-20 shadow-sm active:scale-95">Prev</button>
-                  <button onClick={() => handleQuery(page + 1, true)} disabled={page >= totalPages} className="px-6 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-black capitalize tracking-widest hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-20 shadow-sm active:scale-95">Next</button>
+                  <button onClick={() => handleQuery(page - 1, true)} disabled={page <= 1} className="px-6 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-black capitalize  hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-20 shadow-sm active:scale-95">Prev</button>
+                  <button onClick={() => handleQuery(page + 1, true)} disabled={page >= totalPages} className="px-6 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-black capitalize  hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-20 shadow-sm active:scale-95">Next</button>
               </div>
           </div>
         </div>

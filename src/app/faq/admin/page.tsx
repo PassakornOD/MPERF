@@ -5,7 +5,7 @@ import { ShieldCheck, Users, Layers, Lock, AlertTriangle, ChevronRight, Server, 
 
 const Section = ({ title, children, icon }: { title: string, children: React.ReactNode, icon?: React.ReactNode }) => (
   <section className="mb-16">
-    <h3 className="font-black text-slate-400 capitalize tracking-widest text-[9px] mb-8 flex items-center gap-2">
+    <h3 className="font-black text-slate-400 capitalize  text-[9px] mb-8 flex items-center gap-2">
       {icon ? icon : <ChevronRight size={16} className="text-blue-500" />} {title}
     </h3>
     {children}
@@ -16,7 +16,7 @@ export default function AdminGuidePage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-16">
       <header className="mb-20 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-xs font-black capitalize tracking-widest mb-6 border border-blue-100 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-xs font-black capitalize  mb-6 border border-blue-100 shadow-sm">
           <ShieldCheck size={14} /> System Documentation
         </div>
         <h1 className="text-5xl font-black text-slate-900 capitalize italic tracking-tight mb-4">Admin Dashboard Guide</h1>
@@ -34,7 +34,7 @@ export default function AdminGuidePage() {
                 <p className="text-[11px] text-slate-500 leading-relaxed flex-grow">Manage user lifecycle. Administrators can create, modify, and delete users.</p>
                 <div className="pt-4 border-t border-slate-100 space-y-3">
                     <div>
-                        <span className="font-black text-slate-400 capitalize tracking-widest text-[9px]">Workflow</span>
+                        <span className="font-black text-slate-400 capitalize  text-[9px]">Workflow</span>
                         <ul className="text-[11px] text-slate-600 mt-1 list-disc pl-4 space-y-0.5">
                             <li>Add user via "+" icon.</li>
                             <li>Assign role (Admin/Sysadmin/Operation).</li>
@@ -53,7 +53,7 @@ export default function AdminGuidePage() {
                 <p className="text-[11px] text-slate-500 leading-relaxed flex-grow">Organize users into logical groups for efficient permission application.</p>
                 <div className="pt-4 border-t border-slate-100 space-y-3">
                     <div>
-                        <span className="font-black text-slate-400 capitalize tracking-widest text-[9px]">Workflow</span>
+                        <span className="font-black text-slate-400 capitalize  text-[9px]">Workflow</span>
                         <ul className="text-[11px] text-slate-600 mt-1 list-disc pl-4 space-y-0.5">
                             <li>Create group via "+" icon.</li>
                             <li>Edit to add members & PG associations.</li>
@@ -71,7 +71,7 @@ export default function AdminGuidePage() {
                 <p className="text-[11px] text-slate-500 leading-relaxed flex-grow">Granular mapping of security permissions to specific Hostgroups.</p>
                 <div className="pt-4 border-t border-slate-100 space-y-3">
                     <div>
-                        <span className="font-black text-slate-400 capitalize tracking-widest text-[9px]">Workflow</span>
+                        <span className="font-black text-slate-400 capitalize  text-[9px]">Workflow</span>
                         <ul className="text-[11px] text-slate-600 mt-1 list-disc pl-4 space-y-0.5">
                             <li>Define Permission Group (PG).</li>
                             <li>Edit to associate Hostgroups.</li>

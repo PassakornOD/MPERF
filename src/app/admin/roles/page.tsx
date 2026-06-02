@@ -76,7 +76,7 @@ const AdminRolesPage = () => {
     <Block title="Authorization Framework" subtitle="Global role-to-resource mapping governance">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 animate-ease-in">
         <div className="lg:col-span-1 space-y-6">
-          <label className="text-xs font-black text-slate-400 capitalize tracking-[0.2em] ml-2 block">System Roles</label>
+          <label className="text-xs font-black text-slate-400 capitalize  ml-2 block">System Roles</label>
           <div className="bg-white p-2 rounded-[2rem] border border-slate-100 shadow-sm space-y-1">
           {roles.map(r => (
             <button 
@@ -92,7 +92,7 @@ const AdminRolesPage = () => {
 
         <div className="lg:col-span-3 space-y-6">
           <div className="flex items-center justify-between px-2">
-            <label className="text-xs font-black text-slate-400 capitalize tracking-[0.2em] flex items-center gap-2">
+            <label className="text-xs font-black text-slate-400 capitalize  flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-500" /> Resource Matrix Authorization
             </label>
             {selectedRole && <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-xl text-[9px] font-black capitalize border border-blue-100 shadow-sm">Scope: {selectedHostgroups.length} Assets</span>}
@@ -102,7 +102,7 @@ const AdminRolesPage = () => {
             {!selectedRole ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-slate-300 space-y-4">
                     <ShieldCheck size={64} className="opacity-10" />
-                    <p className="text-xs font-black capitalize tracking-[0.3em]">Select a role to begin mapping</p>
+                    <p className="text-xs font-black capitalize ">Select a role to begin mapping</p>
                 </div>
             ) : (
                 <>
@@ -128,7 +128,7 @@ const AdminRolesPage = () => {
                     <div className="mt-auto pt-8 border-t border-slate-50 flex justify-end">
                         <button 
                             onClick={savePermissions}
-                            className="bg-slate-900 text-white px-10 py-4 rounded-xl font-black text-xs capitalize tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-black transition-all shadow-xl shadow-slate-200 group active:scale-95"
+                            className="bg-slate-900 text-white px-10 py-4 rounded-xl font-black text-xs capitalize  flex items-center justify-center gap-3 hover:bg-black transition-all shadow-xl shadow-slate-200 group active:scale-95"
                         >
                             <Save className="w-4.5 h-4.5 group-hover:rotate-12 transition-transform" /> Commit Permissions
                         </button>

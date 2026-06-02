@@ -128,7 +128,7 @@ const IngestPage = () => {
             
             {/* 1. Selection Mode */}
             <div className="space-y-6">
-              <label className="flex items-center gap-2.5 text-xs font-black text-slate-400 capitalize tracking-[0.2em] px-1">
+              <label className="flex items-center gap-2.5 text-xs font-black text-slate-400 capitalize  px-1">
                 <Clock className="w-3.5 h-3.5" /> Ingestion Strategy
               </label>
               <div className="grid grid-cols-1 gap-2.5">
@@ -157,7 +157,7 @@ const IngestPage = () => {
 
             {/* 2. Filters */}
             <div className="space-y-6">
-              <label className="flex items-center gap-2.5 text-xs font-black text-slate-400 capitalize tracking-[0.2em] px-1">
+              <label className="flex items-center gap-2.5 text-xs font-black text-slate-400 capitalize  px-1">
                 <Layers className="w-3.5 h-3.5" /> Granular Filtering
               </label>
               <div className="space-y-4">
@@ -206,15 +206,15 @@ const IngestPage = () => {
 
             {/* 3. Date Configuration */}
             <div className="space-y-6">
-              <label className="flex items-center gap-2.5 text-xs font-black text-slate-400 capitalize tracking-[0.2em] px-1">
+              <label className="flex items-center gap-2.5 text-xs font-black text-slate-400 capitalize  px-1">
                 <Calendar className="w-3.5 h-3.5" /> Timeline Context
               </label>
               
               <div className="space-y-4 p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 shadow-inner flex flex-col justify-center min-h-[160px]">
                 {formData.mode === 'yesterday' && (
                   <div className="text-center py-4 space-y-2">
-                    <p className="text-xs font-black text-slate-400 capitalize tracking-[0.2em]">Targeting Window</p>
-                    <p className="text-sm font-black text-blue-600 capitalize tracking-widest italic animate-pulse">Yesterday's Operational Logs</p>
+                    <p className="text-xs font-black text-slate-400 capitalize ">Targeting Window</p>
+                    <p className="text-sm font-black text-blue-600 capitalize  italic animate-pulse">Yesterday's Operational Logs</p>
                   </div>
                 )}
 
@@ -244,7 +244,7 @@ const IngestPage = () => {
                         </select>
                     </div>
                     <div className="col-span-2 text-center pt-2">
-                      <span className="text-xs font-black text-slate-300 capitalize tracking-widest">Active Cycle: {new Date().getFullYear()}</span>
+                      <span className="text-xs font-black text-slate-300 capitalize ">Active Cycle: {new Date().getFullYear()}</span>
                     </div>
                   </div>
                 )}
@@ -255,7 +255,7 @@ const IngestPage = () => {
                     <select
                       value={formData.month}
                       onChange={(e) => setFormData({ ...formData, month: e.target.value })}
-                      className="w-full bg-white border border-slate-100 rounded-xl py-4 px-5 text-xs font-black capitalize tracking-widest outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all appearance-none"
+                      className="w-full bg-white border border-slate-100 rounded-xl py-4 px-5 text-xs font-black capitalize  outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all appearance-none"
                     >
                       <option value="">Select Target Month</option>
                       {months.map(m => <option key={m} value={m}>{m}</option>)}
@@ -267,7 +267,7 @@ const IngestPage = () => {
               <button
                 disabled={ingesting || loading}
                 onClick={handleStartIngestion}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-500/20 disabled:shadow-none capitalize tracking-[0.2em] text-xs"
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-500/20 disabled:shadow-none capitalize  text-xs"
               >
                 {ingesting ? (
                   <>
@@ -289,12 +289,12 @@ const IngestPage = () => {
           <div className="px-10 py-5 bg-slate-800/50 border-b border-slate-800 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className={`w-2.5 h-2.5 rounded-full ${ingesting ? 'bg-blue-500 animate-pulse' : results.length > 0 ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-slate-600'}`}></div>
-              <span className="text-xs font-black text-slate-400 capitalize tracking-[0.2em]">Operational Stream Log</span>
+              <span className="text-xs font-black text-slate-400 capitalize ">Operational Stream Log</span>
             </div>
             {results.length > 0 && (
               <button 
                 onClick={() => setResults([])}
-                className="text-xs font-black text-slate-500 hover:text-white transition-all capitalize tracking-widest bg-slate-700/50 px-3 py-1 rounded-xl"
+                className="text-xs font-black text-slate-500 hover:text-white transition-all capitalize  bg-slate-700/50 px-3 py-1 rounded-xl"
               >
                 Flush Log
               </button>
@@ -305,7 +305,7 @@ const IngestPage = () => {
             {results.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-slate-700 py-32 space-y-4">
                 <Database className="w-16 h-12 mb-2 opacity-10" />
-                <p className="text-xs font-black capitalize tracking-[0.3em] opacity-40">System ready for data intake</p>
+                <p className="text-xs font-black capitalize  opacity-40">System ready for data intake</p>
               </div>
             ) : (
               results.map((line, idx) => (

@@ -93,13 +93,13 @@ const ManageUserGroups = () => {
                 <Users className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Group Governance</h3>
+                <h3 className="text-sm font-black text-slate-800 capitalize ">Group Governance</h3>
                 <p className="text-xs font-bold text-slate-400 capitalize mt-0.5">Organize users into logical administrative units</p>
               </div>
             </div>
             <button onClick={() => setIsCreateModalOpen(true)} className="btn-primary flex items-center gap-2 group">
                 <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                <span className="text-xs font-black capitalize tracking-widest">Create Group</span>
+                <span className="text-xs font-black capitalize ">Create Group</span>
             </button>
           </div>
 
@@ -107,10 +107,10 @@ const ManageUserGroups = () => {
             <table className="w-full text-xs text-left border-collapse">
               <thead>
                 <tr className="bg-white border-b border-slate-100">
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Designation</th>
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Enrolled Force</th>
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Active Permissions</th>
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest text-right">Actions</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Designation</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Enrolled Force</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Active Permissions</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize  text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100/50 bg-white">
@@ -139,7 +139,7 @@ const ManageUserGroups = () => {
                               </div>
                             ))}
                           </div>
-                          <span className="text-[11px] font-black text-slate-600 tabular-nums">{groupMembers.length} <span className="text-[8px] text-slate-300 uppercase tracking-widest">Operators</span></span>
+                          <span className="text-[11px] font-black text-slate-600 tabular-nums">{groupMembers.length} <span className="text-[8px] text-slate-300 uppercase ">Operators</span></span>
                         </div>
                       </td>
                       <td className="px-8 py-5">
@@ -147,7 +147,7 @@ const ManageUserGroups = () => {
                           {currentPgs.length > 0 ? currentPgs.map((p: any) => {
                             const pg = data.pgs.find((item: any) => item.pg_id === (p as any).pg_id);
                             return pg ? <span key={(pg as any).pg_id} className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2.5 py-1 rounded-xl font-black text-[8px] capitalize tracking-tighter shadow-sm whitespace-nowrap">{pg.pg_name}</span> : null;
-                          }) : <span className="text-[9px] font-bold text-slate-300 capitalize tracking-widest italic">Baseline Access</span>}
+                          }) : <span className="text-[9px] font-bold text-slate-300 capitalize  italic">Baseline Access</span>}
                         </div>
                       </td>
                       <td className="px-8 py-5 text-right">
@@ -174,10 +174,10 @@ const ManageUserGroups = () => {
                                     setIsAddingUser(false);
                                     setIsAddingPg(false);
                                     setActiveMenu(null);
-                                  }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all capitalize tracking-widest text-left">
+                                  }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all capitalize  text-left">
                                     <Edit2 className="w-4 h-4" /> Modify Group
                                   </button>
-                                  <button onClick={() => { setDeleteTargetId(g.ug_id); setIsDeleteModalOpen(true); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-red-500 hover:bg-red-50 transition-all border-t border-slate-50 capitalize tracking-widest text-left">
+                                  <button onClick={() => { setDeleteTargetId(g.ug_id); setIsDeleteModalOpen(true); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-red-500 hover:bg-red-50 transition-all border-t border-slate-50 capitalize  text-left">
                                     <Trash2 className="w-4 h-4" /> Decommission
                                   </button>
                                 </div>
@@ -208,7 +208,7 @@ const ManageUserGroups = () => {
                                 <div className="flex gap-4 p-6 bg-slate-50/50 rounded-xl items-center border border-slate-100 shadow-inner">
                                     <div className="bg-white p-4 rounded-xl text-emerald-600 shadow-sm border border-slate-100"><Users className="w-8 h-8" /></div>
                                     <div>
-                                        <p className="text-xs font-black text-slate-400 capitalize tracking-widest mb-0.5">Identification</p>
+                                        <p className="text-xs font-black text-slate-400 capitalize  mb-0.5">Identification</p>
                                         <p className="font-black text-xl text-slate-900 tracking-tight">{editingGroup?.ug_name}</p>
                                     </div>
                                 </div>
@@ -219,7 +219,7 @@ const ManageUserGroups = () => {
                                         onChange={e => setEditFields({ ...editFields, ug_name: e.target.value })}
                                     />
                                     <div className="flex justify-end pt-4 border-t border-slate-50">
-                                        <button onClick={() => saveUpdates()} className="bg-blue-600 text-white px-8 py-3 rounded-xl text-xs font-black capitalize tracking-[0.2em] shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all">Save Changes</button>
+                                        <button onClick={() => saveUpdates()} className="bg-blue-600 text-white px-8 py-3 rounded-xl text-xs font-black capitalize  shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all">Save Changes</button>
                                     </div>
                                 </div>
                             </div>
@@ -229,13 +229,13 @@ const ManageUserGroups = () => {
                         label: 'Members', content: (
                             <div className="space-y-6 pt-2">
                                 <div className="flex justify-end">
-                                    <button onClick={() => setIsAddingUser(true)} className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-black text-xs capitalize tracking-widest transition-all">
+                                    <button onClick={() => setIsAddingUser(true)} className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-black text-xs capitalize  transition-all">
                                         <PlusCircle className="w-4 h-4" /> Add Member
                                     </button>
                                 </div>
 
                                 <div className="relative border border-slate-100 rounded-xl p-6 pt-10 bg-slate-50/20 shadow-inner">
-                                    <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-blue-600 border border-slate-100 rounded-full shadow-sm flex items-center gap-2">
+                                    <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize  text-blue-600 border border-slate-100 rounded-full shadow-sm flex items-center gap-2">
                                         <User className="w-3.5 h-3.5" /> Group Members
                                     </span>
 
@@ -262,14 +262,14 @@ const ManageUserGroups = () => {
                                     ) : (
                                         <div className="py-12 text-center">
                                             <User className="w-12 h-12 text-slate-100 mx-auto mb-3" />
-                                            <p className="text-xs text-slate-300 font-black capitalize tracking-widest italic">No members in this group</p>
+                                            <p className="text-xs text-slate-300 font-black capitalize  italic">No members in this group</p>
                                         </div>
                                     )}
                                 </div>
 
                                 {isAddingUser && (
                                     <div className="relative border-2 border-dashed border-blue-100 rounded-xl p-6 pt-10 bg-blue-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
-                                        <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
+                                        <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize  text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
                                             <Plus className="w-3.5 h-3.5" /> Available Users
                                         </span>
                                         <button onClick={() => setIsAddingUser(false)} className="absolute top-2 right-2 p-2 text-slate-300 hover:text-slate-900 transition-colors"><X className="w-4 h-4" /></button>
@@ -290,7 +290,7 @@ const ManageUserGroups = () => {
                                                 ))}
                                             </div>
                                         ) : (
-                                            <p className="text-center py-4 text-xs text-slate-300 font-black capitalize tracking-widest italic">All users enrolled</p>
+                                            <p className="text-center py-4 text-xs text-slate-300 font-black capitalize  italic">All users enrolled</p>
                                         )}
                                     </div>
                                 )}
@@ -301,7 +301,7 @@ const ManageUserGroups = () => {
                         label: 'Associated', content: (
                             <div className="space-y-6 pt-2">
                                 <div className="flex justify-end">
-                                    <button onClick={() => setIsAddingPg(true)} className="flex items-center gap-1.5 text-emerald-600 hover:text-emerald-700 font-black text-xs capitalize tracking-widest transition-all">
+                                    <button onClick={() => setIsAddingPg(true)} className="flex items-center gap-1.5 text-emerald-600 hover:text-emerald-700 font-black text-xs capitalize  transition-all">
                                         <PlusCircle className="w-4 h-4" /> Add Permission
                                     </button>
                                 </div>
@@ -347,14 +347,14 @@ const ManageUserGroups = () => {
                                     }) : (
                                         <div className="py-20 text-center border border-slate-100 rounded-[2rem] bg-slate-50/30">
                                             <ShieldCheck className="w-12 h-12 text-slate-100 mx-auto mb-3" />
-                                            <p className="text-xs text-slate-300 font-black capitalize tracking-widest italic">No associated permissions</p>
+                                            <p className="text-xs text-slate-300 font-black capitalize  italic">No associated permissions</p>
                                         </div>
                                     )}
                                 </div>
 
                                 {isAddingPg && (
                                     <div className="relative border-2 border-dashed border-emerald-100 rounded-xl p-6 pt-10 bg-emerald-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
-                                        <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-emerald-600 border border-emerald-100 rounded-full shadow-sm flex items-center gap-2">
+                                        <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize  text-emerald-600 border border-emerald-100 rounded-full shadow-sm flex items-center gap-2">
                                             <ShieldCheck className="w-3.5 h-3.5" /> Available Permissions
                                         </span>
                                         <button onClick={() => setIsAddingPg(false)} className="absolute top-2 right-2 p-2 text-slate-300 hover:text-slate-900 transition-colors"><X className="w-4 h-4" /></button>
@@ -375,7 +375,7 @@ const ManageUserGroups = () => {
                                                 ))}
                                             </div>
                                         ) : (
-                                            <p className="text-center py-4 text-xs text-slate-300 font-black capitalize tracking-widest italic">All permissions assigned</p>
+                                            <p className="text-center py-4 text-xs text-slate-300 font-black capitalize  italic">All permissions assigned</p>
                                         )}
                                     </div>
                                 )}
@@ -394,7 +394,7 @@ const ManageUserGroups = () => {
                         className={createError ? 'border-red-500 ring-4 ring-red-500/10' : ''}
                     />
                     {createError && <p className="text-xs font-bold text-red-500 pl-1 italic">{createError}</p>}
-                    <button onClick={createGroup} className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-xs capitalize tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
+                    <button onClick={createGroup} className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-xs capitalize  hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
                         Register Group <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </button>
                 </div>

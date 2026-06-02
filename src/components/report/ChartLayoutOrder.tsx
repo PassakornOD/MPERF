@@ -22,13 +22,13 @@ const ChartLayoutOrder: React.FC<ChartLayoutOrderProps> = ({
 }) => {
     return (
         <div className="relative border border-slate-100 rounded-xl p-4 sm:p-5 pt-7 bg-white shadow-sm transition-all hover:shadow-md">
-            <span className="absolute -top-3 left-4 bg-blue-50 text-blue-700 px-3 py-1 text-[9px] font-bold capitalize tracking-[0.1em] border border-blue-100 rounded-full shadow-sm flex items-center gap-1.5">
+            <span className="absolute -top-3 left-4 bg-blue-50 text-blue-700 px-3 py-1 text-[9px] font-bold capitalize  border border-blue-100 rounded-full shadow-sm flex items-center gap-1.5">
                 <Layout className="w-3 h-3" /> Sequence
             </span>
             <div className="flex flex-col lg:flex-row gap-4 items-stretch justify-center">
                 {availableCharts.length > 0 && (
                     <div className="flex-1 border border-slate-100 rounded-xl p-3 bg-slate-50/50 shadow-inner">
-                        <p className="text-[9px] font-bold text-slate-400 capitalize tracking-widest border-b border-slate-100 pb-2 mb-3">Available</p>
+                        <p className="text-[9px] font-bold text-slate-400 capitalize  border-b border-slate-100 pb-2 mb-3">Available</p>
                         <div className="space-y-1.5 max-h-[250px] overflow-y-auto pr-1 custom-scrollbar">
                             {availableCharts.map((report) => (
                                 <button
@@ -44,7 +44,7 @@ const ChartLayoutOrder: React.FC<ChartLayoutOrderProps> = ({
                     </div>
                 )}
                 <div className="flex-1 border border-blue-100 rounded-xl p-3 bg-blue-50/20 shadow-inner flex flex-col min-h-[200px]">
-                    <p className="text-[9px] font-bold text-blue-600 capitalize tracking-widest border-b border-blue-100 pb-2 mb-3">Sequence</p>
+                    <p className="text-[9px] font-bold text-blue-600 capitalize  border-b border-blue-100 pb-2 mb-3">Sequence</p>
                     {selectedCharts.length > 0 ? (
                         <div className="space-y-1.5 max-h-[250px] overflow-y-auto pr-1 custom-scrollbar">
                             {selectedCharts.map((report, sIdx) => (
@@ -84,7 +84,7 @@ const ChartLayoutOrder: React.FC<ChartLayoutOrderProps> = ({
                     ) : (
                         <div className="flex-1 flex flex-col items-center justify-center text-slate-400 space-y-1 py-4">
                             <Activity className="w-6 h-6 opacity-20" />
-                            <p className="text-[9px] font-bold capitalize tracking-widest text-center">Empty</p>
+                            <p className="text-[9px] font-bold capitalize  text-center">Empty</p>
                         </div>
                     )}
                 </div>

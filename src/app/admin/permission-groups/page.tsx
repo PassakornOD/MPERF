@@ -122,13 +122,13 @@ const PermissionGroupsPage = () => {
                 <div className="flex items-center gap-4">
                     <div className="bg-blue-600 p-3 rounded-xl text-white shadow-lg shadow-blue-500/20"><ShieldCheck className="w-6 h-6" /></div>
                     <div>
-                        <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Resource Permissions</h3>
+                        <h3 className="text-sm font-black text-slate-800 capitalize ">Resource Permissions</h3>
                         <p className="text-xs font-bold text-slate-400 capitalize mt-0.5">Map server hostgroups to access levels</p>
                     </div>
                 </div>
                 <button onClick={() => setIsCreateModalOpen(true)} className="btn-primary flex items-center gap-2 group">
                     <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                    <span className="text-xs font-black capitalize tracking-widest">Create Access Group</span>
+                    <span className="text-xs font-black capitalize ">Create Access Group</span>
                 </button>
             </div>
 
@@ -136,10 +136,10 @@ const PermissionGroupsPage = () => {
               <table className="w-full text-xs text-left border-collapse">
                 <thead>
                   <tr className="bg-white border-b border-slate-100">
-                    <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Access Group</th>
-                    <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Associations</th>
-                    <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Secured Assets</th>
-                    <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest text-right">Actions</th>
+                    <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Access Group</th>
+                    <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Associations</th>
+                    <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Secured Assets</th>
+                    <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize  text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100/50 bg-white">
@@ -171,7 +171,7 @@ const PermissionGroupsPage = () => {
                             <div className="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-inner">
                               <Server className="w-4 h-4" />
                             </div>
-                            <span className="text-[11px] font-black text-slate-600 tabular-nums">{groupHgs.length} <span className="text-[8px] text-slate-300 uppercase tracking-widest">Sectors</span></span>
+                            <span className="text-[11px] font-black text-slate-600 tabular-nums">{groupHgs.length} <span className="text-[8px] text-slate-300 uppercase ">Sectors</span></span>
                           </div>
                         </td>
                         <td className="px-8 py-5 text-right">
@@ -184,10 +184,10 @@ const PermissionGroupsPage = () => {
                             </button>
                             {activeMenu === pg.pg_id && (
                                 <div className="absolute right-0 top-full mt-2 bg-white border border-slate-100 rounded-xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15)] py-2 z-[100] w-44 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                                    <button onClick={(e) => { openEdit(e, pg, groupHgs); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all capitalize tracking-widest text-left">
+                                    <button onClick={(e) => { openEdit(e, pg, groupHgs); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all capitalize  text-left">
                                         <Edit2 className="w-4 h-4" /> Edit Config
                                     </button>
-                                    <button onClick={(e) => { deletePg(e, pg.pg_id); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-red-500 hover:bg-red-50 transition-all border-t border-slate-50 capitalize tracking-widest text-left">
+                                    <button onClick={(e) => { deletePg(e, pg.pg_id); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-red-500 hover:bg-red-50 transition-all border-t border-slate-50 capitalize  text-left">
                                         <Trash2 className="w-4 h-4" /> Purge Group
                                     </button>
                                 </div>
@@ -207,11 +207,11 @@ const PermissionGroupsPage = () => {
                         <div className="flex items-center gap-4">
                             <div className="bg-orange-500 p-2.5 rounded-xl text-white shadow-lg shadow-orange-500/20"><Server className="w-5 h-5" /></div>
                             <div>
-                                <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Unprotected Assets</h3>
+                                <h3 className="text-sm font-black text-slate-800 capitalize ">Unprotected Assets</h3>
                                 <p className="text-xs font-bold text-slate-400 capitalize mt-0.5">Hostgroups not yet mapped to any permission group</p>
                             </div>
                         </div>
-                        <div className="bg-orange-50 text-orange-600 px-4 py-1.5 rounded-full text-[9px] font-black border border-orange-100 capitalize tracking-widest shadow-sm">
+                        <div className="bg-orange-50 text-orange-600 px-4 py-1.5 rounded-full text-[9px] font-black border border-orange-100 capitalize  shadow-sm">
                             {availableHostgroups.length} Assets Remaining
                         </div>
                     </div>
@@ -239,7 +239,7 @@ const PermissionGroupsPage = () => {
                 className={createError ? "border-red-500 ring-4 ring-red-500/10" : ""}
             />
             {createError && <p className="text-xs font-bold text-red-500 pl-1 italic">{createError}</p>}
-            <button onClick={createGroup} className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-xs capitalize tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
+            <button onClick={createGroup} className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-xs capitalize  hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
                 Register Access Group <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
             </button>
         </div>
@@ -258,7 +258,7 @@ const PermissionGroupsPage = () => {
                     <div className="flex gap-4 p-6 bg-slate-50/50 rounded-xl items-center border border-slate-100 shadow-inner">
                         <div className="bg-white p-4 rounded-xl text-blue-600 shadow-sm border border-slate-100"><ShieldCheck className="w-8 h-8" /></div>
                         <div>
-                            <p className="text-xs font-black text-slate-400 capitalize tracking-widest mb-0.5">Configuration</p>
+                            <p className="text-xs font-black text-slate-400 capitalize  mb-0.5">Configuration</p>
                             <p className="font-black text-xl text-slate-900 tracking-tight">{editingPg?.pg_name}</p>
                         </div>
                     </div>
@@ -269,7 +269,7 @@ const PermissionGroupsPage = () => {
                             onChange={e => setEditFields({...editFields, pg_name: e.target.value})} 
                         />
                         <div className="flex justify-end pt-4 border-t border-slate-50">
-                            <button onClick={() => savePgUpdates()} className="bg-blue-600 text-white px-8 py-3 rounded-xl text-xs font-black capitalize tracking-[0.2em] shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all">Save Changes</button>
+                            <button onClick={() => savePgUpdates()} className="bg-blue-600 text-white px-8 py-3 rounded-xl text-xs font-black capitalize  shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all">Save Changes</button>
                         </div>
                     </div>
                 </div>
@@ -309,7 +309,7 @@ const PermissionGroupsPage = () => {
                     }) : (
                         <div className="py-20 text-center border border-slate-100 rounded-[2rem] bg-slate-50/30">
                             <Users className="w-12 h-12 text-slate-100 mx-auto mb-3" />
-                            <p className="text-xs text-slate-300 font-black capitalize tracking-widest italic">No associated user groups</p>
+                            <p className="text-xs text-slate-300 font-black capitalize  italic">No associated user groups</p>
                         </div>
                     )}
                 </div>
@@ -317,13 +317,13 @@ const PermissionGroupsPage = () => {
             { label: 'Hostgroups', content: (
                 <div className="space-y-6 pt-2">
                     <div className="flex justify-end">
-                        <button onClick={() => setIsAddingHg(true)} className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-black text-xs capitalize tracking-widest transition-all">
+                        <button onClick={() => setIsAddingHg(true)} className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-black text-xs capitalize  transition-all">
                             <PlusCircle className="w-4 h-4" /> Assign Hostgroup
                         </button>
                     </div>
 
                     <div className="relative border border-slate-100 rounded-xl p-6 pt-10 bg-slate-50/20 shadow-inner">
-                        <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-blue-600 border border-slate-100 rounded-full shadow-sm flex items-center gap-2">
+                        <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize  text-blue-600 border border-slate-100 rounded-full shadow-sm flex items-center gap-2">
                             <Server className="w-3.5 h-3.5" /> Secured Assets
                         </span>
 
@@ -338,7 +338,7 @@ const PermissionGroupsPage = () => {
                                                 <div className="bg-slate-50 p-2 rounded-xl group-hover/item:scale-110 transition-transform flex-shrink-0"><Server className="w-4 h-4 text-blue-600" /></div>
                                                 <div className="flex flex-col truncate">
                                                     <span className="text-[11px] font-black text-slate-700 truncate capitalize tracking-tight">{hg.hostgroup}</span>
-                                                    <span className="text-[8px] font-black text-slate-400 capitalize tracking-widest">{hostCount} Hosts</span>
+                                                    <span className="text-[8px] font-black text-slate-400 capitalize ">{hostCount} Hosts</span>
                                                 </div>
                                             </div>
                                             <button onClick={async () => { 
@@ -354,14 +354,14 @@ const PermissionGroupsPage = () => {
                         ) : (
                             <div className="py-12 text-center">
                                 <Server className="w-12 h-12 text-slate-100 mx-auto mb-3" />
-                                <p className="text-xs text-slate-300 font-black capitalize tracking-widest italic">No assets assigned to this group</p>
+                                <p className="text-xs text-slate-300 font-black capitalize  italic">No assets assigned to this group</p>
                             </div>
                         )}
                     </div>
 
                     {isAddingHg && (
                         <div className="relative border-2 border-dashed border-blue-100 rounded-xl p-6 pt-10 bg-blue-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
-                            <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
+                            <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize  text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
                                 <Plus className="w-3.5 h-3.5" /> Available Assets
                             </span>
                             <button onClick={() => setIsAddingHg(false)} className="absolute top-2 right-2 p-2 text-slate-300 hover:text-slate-900 transition-colors"><X className="w-4 h-4" /></button>
@@ -386,7 +386,7 @@ const PermissionGroupsPage = () => {
                                     )})}
                                 </div>
                             ) : (
-                                <p className="text-center py-4 text-xs text-slate-300 font-black capitalize tracking-widest italic">All assets already secured</p>
+                                <p className="text-center py-4 text-xs text-slate-300 font-black capitalize  italic">All assets already secured</p>
                             )}
                         </div>
                     )}

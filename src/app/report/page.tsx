@@ -46,6 +46,7 @@ const ReportExportPage = () => {
     const [activeAction, setActiveAction] = useState<'create-template' | 'quick-gen' | 'load-template' | null>(null);
     const [newTemplateName, setNewTemplateName] = useState('');
     const [isExporting, setIsFetchingPDF] = useState(false);
+    const [progress, setProgress] = useState(0);
     const [exportStatus, setExportStatus] = useState('');
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -178,11 +179,13 @@ const ReportExportPage = () => {
             return;
         }
         setIsFetchingPDF(true);
+        setProgress(10);
         setExportStatus('Preparing report...');
         const selectedReportsList = activeReports.filter(r => r.enabled);
 
         try {
             setExportStatus('Fetching performance metrics...');
+            setProgress(30);
 
             const hostgroupsWithData = await Promise.all(Object.values(selectedHostnames.reduce((acc: any, host) => {
                 if (!acc[host.group]) acc[host.group] = { name: host.group, hosts: [] };
@@ -224,6 +227,7 @@ const ReportExportPage = () => {
             }));
 
             setExportStatus('Compiling PDF on server...');
+            setProgress(80);
 
             const payload: ReportPayload = {
                 reportMonth: new Date(parseInt(year), parseInt(month) - 1).toLocaleString('en-US', { month: 'long', year: 'numeric' }),
@@ -239,12 +243,14 @@ const ReportExportPage = () => {
                 timeout: 300000 // 5 minute timeout for large reports
             });
 
+            setProgress(100);
             setPdfUrl(window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' })));
         } catch (e: any) {
             console.error(e);
             showToast('Error: ' + (e.response?.data?.error || e.message), 'error');
         } finally {
             setIsFetchingPDF(false);
+            setProgress(0);
             setExportStatus('');
         }
     };
@@ -315,7 +321,7 @@ const ReportExportPage = () => {
                                 resetConfiguration();
                                 setActiveAction('create-template');
                             }}
-                            className={`px-5 py-2.5 rounded-xl text-xs font-black capitalize tracking-widest transition-all duration-300 ${activeAction === 'create-template' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`px-5 py-2.5 rounded-xl text-xs font-black capitalize  transition-all duration-300 ${activeAction === 'create-template' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
                         >
                             Create Template
                         </button>
@@ -324,7 +330,7 @@ const ReportExportPage = () => {
                                 resetConfiguration();
                                 setActiveAction('quick-gen');
                             }}
-                            className={`px-5 py-2.5 rounded-xl text-xs font-black capitalize tracking-widest transition-all duration-300 ${activeAction === 'quick-gen' ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`px-5 py-2.5 rounded-xl text-xs font-black capitalize  transition-all duration-300 ${activeAction === 'quick-gen' ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
                         >
                             On-Demand Report
                         </button>
@@ -334,7 +340,7 @@ const ReportExportPage = () => {
                             <CheckCircle2 className="w-5 h-5" />
                         </div>
                         <div>
-                            <p className="text-[9px] font-black text-slate-400 capitalize tracking-widest leading-none mb-1">Scope</p>
+                            <p className="text-[9px] font-black text-slate-400 capitalize  leading-none mb-1">Scope</p>
                             <p className="text-xs font-black text-slate-900 leading-none">{selectedHostnames.length} Nodes</p>
                         </div>
                     </div>
@@ -343,20 +349,20 @@ const ReportExportPage = () => {
 
             {/* Templates Section */}
             <div className="relative modern-card p-10 pt-14">
-                <span className="absolute -top-4 left-10 bg-blue-600 px-6 py-2 text-xs font-black capitalize tracking-[0.2em] text-white rounded-full shadow-xl shadow-blue-500/20 flex items-center gap-2">
+                <span className="absolute -top-4 left-10 bg-blue-600 px-6 py-2 text-xs font-black capitalize  text-white rounded-full shadow-xl shadow-blue-500/20 flex items-center gap-2">
                     <Layers className="w-4 h-4" /> Global Templates
                 </span>
                 {isLoadingTemplates ? (
                     <div className="py-24 text-center">
                         <Loader2 className="w-16 h-16 animate-spin mx-auto text-blue-600 opacity-20" />
-                        <p className="text-xs font-black text-slate-300 capitalize tracking-[0.3em] mt-8">Parsing saved configurations...</p>
+                        <p className="text-xs font-black text-slate-300 capitalize  mt-8">Parsing saved configurations...</p>
                     </div>
                 ) : (
                     <div className="space-y-4">
                         {templates.length === 0 ? (
                             <div className="py-24 text-center border-2 border-dashed border-slate-100 rounded-[2rem] bg-slate-50/20">
                                 <Layers className="w-16 h-16 text-slate-100 mx-auto mb-6" />
-                                <p className="text-slate-400 font-black text-xs capitalize tracking-[0.2em]">No operational templates found</p>
+                                <p className="text-slate-400 font-black text-xs capitalize ">No operational templates found</p>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 gap-4">
@@ -369,9 +375,9 @@ const ReportExportPage = () => {
                                             <div className="min-w-0">
                                                 <div className="flex items-center gap-3 mb-1">
                                                     <h4 className="font-black text-slate-900 text-sm capitalize tracking-tight truncate">{template.name}</h4>
-                                                    <span className="bg-slate-100 text-slate-400 text-[8px] font-black capitalize tracking-widest px-2 py-0.5 rounded-xl border border-slate-50">ID:{template.id}</span>
+                                                    <span className="bg-slate-100 text-slate-400 text-[8px] font-black capitalize  px-2 py-0.5 rounded-xl border border-slate-50">ID:{template.id}</span>
                                                 </div>
-                                                <div className="flex items-center gap-2 text-[9px] font-black text-slate-400 capitalize tracking-widest italic opacity-70">
+                                                <div className="flex items-center gap-2 text-[9px] font-black text-slate-400 capitalize  italic opacity-70">
                                                     <Clock className="w-3.5 h-3.5" /> Updated {template.lastUpdated}
                                                 </div>
                                             </div>
@@ -383,8 +389,8 @@ const ReportExportPage = () => {
                                                     {template.reportTitle}
                                                 </h4>
                                                 <div className="flex items-center gap-4">
-                                                    <span className="text-[9px] font-black text-slate-400 capitalize tracking-widest flex items-center gap-1.5"><Monitor className="w-3.5 h-3.5 text-slate-300" /> {template.hosts.length} Nodes</span>
-                                                    <span className="text-[9px] font-black text-slate-400 capitalize tracking-widest flex items-center gap-1.5"><Activity className="w-3.5 h-3.5 text-slate-300" /> {template.charts.length} Dimensions</span>
+                                                    <span className="text-[9px] font-black text-slate-400 capitalize  flex items-center gap-1.5"><Monitor className="w-3.5 h-3.5 text-slate-300" /> {template.hosts.length} Nodes</span>
+                                                    <span className="text-[9px] font-black text-slate-400 capitalize  flex items-center gap-1.5"><Activity className="w-3.5 h-3.5 text-slate-300" /> {template.charts.length} Dimensions</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -400,7 +406,7 @@ const ReportExportPage = () => {
                                                     setExpandedGroups(uniqueGroups);
                                                     setActiveAction('load-template');
                                                 }}
-                                                className="px-8 py-3 bg-blue-600 text-white rounded-xl font-black text-xs capitalize tracking-[0.2em] shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all active:scale-95"
+                                                className="px-8 py-3 bg-blue-600 text-white rounded-xl font-black text-xs capitalize  shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all active:scale-95"
                                             >
                                                 Initialize
                                             </button>
@@ -435,7 +441,7 @@ const ReportExportPage = () => {
                                     {activeAction === 'create-template' ? 'Create Template' :
                                         activeAction === 'quick-gen' ? 'On-Demand Report Generation' : 'Modify & Execute Cycle'}
                                 </h3>
-                                <p className="text-[11px] font-black text-slate-300 capitalize tracking-[0.2em] mt-1">Configure structural parameters and data scope</p>
+                                <p className="text-[11px] font-black text-slate-300 capitalize  mt-1">Configure structural parameters and data scope</p>
                             </div>
                         </div>
                         <button
@@ -450,7 +456,7 @@ const ReportExportPage = () => {
                         <div className="bg-blue-50/20 p-8 rounded-xl border border-blue-100/50 space-y-4 animate-in fade-in zoom-in-95 duration-500">
                             <div className="flex items-center gap-3 text-blue-700 mb-2">
                                 <FileText className="w-4 h-4" />
-                                <h4 className="text-xs font-black capitalize tracking-[0.2em]">Deployment Identity</h4>
+                                <h4 className="text-xs font-black capitalize ">Deployment Identity</h4>
                             </div>
                             <FloatingInput
                                 label="Template Name"
@@ -505,7 +511,7 @@ const ReportExportPage = () => {
                             <button
                                 onClick={handleSaveTemplate}
                                 disabled={selectedHostnames.length === 0 || !newTemplateName}
-                                className="px-16 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-[11px] capitalize tracking-[0.3em] transition-all shadow-xl shadow-blue-500/20 disabled:opacity-30 flex items-center gap-3 group active:scale-95"
+                                className="px-16 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-[11px] capitalize  transition-all shadow-xl shadow-blue-500/20 disabled:opacity-30 flex items-center gap-3 group active:scale-95"
                             >
                                 <Layers className="w-5 h-5 group-hover:rotate-12 transition-transform" /> Save Template
                             </button>
@@ -513,17 +519,45 @@ const ReportExportPage = () => {
                             <button
                                 onClick={handlePreviewPDF}
                                 disabled={isExporting || selectedHostnames.length === 0 || activeReports.filter(r => r.enabled).length === 0}
-                                className="px-16 py-4 bg-slate-900 hover:bg-black text-white rounded-xl font-black text-[11px] capitalize tracking-[0.3em] transition-all shadow-xl shadow-slate-900/20 disabled:opacity-30 flex items-center gap-3 group active:scale-95"
+                                className="px-16 py-4 bg-slate-900 hover:bg-black text-white rounded-xl font-black text-[11px] capitalize  transition-all shadow-xl shadow-slate-900/20 disabled:opacity-30 flex items-center gap-3 group active:scale-95"
                             >
-                                {isExporting ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileText className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />}
-                                {isExporting ? exportStatus : 'Generate PDF'}
+                                <FileText className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
+                                Generate PDF
                             </button>
                         )}
                     </div>
                 </div>
             )}
 
-            <Modal isOpen={!!pdfUrl} onClose={() => setPdfUrl(null)} title="System Intelligence Document Preview" maxWidth="max-w-6xl" onDownload={() => {
+            {/* PDF Progress Modal */}
+            <Modal isOpen={isExporting} onClose={() => { }} title="Generating PDF Document" maxWidth="max-w-md">
+                <div className="p-8 space-y-6">
+                    <div className="text-center space-y-2">
+                        <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto" />
+                        <p className="text-sm font-black text-slate-900 capitalize tracking-tight">{exportStatus}</p>
+                        <p className="text-xs font-medium text-slate-400">{progress}% Complete</p>
+                    </div>
+                    <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-blue-600 transition-all duration-300 ease-out relative"
+                            style={{
+                                width: `${progress}%`,
+                                backgroundImage: 'linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent)',
+                                backgroundSize: '1rem 1rem',
+                                animation: 'progress-bar-stripes 1s linear infinite'
+                            }}
+                        />
+                    </div>
+                    <style jsx global>{`
+                        @keyframes progress-bar-stripes {
+                            from { background-position: 1rem 0; }
+                            to { background-position: 0 0; }
+                        }
+                    `}</style>
+                </div>
+            </Modal>
+
+            <Modal isOpen={!!pdfUrl} onClose={() => setPdfUrl(null)} title="Document Preview" maxWidth="max-w-6xl" onDownload={() => {
                 const link = document.createElement('a'); link.href = pdfUrl!; link.download = `Metrisar_Analytics_${Date.now()}.pdf`; link.click();
             }}>
                 {pdfUrl && <iframe src={pdfUrl} className="w-full h-[85vh] rounded-[2rem] border border-slate-100 shadow-inner bg-slate-900/5" title="Analytics Viewer" />}
@@ -538,7 +572,7 @@ const ReportExportPage = () => {
                     <p className="text-slate-400 font-medium leading-relaxed mb-12 max-w-md mx-auto text-sm">{limitMessage}</p>
                     <button
                         onClick={() => setIsLimitModalOpen(false)}
-                        className="w-full py-4 bg-slate-900 hover:bg-black text-white rounded-xl font-black text-xs capitalize tracking-[0.3em] transition-all shadow-xl active:scale-[0.98]"
+                        className="w-full py-4 bg-slate-900 hover:bg-black text-white rounded-xl font-black text-xs capitalize  transition-all shadow-xl active:scale-[0.98]"
                     >
                         Acknowledge Threshold
                     </button>

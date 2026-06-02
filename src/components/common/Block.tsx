@@ -17,7 +17,7 @@ const Block: React.FC<BlockProps> = ({ title, subtitle, tabs, children }) => {
             {title}
           </h2>
           {subtitle && (
-            <p className="text-[9px] font-black text-slate-400 capitalize tracking-widest">
+            <p className="text-[9px] font-black text-slate-400 capitalize ">
               {subtitle}
             </p>
           )}

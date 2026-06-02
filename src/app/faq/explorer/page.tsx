@@ -23,7 +23,7 @@ const CopyButton = ({ text }: { text: string }) => {
 
 const Section = ({ title, children, icon }: { title: string, children: React.ReactNode, icon?: React.ReactNode }) => (
   <section className="mb-16">
-    <h3 className="font-black text-slate-400 capitalize tracking-widest text-[9px] mb-8 flex items-center gap-2">
+    <h3 className="font-black text-slate-400 capitalize  text-[9px] mb-8 flex items-center gap-2">
       {icon ? icon : <ChevronRight size={16} className="text-blue-500" />} {title}
     </h3>
     {children}
@@ -34,7 +34,7 @@ export default function ExplorerGuidePage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-16">
       <header className="mb-20 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 text-purple-600 text-xs font-black capitalize tracking-widest mb-6 border border-purple-100 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 text-purple-600 text-xs font-black capitalize  mb-6 border border-purple-100 shadow-sm">
           <ShieldCheck size={14} /> Database Reference
         </div>
         <h1 className="text-5xl font-black text-slate-900 capitalize italic tracking-tight mb-4">Explorer DB Guide</h1>
@@ -65,7 +65,7 @@ export default function ExplorerGuidePage() {
                     </div>
                 </div>
                 <div className="space-y-4">
-                    <h5 className="font-black text-slate-400 capitalize tracking-widest text-[9px]">Methods</h5>
+                    <h5 className="font-black text-slate-400 capitalize  text-[9px]">Methods</h5>
                     <ul className="list-disc pl-5 space-y-2 text-xs text-slate-600">
                         <li><b>Individual Records:</b> Delete specific entries from the query result table.</li>
                         <li><b>Bulk Maintenance:</b> Use the dashboard control panel to purge data by criteria (e.g., Year, Hostgroup).</li>
@@ -81,7 +81,7 @@ export default function ExplorerGuidePage() {
           <div className="bg-[#0f172a] p-10 rounded-[2rem] shadow-2xl text-slate-300 font-mono text-[11px]">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <div>
-                    <h5 className="text-sky-400 font-black mb-6 flex items-center gap-2 text-xs capitalize tracking-widest"><Globe size={18}/> Data Retrieval</h5>
+                    <h5 className="text-sky-400 font-black mb-6 flex items-center gap-2 text-xs capitalize "><Globe size={18}/> Data Retrieval</h5>
                     <p className="text-slate-500 text-xs mb-4">Endpoint: <code className="bg-slate-800 px-2 py-0.5 rounded text-slate-100">GET /api/admin/sar-data</code></p>
                     <div className="relative group">
                         <code className="block bg-[#1e293b] p-4 rounded-xl text-slate-100 border border-slate-800/50">curl -X GET "https://localhost/api/admin/sar-data?hostgroup=Datawarehouse&type=cpu&level=year&year=2026"</code>
@@ -89,7 +89,7 @@ export default function ExplorerGuidePage() {
                     </div>
                 </div>
                 <div>
-                    <h5 className="text-red-400 font-black mb-6 flex items-center gap-2 text-xs capitalize tracking-widest"><Trash2 size={18}/> Data Deletion</h5>
+                    <h5 className="text-red-400 font-black mb-6 flex items-center gap-2 text-xs capitalize "><Trash2 size={18}/> Data Deletion</h5>
                     <p className="text-slate-500 text-xs mb-4">Endpoint: <code className="bg-slate-800 px-2 py-0.5 rounded text-slate-100">POST /api/admin/sar-data/delete</code></p>
                     <div className="relative group">
                         <code className="block bg-[#1e293b] p-4 rounded-xl text-slate-100 border border-slate-800/50">{`{ "hostgroup": "Datawarehouse", "type": "cpu", "level": "year", "year": "2026" }`}</code>
@@ -104,7 +104,7 @@ export default function ExplorerGuidePage() {
       <Section title="4. Parameter Reference">
         <div className="modern-card overflow-hidden">
           <table className="w-full text-left">
-            <thead className="bg-slate-50/80 border-b border-slate-100 text-slate-500 capitalize text-[9px] tracking-widest font-black">
+            <thead className="bg-slate-50/80 border-b border-slate-100 text-slate-500 capitalize text-[9px]  font-black">
               <tr>
                 <th className="px-8 py-5">Parameter</th>
                 <th className="px-8 py-5">Format</th>

@@ -23,7 +23,7 @@ const CopyButton = ({ text }: { text: string }) => {
 
 const Section = ({ title, children, icon }: { title: string, children: React.ReactNode, icon?: React.ReactNode }) => (
   <section className="mb-16">
-    <h3 className="font-black text-slate-400 capitalize tracking-widest text-[9px] mb-8 flex items-center gap-2">
+    <h3 className="font-black text-slate-400 capitalize  text-[9px] mb-8 flex items-center gap-2">
       {icon ? icon : <ChevronRight size={16} className="text-blue-500" />} {title}
     </h3>
     {children}
@@ -34,7 +34,7 @@ export default function IngestionDBGuidePage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-20 animate-ease-in pb-32">
       <header className="mb-24 text-center">
-        <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-blue-50 text-blue-600 text-xs font-black capitalize tracking-widest mb-8 border border-blue-100 shadow-sm shadow-blue-500/5">
+        <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-blue-50 text-blue-600 text-xs font-black capitalize  mb-8 border border-blue-100 shadow-sm shadow-blue-500/5">
           <Database size={16} /> Technical Architecture
         </div>
         <h1 className="text-6xl font-black text-slate-900 tracking-tight mb-6 capitalize italic">Ingestion Pipeline</h1>
@@ -59,7 +59,7 @@ export default function IngestionDBGuidePage() {
                     {item.icon}
                 </div>
                 <div className="pt-2">
-                    <span className="font-black text-slate-400 capitalize tracking-widest text-[9px]">{item.step} Stage</span>
+                    <span className="font-black text-slate-400 capitalize  text-[9px]">{item.step} Stage</span>
                     <h4 className="font-black text-slate-900 text-base mt-1 mb-2 capitalize italic tracking-tight">{item.title}</h4>
                     <p className="text-slate-500 text-xs leading-relaxed font-medium">{item.desc}</p>
                 </div>
@@ -100,7 +100,7 @@ export default function IngestionDBGuidePage() {
             <div>
                 <div className="flex items-center justify-between mb-10">
                     <h4 className="font-black text-slate-900 text-xl flex items-center gap-4 capitalize italic tracking-tight"><Globe size={24} className="text-blue-600" /> Web Console</h4>
-                    <span className="font-black text-slate-400 capitalize tracking-widest text-[9px] bg-slate-100 px-4 py-1 rounded-full border border-slate-200 shadow-inner">Operational UI</span>
+                    <span className="font-black text-slate-400 capitalize  text-[9px] bg-slate-100 px-4 py-1 rounded-full border border-slate-200 shadow-inner">Operational UI</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {[
@@ -112,7 +112,7 @@ export default function IngestionDBGuidePage() {
                         <div key={item.step} className="bg-slate-50/50 p-8 rounded-[2rem] border border-slate-100 flex flex-col gap-5 shadow-inner transition-all hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 group">
                             <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center text-xs font-black group-hover:bg-blue-600 transition-colors shadow-lg">{item.step}</div>
                             <div className="space-y-2">
-                                <p className="font-black text-slate-900 text-xs capitalize tracking-widest">{item.label}</p>
+                                <p className="font-black text-slate-900 text-xs capitalize ">{item.label}</p>
                                 <p className="text-slate-500 text-[11px] leading-relaxed font-medium">{item.detail}</p>
                             </div>
                         </div>
@@ -123,7 +123,7 @@ export default function IngestionDBGuidePage() {
             {/* CLI & API */}
             <div className="pt-16 border-t border-slate-100 space-y-16">
                 <div>
-                    <h5 className="text-emerald-600 font-black mb-8 flex items-center gap-3 text-sm capitalize tracking-widest italic"><Terminal size={24}/> CLI Core (Automation)</h5>
+                    <h5 className="text-emerald-600 font-black mb-8 flex items-center gap-3 text-sm capitalize  italic"><Terminal size={24}/> CLI Core (Automation)</h5>
                     <div className="space-y-8">
                         {[
                             { desc: "Specific target for Datawarehouse cluster", cmd: 'npx ts-node MPERF/scripts/ingest_sar.ts --hostgroup Datawarehouse --dataType cpu --day "2026-05-19"' },
@@ -133,7 +133,7 @@ export default function IngestionDBGuidePage() {
                             <div key={i} className="relative group">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                    <p className="font-black text-slate-400 capitalize tracking-widest text-[9px]"># {ex.desc}</p>
+                                    <p className="font-black text-slate-400 capitalize  text-[9px]"># {ex.desc}</p>
                                 </div>
                                 <code className="block bg-slate-950 p-6 rounded-[1.5rem] text-blue-400 text-[11px] font-mono shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-800 group-hover:border-emerald-500/30 transition-all duration-500">{ex.cmd}</code>
                                 <div className="absolute right-4 top-[52px]">
@@ -144,9 +144,9 @@ export default function IngestionDBGuidePage() {
                     </div>
                 </div>
                 <div>
-                    <h5 className="text-sky-600 font-black mb-8 flex items-center gap-3 text-sm capitalize tracking-widest italic"><Globe size={24}/> API REST Integration</h5>
+                    <h5 className="text-sky-600 font-black mb-8 flex items-center gap-3 text-sm capitalize  italic"><Globe size={24}/> API REST Integration</h5>
                     <div className="flex gap-4 p-5 bg-blue-50/50 rounded-xl border border-blue-100 mb-8 items-center max-w-fit shadow-inner">
-                        <span className="font-black text-slate-400 capitalize tracking-widest text-[9px]">ENDPOINT</span>
+                        <span className="font-black text-slate-400 capitalize  text-[9px]">ENDPOINT</span>
                         <code className="bg-white px-4 py-1 rounded-xl border border-blue-200 text-blue-600 font-black text-xs shadow-sm">/api/admin/ingest</code>
                     </div>
                     <div className="space-y-8">
@@ -157,7 +157,7 @@ export default function IngestionDBGuidePage() {
                             <div key={i} className="relative group">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="w-2 h-2 rounded-full bg-sky-500"></div>
-                                    <p className="font-black text-slate-400 capitalize tracking-widest text-[9px]"># {ex.desc}</p>
+                                    <p className="font-black text-slate-400 capitalize  text-[9px]"># {ex.desc}</p>
                                 </div>
                                 <code className="block bg-slate-950 p-6 rounded-[1.5rem] text-sky-400 text-[11px] font-mono shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-800 group-hover:border-sky-500/30 transition-all duration-500">{ex.payload}</code>
                                 <div className="absolute right-4 top-[52px]">
@@ -177,7 +177,7 @@ export default function IngestionDBGuidePage() {
           <div className="overflow-x-auto custom-scrollbar">
             <table className="w-full text-left border-collapse">
                 <thead className="bg-slate-50/50 border-b border-slate-100">
-                <tr className="font-black text-slate-400 capitalize tracking-widest text-[9px]">
+                <tr className="font-black text-slate-400 capitalize  text-[9px]">
                     <th className="px-10 py-6">Key Indicator</th>
                     <th className="px-10 py-6">Validated Format</th>
                     <th className="px-10 py-6 text-right">Functional Description</th>

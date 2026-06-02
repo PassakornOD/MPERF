@@ -111,13 +111,13 @@ const AdminUsersPage = () => {
                 <User className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">User Governance</h3>
+                <h3 className="text-sm font-black text-slate-800 capitalize ">User Governance</h3>
                 <p className="text-xs font-bold text-slate-400 capitalize mt-0.5">Manage system access and global roles</p>
               </div>
             </div>
             <button onClick={() => setIsModalOpen(true)} className="bg-slate-900 text-white px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-all shadow-md flex items-center gap-2 group">
                 <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                <span className="text-xs font-black capitalize tracking-widest">Enroll User</span>
+                <span className="text-xs font-black capitalize ">Enroll User</span>
             </button>
           </div>
 
@@ -125,10 +125,10 @@ const AdminUsersPage = () => {
             <table className="w-full text-xs text-left border-collapse">
               <thead>
                 <tr className="bg-white border-b border-slate-100">
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Identity</th>
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Role Authority</th>
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Memberships</th>
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest text-right">Actions</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Identity</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Role Authority</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Memberships</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize  text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100/50 bg-white">
@@ -150,7 +150,7 @@ const AdminUsersPage = () => {
                         </div>
                       </td>
                       <td className="px-8 py-5">
-                        <span className={`px-3 py-1 rounded-full text-[9px] font-black capitalize tracking-widest border ${
+                        <span className={`px-3 py-1 rounded-full text-[9px] font-black capitalize  border ${
                           u.role === 'admin' ? 'bg-blue-600 text-white border-blue-700 shadow-md shadow-blue-500/20' : 
                           u.role === 'sysadmin' ? 'bg-slate-900 text-white border-slate-800' : 
                           'bg-slate-100 text-slate-600 border-slate-200 shadow-inner'
@@ -161,7 +161,7 @@ const AdminUsersPage = () => {
                           {userGroups.length > 0 ? userGroups.slice(0, 2).map((m: any) => {
                               const group = groups.find((g: any) => g.ug_id === m.ug_id);
                               return group ? <span key={group.ug_id} className="bg-white border border-slate-100 text-slate-500 px-2.5 py-1 rounded-xl font-bold text-[9px] shadow-sm whitespace-nowrap">{group.ug_name}</span> : null;
-                          }) : <span className="text-[9px] font-bold text-slate-300 capitalize tracking-widest italic">No Active Groups</span>}
+                          }) : <span className="text-[9px] font-bold text-slate-300 capitalize  italic">No Active Groups</span>}
                           {userGroups.length > 2 && <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded-xl font-black text-[9px] shadow-sm border border-blue-100">+{userGroups.length - 2}</span>}
                         </div>
                       </td>
@@ -181,11 +181,11 @@ const AdminUsersPage = () => {
                                       setActiveTab(0);
                                       setIsAddingGroup(false);
                                       setActiveMenu(null);
-                                  }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all capitalize tracking-widest">
+                                  }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all capitalize ">
                                       <Edit2 className="w-4 h-4" /> Edit Profile
                                   </button>
                                   {!isSelf && !['sysreport', 'mfadmin'].includes(u.username) && (
-                                      <button onClick={() => { deleteUser(u.user_id); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-red-500 hover:bg-red-50 transition-all border-t border-slate-50 capitalize tracking-widest">
+                                      <button onClick={() => { deleteUser(u.user_id); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-red-500 hover:bg-red-50 transition-all border-t border-slate-50 capitalize ">
                                           <Trash2 className="w-4 h-4" /> Remove Access
                                       </button>
                                   )}
@@ -214,12 +214,12 @@ const AdminUsersPage = () => {
                     <div className="flex gap-4 p-6 bg-slate-50/50 rounded-xl items-center border border-slate-100 shadow-inner">
                         <div className="bg-white p-4 rounded-xl text-blue-600 shadow-sm border border-slate-100"><User className="w-8 h-8" /></div>
                         <div>
-                            <p className="text-xs font-black text-slate-400 capitalize tracking-widest mb-0.5">Identification</p>
+                            <p className="text-xs font-black text-slate-400 capitalize  mb-0.5">Identification</p>
                             <p className="font-black text-xl text-slate-900 tracking-tight">{editUser?.username}</p>
                         </div>
                     </div>
                     <div>
-                        <p className="text-xs font-black text-slate-400 capitalize tracking-widest mb-4 ml-1">Assigned Role</p>
+                        <p className="text-xs font-black text-slate-400 capitalize  mb-4 ml-1">Assigned Role</p>
                         <div className="grid grid-cols-3 gap-3">
                             {roles.map(r => {
                                 const isSelf = Number(editUser?.user_id) === Number((session?.user as any)?.id);
@@ -236,7 +236,7 @@ const AdminUsersPage = () => {
                                             setEditFields({...editFields, role: r.role_name});
                                             fetchData();
                                         }} 
-                                        className={`px-4 py-3 rounded-xl text-xs font-black capitalize tracking-widest transition-all duration-300 border ${
+                                        className={`px-4 py-3 rounded-xl text-xs font-black capitalize  transition-all duration-300 border ${
                                             isSelected 
                                             ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20' 
                                             : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300 hover:text-slate-600 shadow-sm'
@@ -253,13 +253,13 @@ const AdminUsersPage = () => {
             { label: 'Member Of', content: (
                 <div className="space-y-6 pt-2">
                     <div className="flex justify-end">
-                        <button onClick={() => setIsAddingGroup(true)} className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-black text-xs capitalize tracking-widest transition-all">
+                        <button onClick={() => setIsAddingGroup(true)} className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-black text-xs capitalize  transition-all">
                             <PlusCircle className="w-4 h-4" /> Add to Group
                         </button>
                     </div>
 
                     <div className="relative border border-slate-100 rounded-xl p-6 pt-10 bg-slate-50/20 shadow-inner">
-                        <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-blue-600 border border-slate-100 rounded-full shadow-sm flex items-center gap-2">
+                        <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize  text-blue-600 border border-slate-100 rounded-full shadow-sm flex items-center gap-2">
                             <Users className="w-3.5 h-3.5" /> Active Memberships
                         </span>
 
@@ -275,7 +275,7 @@ const AdminUsersPage = () => {
                                                 <div className="bg-slate-50 p-2 rounded-xl group-hover/item:scale-110 transition-transform flex-shrink-0"><Users className="w-4 h-4 text-blue-600" /></div>
                                                 <div className="flex flex-col truncate">
                                                     <span className="text-xs font-black text-slate-700 truncate">{group.ug_name}</span>
-                                                    {isPersonalGroup && <span className="text-[8px] font-black text-blue-500 capitalize tracking-widest">Personal Group</span>}
+                                                    {isPersonalGroup && <span className="text-[8px] font-black text-blue-500 capitalize ">Personal Group</span>}
                                                 </div>
                                             </div>
                                             {!isPersonalGroup && (
@@ -293,14 +293,14 @@ const AdminUsersPage = () => {
                         ) : (
                             <div className="py-12 text-center">
                                 <Users className="w-12 h-12 text-slate-100 mx-auto mb-3" />
-                                <p className="text-xs text-slate-300 font-black capitalize tracking-widest italic">No active memberships</p>
+                                <p className="text-xs text-slate-300 font-black capitalize  italic">No active memberships</p>
                             </div>
                         )}
                     </div>
 
                     {isAddingGroup && (
                         <div className="relative border-2 border-dashed border-blue-100 rounded-xl p-6 pt-10 bg-blue-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
-                            <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
+                            <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize  text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
                                 <Plus className="w-3.5 h-3.5" /> Available Groups
                             </span>
                             <button onClick={() => setIsAddingGroup(false)} className="absolute top-2 right-2 p-2 text-slate-300 hover:text-slate-900 transition-colors"><X className="w-4 h-4" /></button>
@@ -321,7 +321,7 @@ const AdminUsersPage = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-center py-4 text-xs text-slate-300 font-black capitalize tracking-widest italic">All available groups assigned</p>
+                                <p className="text-center py-4 text-xs text-slate-300 font-black capitalize  italic">All available groups assigned</p>
                             )}
                         </div>
                     )}
@@ -338,7 +338,7 @@ const AdminUsersPage = () => {
 
                         return (
                             <div key={ugId} className="relative border border-slate-100 rounded-xl p-6 pt-10 bg-slate-50/10">
-                                <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-slate-500 border border-slate-100 rounded-full shadow-sm flex items-center gap-2 italic">
+                                <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize  text-slate-500 border border-slate-100 rounded-full shadow-sm flex items-center gap-2 italic">
                                     Inherited from: {group?.ug_name}
                                 </span>
                                 <div className="space-y-3">
@@ -380,7 +380,7 @@ const AdminUsersPage = () => {
                     {editFields.group_ids.length === 0 && (
                         <div className="py-20 text-center border border-slate-100 rounded-xl bg-slate-50/30">
                             <ShieldCheck className="w-12 h-12 text-slate-100 mx-auto mb-3" />
-                            <p className="text-xs text-slate-300 font-black capitalize tracking-widest italic">No groups or permissions found</p>
+                            <p className="text-xs text-slate-300 font-black capitalize  italic">No groups or permissions found</p>
                         </div>
                     )}
                 </div>
@@ -425,11 +425,11 @@ const AdminUsersPage = () => {
                     <option value="" disabled hidden></option>
                     {roles.map(r => <option key={r.role_id} value={r.role_name}>{r.role_name}</option>)}
                 </select>
-                <label className={`absolute left-4 transition-all pointer-events-none font-black capitalize tracking-widest ${newUser.role ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Assign Global Role</label>
+                <label className={`absolute left-4 transition-all pointer-events-none font-black capitalize  ${newUser.role ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Assign Global Role</label>
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
             </div>
 
-            <button onClick={handleCreateUser} className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-xs capitalize tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
+            <button onClick={handleCreateUser} className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-xs capitalize  hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
                 Register Account <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>

@@ -30,7 +30,7 @@ const UnifiedAdminDashboard = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-6 py-2.5 rounded-xl text-xs font-black capitalize tracking-widest transition-all duration-300 flex items-center gap-2.5 ${
+                className={`px-6 py-2.5 rounded-xl text-xs font-black capitalize  transition-all duration-300 flex items-center gap-2.5 ${
                   isActive ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'
                 }`}
               >

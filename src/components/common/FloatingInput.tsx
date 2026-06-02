@@ -31,7 +31,7 @@ const FloatingInput = ({ label, value, onFocus, onBlur, ...props }: FloatingInpu
       />
       <label
         className={`
-          absolute left-4 transition-all pointer-events-none font-black capitalize tracking-widest
+          absolute left-4 transition-all pointer-events-none font-black capitalize 
           ${(isFocused || hasValue) 
             ? 'top-2 text-[9px] text-blue-600' 
             : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}

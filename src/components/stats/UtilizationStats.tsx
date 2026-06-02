@@ -62,7 +62,7 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
     <Block title={`${type} Utilization`} subtitle={`Long-term ${type === 'CPU' ? 'Processor' : 'Memory'} usage stats (Last 12 Months)`}>
       <div className="bg-slate-50/50 p-6 sm:p-8 rounded-xl border border-slate-100 mb-8 flex flex-wrap gap-6 items-end justify-start sm:justify-center transition-all shadow-inner">
         <div className="flex-1 min-w-[250px]">
-          <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Hostgroup Scope</label>
+          <label className="text-xs font-black text-slate-400 capitalize  mb-2 ml-1 block">Hostgroup Scope</label>
           <div className="relative group">
             <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm" value={hostgroup} onChange={(e) => setHostgroup(e.target.value)}>
               <option value="">Select Target</option>
@@ -71,7 +71,7 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
             <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
           </div>
         </div>
-        <button onClick={handleQuery} className="bg-slate-900 text-white px-10 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-slate-200 h-[42px] active:scale-95">
+        <button onClick={handleQuery} className="bg-slate-900 text-white px-10 py-2.5 rounded-xl text-xs font-black capitalize  hover:bg-black transition-all shadow-xl shadow-slate-200 h-[42px] active:scale-95">
           Execute Query
         </button>
       </div>
@@ -93,9 +93,9 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
               <table className="w-full text-xs text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50/50 border-b border-slate-100">
-                    <th className="px-8 py-6 text-slate-400 font-black text-[9px] capitalize tracking-widest">Hostname</th>
+                    <th className="px-8 py-6 text-slate-400 font-black text-[9px] capitalize ">Hostname</th>
                     {months.map(m => (
-                      <th key={`${m.month}-${m.year}`} className="px-3 py-6 text-center text-slate-400 font-black text-[9px] capitalize tracking-widest">
+                      <th key={`${m.month}-${m.year}`} className="px-3 py-6 text-center text-slate-400 font-black text-[9px] capitalize ">
                         {m.label} {String(m.year).slice(-2)}
                       </th>
                     ))}
@@ -143,13 +143,13 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
             ) : (
               <div className="flex flex-col items-center justify-center py-40 bg-slate-50/50 rounded-xl border-2 border-dashed border-slate-100 mx-10 my-10">
                 <AlertCircle className="w-12 h-12 text-slate-200 mb-4" />
-                <p className="text-xs font-black text-slate-300 capitalize tracking-[0.2em]">No operational records found for sector</p>
+                <p className="text-xs font-black text-slate-300 capitalize ">No operational records found for sector</p>
               </div>
             )
           ) : (
             <div className="flex flex-col items-center justify-center py-40">
               <Activity size={80} className="mb-8 text-slate-100 animate-pulse" />
-              <p className="text-xs font-black text-slate-300 capitalize tracking-[0.3em]">Awaiting Vector Selection</p>
+              <p className="text-xs font-black text-slate-300 capitalize ">Awaiting Vector Selection</p>
             </div>
           )}
         </div>

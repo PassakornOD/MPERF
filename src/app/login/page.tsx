@@ -40,8 +40,8 @@ export default function LoginPage() {
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_10%,rgba(37,99,235,0.15),transparent_60%)] pointer-events-none"></div>
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-600/5 blur-[120px] rounded-full pointer-events-none"></div>
       <div className="absolute top-1/4 left-0 w-[300px] h-[300px] bg-indigo-600/5 blur-[100px] rounded-full pointer-events-none"></div>
-      
-      <motion.div 
+
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
@@ -54,13 +54,13 @@ export default function LoginPage() {
               <span className="text-white font-black text-4xl italic">M</span>
             </div>
             <h1 className="text-3xl font-black tracking-tight text-slate-900 capitalize italic leading-none">Metrisar</h1>
-            <p className="text-[10px] font-black text-slate-400 capitalize tracking-[0.4em] mt-3">Infrastructure Analytics Platform</p>
+            <p className="text-[10px] font-black text-slate-400 capitalize  mt-3">Infrastructure Analytics Platform</p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest ml-4 block mb-1">Operator ID</label>
+              <label className="text-[10px] font-black text-slate-400 capitalize  ml-4 block mb-1">Username</label>
               <div className="relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors">
                   <User size={18} />
@@ -77,7 +77,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest ml-4 block mb-1">Access Token</label>
+              <label className="text-[10px] font-black text-slate-400 capitalize  ml-4 block mb-1">Password</label>
               <div className="relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors">
                   <Lock size={18} />
@@ -92,17 +92,17 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-            
+
             <div className="pt-4">
-              <button 
+              <button
                 disabled={isLoading}
-                className="w-full bg-slate-900 text-white py-5 rounded-xl font-black text-[11px] capitalize tracking-[0.4em] hover:bg-black transition-all shadow-2xl shadow-slate-200 active:scale-[0.98] group flex items-center justify-center gap-3 disabled:opacity-50"
+                className="w-full bg-slate-900 text-white py-5 rounded-xl font-black text-[11px] capitalize  hover:bg-black transition-all shadow-2xl shadow-slate-200 active:scale-[0.98] group flex items-center justify-center gap-3 disabled:opacity-50"
               >
                 {isLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
                   <>
-                    Authorize Access <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    Sign In <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
               </button>
@@ -111,8 +111,8 @@ export default function LoginPage() {
 
           {/* Footer */}
           <div className="mt-16 text-center border-t border-slate-50 pt-8">
-            <p className="text-[9px] font-black text-slate-300 capitalize tracking-widest leading-relaxed">
-              Metrisar Management Console v2.7.0-CLEO<br/>
+            <p className="text-[9px] font-black text-slate-300 capitalize  leading-relaxed">
+              Metrisar Management Console v2.7.0-CLEO<br />
               &copy; {new Date().getFullYear()} MFEC Infrastructure Services
             </p>
           </div>

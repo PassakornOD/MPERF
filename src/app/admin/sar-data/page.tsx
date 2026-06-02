@@ -21,7 +21,7 @@ const SarAdminPage = () => {
           <div className="bg-slate-100 p-1 rounded-xl inner-shadow flex w-fit border border-slate-200/50">
             <button
               onClick={() => setActiveTab('ingest')}
-              className={`px-8 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] transition-all duration-300 flex items-center gap-2.5 ${
+              className={`px-8 py-2.5 rounded-xl text-xs font-black capitalize  transition-all duration-300 flex items-center gap-2.5 ${
                 activeTab === 'ingest' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
@@ -29,7 +29,7 @@ const SarAdminPage = () => {
             </button>
             <button
               onClick={() => setActiveTab('query')}
-              className={`px-8 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] transition-all duration-300 flex items-center gap-2.5 ${
+              className={`px-8 py-2.5 rounded-xl text-xs font-black capitalize  transition-all duration-300 flex items-center gap-2.5 ${
                 activeTab === 'query' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'
               }`}
             >

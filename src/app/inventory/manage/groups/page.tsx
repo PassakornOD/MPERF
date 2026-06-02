@@ -212,7 +212,7 @@ const ManageAssetsPage = () => {
                 </button>
                 {showColumnSelector && (
                     <div className="absolute right-0 mt-4 w-56 bg-white border border-slate-100 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] z-50 p-6 animate-in fade-in zoom-in duration-300">
-                        <p className="text-[9px] font-black capitalize tracking-[0.2em] text-slate-400 mb-4 px-2">Data Columns</p>
+                        <p className="text-[9px] font-black capitalize  text-slate-400 mb-4 px-2">Data Columns</p>
                         <div className="space-y-1 max-h-72 overflow-y-auto pr-2 custom-scrollbar">
                             {allColumns.map(col => (
                                 <button 
@@ -230,10 +230,10 @@ const ManageAssetsPage = () => {
             </div>
             {canCreate && (
               <div className="flex items-center gap-2">
-                <button onClick={() => { setEditingGroup(null); setNewGroup({ hostgroup: '', owner: '', pg_id: '' }); setIsGroupModalOpen(true); }} className="bg-blue-600 text-white px-6 py-3 rounded-xl text-xs font-black capitalize tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2">
+                <button onClick={() => { setEditingGroup(null); setNewGroup({ hostgroup: '', owner: '', pg_id: '' }); setIsGroupModalOpen(true); }} className="bg-blue-600 text-white px-6 py-3 rounded-xl text-xs font-black capitalize  hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2">
                     <Plus className="w-4 h-4" /> Group
                 </button>
-                <button onClick={() => { setEditingHost(null); setHostForm({ hostname: '', hostgroup_id: '', System: '', Location: '', IP: '', Model: '', CPU: '', Disk: '', OS: '', Serial: '', MA: '', mem: '', Pagesize: '4096' }); setIsHostModalOpen(true); }} className="bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black capitalize tracking-widest hover:bg-black transition-all shadow-lg shadow-slate-200 flex items-center gap-2">
+                <button onClick={() => { setEditingHost(null); setHostForm({ hostname: '', hostgroup_id: '', System: '', Location: '', IP: '', Model: '', CPU: '', Disk: '', OS: '', Serial: '', MA: '', mem: '', Pagesize: '4096' }); setIsHostModalOpen(true); }} className="bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black capitalize  hover:bg-black transition-all shadow-lg shadow-slate-200 flex items-center gap-2">
                     <Plus className="w-4 h-4" /> Node
                 </button>
               </div>
@@ -260,7 +260,7 @@ const ManageAssetsPage = () => {
                     <div className="space-y-1">
                         <h4 className="font-black text-slate-900 text-lg capitalize tracking-tight leading-none">{hg.hostgroup}</h4>
                         <div className="flex items-center gap-3">
-                            <span className="text-xs font-black text-slate-400 capitalize tracking-[0.2em]">{groupHosts.length} Active Nodes</span>
+                            <span className="text-xs font-black text-slate-400 capitalize ">{groupHosts.length} Active Nodes</span>
                             {isProtected && <span className="bg-slate-900 text-white text-[8px] font-black capitalize px-2 py-0.5 rounded-xl tracking-tighter">System Protected</span>}
                         </div>
                     </div>
@@ -285,11 +285,11 @@ const ManageAssetsPage = () => {
                             <thead>
                                 <tr className="bg-white border-b border-slate-100">
                                     {visibleColumns.map(colId => (
-                                        <th key={colId} className="px-6 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest whitespace-nowrap">
+                                        <th key={colId} className="px-6 py-5 text-[9px] font-black text-slate-400 capitalize  whitespace-nowrap">
                                             {allColumns.find(c => c.id === colId)?.label}
                                         </th>
                                     ))}
-                                    <th className="px-6 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest text-right whitespace-nowrap">Actions</th>
+                                    <th className="px-6 py-5 text-[9px] font-black text-slate-400 capitalize  text-right whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100/50">
@@ -326,7 +326,7 @@ const ManageAssetsPage = () => {
                                     <tr>
                                         <td colSpan={visibleColumns.length + 1} className="py-20 text-center">
                                             <Monitor className="w-12 h-12 text-slate-100 mx-auto mb-4" />
-                                            <p className="text-xs text-slate-300 font-black capitalize tracking-[0.2em] italic">No Nodes registered in this sector</p>
+                                            <p className="text-xs text-slate-300 font-black capitalize  italic">No Nodes registered in this sector</p>
                                         </td>
                                     </tr>
                                 )}
@@ -362,13 +362,13 @@ const ManageAssetsPage = () => {
                     <option value="" disabled hidden></option>
                     {pgs.map((p: any) => <option key={p.pg_id} value={p.pg_id}>{p.pg_name}</option>)}
                 </select>
-                <label className={`absolute left-4 transition-all pointer-events-none font-black capitalize tracking-widest ${(editingGroup?.pg_id || newGroup.pg_id) ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Security Association</label>
+                <label className={`absolute left-4 transition-all pointer-events-none font-black capitalize  ${(editingGroup?.pg_id || newGroup.pg_id) ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Security Association</label>
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
             </div>
             <button 
                 onClick={() => groupMutation.mutate(editingGroup ? { hostgroup_id: editingGroup.hostgroup_id, hostgroup: editingGroup.hostgroup, owner: editingGroup.owner, pg_id: editingGroup.pg_id } : newGroup)} 
                 disabled={groupMutation.isPending}
-                className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-xs capitalize tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50 mt-4 flex items-center justify-center group"
+                className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-xs capitalize  hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50 mt-4 flex items-center justify-center group"
             >
                 {groupMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : (
                     <>
@@ -394,7 +394,7 @@ const ManageAssetsPage = () => {
                                 <option value="" disabled hidden></option>
                                 {hostGroups.map((g: any) => <option key={g.hostgroup_id} value={g.hostgroup_id}>{g.hostgroup}</option>)}
                             </select>
-                            <label className={`absolute left-4 transition-all pointer-events-none font-black capitalize tracking-widest ${hostForm.hostgroup_id ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Sector Assignment</label>
+                            <label className={`absolute left-4 transition-all pointer-events-none font-black capitalize  ${hostForm.hostgroup_id ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Sector Assignment</label>
                             <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
                         </div>
                     ) : key === 'OS' ? (
@@ -413,7 +413,7 @@ const ManageAssetsPage = () => {
                                 <option value="CentOS">CentOS</option>
                                 <option value="Other">Standard Linux / Unix</option>
                             </select>
-                            <label className={`absolute left-4 transition-all pointer-events-none font-black capitalize tracking-widest ${hostForm.OS ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Operating System</label>
+                            <label className={`absolute left-4 transition-all pointer-events-none font-black capitalize  ${hostForm.OS ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Operating System</label>
                             <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
                         </div>
                     ) : (
@@ -428,7 +428,7 @@ const ManageAssetsPage = () => {
             <button 
                 onClick={() => hostMutation.mutate(editingHost ? { ...hostForm, hostname_id: editingHost.hostname_id } : hostForm)} 
                 disabled={hostMutation.isPending}
-                className="md:col-span-2 bg-slate-900 text-white py-4 rounded-xl font-black text-xs capitalize tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-slate-200 disabled:opacity-50 mt-4 flex items-center justify-center group"
+                className="md:col-span-2 bg-slate-900 text-white py-4 rounded-xl font-black text-xs capitalize  hover:bg-black transition-all shadow-xl shadow-slate-200 disabled:opacity-50 mt-4 flex items-center justify-center group"
             >
                 {hostMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : (
                     <>

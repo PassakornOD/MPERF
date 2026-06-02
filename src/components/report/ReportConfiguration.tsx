@@ -29,7 +29,7 @@ const ReportConfiguration: React.FC<ReportConfigurationProps> = ({
 }) => {
     return (
         <div className="relative border border-slate-100 rounded-xl p-4 sm:p-5 pt-7 bg-white shadow-sm transition-all hover:shadow-md">
-            <span className="absolute -top-3 left-4 bg-blue-50 text-blue-700 px-3 py-1 text-[9px] font-bold capitalize tracking-[0.1em] border border-blue-100 rounded-full shadow-sm flex items-center gap-1.5">
+            <span className="absolute -top-3 left-4 bg-blue-50 text-blue-700 px-3 py-1 text-[9px] font-bold capitalize  border border-blue-100 rounded-full shadow-sm flex items-center gap-1.5">
                 <Calendar className="w-3 h-3" /> Metadata
             </span>
 

@@ -5,7 +5,7 @@ import { Terminal, ShieldCheck, Container, FileText, ChevronRight, Check } from 
 
 const Section = ({ title, children, icon }: { title: string, children: React.ReactNode, icon?: React.ReactNode }) => (
   <section className="mb-16">
-    <h3 className="text-xs font-bold text-slate-400 capitalize tracking-widest mb-8 flex items-center gap-2">
+    <h3 className="text-xs font-bold text-slate-400 capitalize  mb-8 flex items-center gap-2">
       {icon ? icon : <ChevronRight size={16} className="text-blue-500" />} {title}
     </h3>
     {children}
@@ -16,7 +16,7 @@ export default function DockerGuidePage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-20 animate-ease-in pb-32">
       <header className="mb-24 text-center">
-        <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-blue-50 text-blue-600 text-xs font-black capitalize tracking-[0.2em] mb-8 border border-blue-100 shadow-sm shadow-blue-500/5">
+        <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-blue-50 text-blue-600 text-xs font-black capitalize  mb-8 border border-blue-100 shadow-sm shadow-blue-500/5">
           <ShieldCheck size={16} /> Deployment Architecture
         </div>
         <h1 className="text-6xl font-black text-slate-900 tracking-tight mb-6 capitalize italic">Docker Runtime Guide</h1>
@@ -50,7 +50,7 @@ export default function DockerGuidePage() {
                 <div className="relative group">
                     <div className="flex items-center gap-3 mb-3">
                         <div className="w-2 h-2 rounded-full bg-slate-700"></div>
-                        <p className="text-slate-500 font-black capitalize tracking-[0.2em] text-xs"># 01. Build production image set</p>
+                        <p className="text-slate-500 font-black capitalize  text-xs"># 01. Build production image set</p>
                     </div>
                     <code className="block bg-slate-900/50 p-6 rounded-xl text-blue-400 border border-slate-800/50 shadow-inner group-hover:border-blue-500/30 transition-all duration-300">
                       docker build -t mperf-app .
@@ -59,7 +59,7 @@ export default function DockerGuidePage() {
                 <div className="relative group">
                     <div className="flex items-center gap-3 mb-3">
                         <div className="w-2 h-2 rounded-full bg-slate-700"></div>
-                        <p className="text-slate-500 font-black capitalize tracking-[0.2em] text-xs"># 02. Deploy services via Compose</p>
+                        <p className="text-slate-500 font-black capitalize  text-xs"># 02. Deploy services via Compose</p>
                     </div>
                     <code className="block bg-slate-900/50 p-6 rounded-xl text-emerald-400 border border-slate-800/50 shadow-inner group-hover:border-emerald-500/30 transition-all duration-300">
                       docker-compose up -d

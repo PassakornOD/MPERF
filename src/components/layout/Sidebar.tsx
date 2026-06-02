@@ -52,7 +52,7 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
           {!isCollapsed && (
             <div className="flex flex-col leading-tight animate-in fade-in duration-300">
               <h1 className="text-lg font-black tracking-tight text-white capitalize italic">Metrisar</h1>
-              <span className="text-[10px] font-black text-slate-500 capitalize tracking-[0.2em]">Infrastructure</span>
+              <span className="text-[10px] font-black text-slate-500 capitalize ">Infrastructure</span>
             </div>
           )}
         </div>
@@ -61,7 +61,7 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto custom-scrollbar py-8 px-4 space-y-8">
         <div className="space-y-1">
-          {!isCollapsed && <p className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Core Analytics</p>}
+          {!isCollapsed && <p className="px-4 text-[10px] font-black text-slate-500 uppercase  mb-4">Core Analytics</p>}
           {navItems.map((item) => {
             const isActive = (pathname.startsWith(item.href) && item.href !== '/') || (item.href === '/' && pathname === '/');
             return (
@@ -75,7 +75,7 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
                 }`}
               >
                 <item.icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-blue-400'}`} />
-                {!isCollapsed && <span className="text-xs font-black capitalize tracking-widest animate-in fade-in duration-300">{item.name}</span>}
+                {!isCollapsed && <span className="text-xs font-black capitalize  animate-in fade-in duration-300">{item.name}</span>}
                 {isActive && !isCollapsed && <motion.div layoutId="activeHighlight" className="ml-auto w-1 h-4 bg-white/40 rounded-full" />}
               </Link>
             );
@@ -84,7 +84,7 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
 
         {adminItems.length > 0 && (
           <div className="space-y-1">
-            {!isCollapsed && <p className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Governance</p>}
+            {!isCollapsed && <p className="px-4 text-[10px] font-black text-slate-500 uppercase  mb-4">Governance</p>}
             {adminItems.map((item) => {
               const isActive = pathname.startsWith(item.href);
               return (
@@ -98,7 +98,7 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
                   }`}
                 >
                   <item.icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-emerald-400'}`} />
-                  {!isCollapsed && <span className="text-xs font-black capitalize tracking-widest animate-in fade-in duration-300">{item.name}</span>}
+                  {!isCollapsed && <span className="text-xs font-black capitalize  animate-in fade-in duration-300">{item.name}</span>}
                 </Link>
               );
             })}
