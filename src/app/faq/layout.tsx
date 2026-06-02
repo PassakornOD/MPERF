@@ -27,11 +27,11 @@ export default function FaqLayout({ children }: { children: React.ReactNode }) {
     <div className="max-w-7xl mx-auto py-8">
       <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 px-4">
         <div className="space-y-1">
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">Help & Documentation</h1>
-          <p className="text-sm font-medium text-gray-400 mt-1">Comprehensive system guides and references</p>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Help & Documentation</h1>
+          <p className="text-sm font-medium text-slate-400 mt-1">Comprehensive system guides and references</p>
         </div>
 
-        <div className="bg-gray-100 p-1 rounded-2xl flex w-fit shadow-inner">
+        <div className="bg-slate-100 p-1 rounded-xl flex w-fit shadow-inner">
           {tabs.map((tab) => {
             const isActive = pathname.startsWith(tab.href);
             return (
@@ -39,7 +39,7 @@ export default function FaqLayout({ children }: { children: React.ReactNode }) {
                 key={tab.name}
                 onClick={() => router.push(tab.href)}
                 className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-                  isActive ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                  isActive ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
                 <tab.icon className="w-4 h-4" /> {tab.name}

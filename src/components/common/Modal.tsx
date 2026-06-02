@@ -51,26 +51,26 @@ const Modal = ({
     : 'items-center justify-center p-6';
 
   const modalContent = (
-    <div className={`fixed inset-0 z-[99999] flex bg-slate-950/40 backdrop-blur-[2px] ${positionClasses} pointer-events-auto`}>
+    <div className={`fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-[1px] pointer-events-auto transition-all`}>
       <Draggable nodeRef={nodeRef} handle=".modal-handle" bounds="parent">
         <div 
           ref={nodeRef} 
-          className={`bg-white rounded-3xl w-full ${maxWidth} flex flex-col shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] border border-slate-100 overflow-hidden animate-in fade-in zoom-in duration-300 self-center will-change-transform`}
+          className={`bg-white rounded-xl w-full ${maxWidth} flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200 self-center will-change-transform`}
         >
-          <div className="flex justify-between items-center px-6 py-4 border-b border-slate-50 modal-handle cursor-grab active:cursor-grabbing bg-slate-50/50">
-            <h2 className="text-xs font-black text-slate-900 capitalize tracking-widest leading-none">{title}</h2>
+          <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 modal-handle cursor-grab active:cursor-grabbing">
+            <h2 className="text-lg font-semibold text-slate-800 leading-none">{title}</h2>
             <div className="flex items-center gap-2">
               {onDownload && (
-                <button onClick={onDownload} className="p-2 hover:bg-white text-blue-600 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-100" title="Download Report">
-                  <Download className="w-4 h-4" />
+                <button onClick={onDownload} className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors" title="Download">
+                  <Download className="w-5 h-5" />
                 </button>
               )}
-              <button onClick={onClose} className="p-2 hover:bg-white text-slate-400 hover:text-slate-900 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-100">
-                <X className="w-4 h-4" />
+              <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-600 transition-colors">
+                <X className="w-5 h-5" />
               </button>
             </div>
           </div>
-          <div className="px-8 py-8 max-h-[80vh] overflow-y-auto custom-scrollbar">
+          <div className="p-6 max-h-[85vh] overflow-y-auto custom-scrollbar">
             {children}
           </div>
         </div>

@@ -8,9 +8,9 @@ export default function InventoryLayout({ children }: { children: React.ReactNod
   const userRole = (session?.user as any)?.role;
 
   const inventoryTabs = [
-    { name: 'Server Inventory', href: '/inventory/list', iconKey: 'List' },
+    { name: 'Asset Registry', href: '/inventory/list', iconKey: 'List' },
     ...(userRole === 'admin' || userRole === 'sysadmin'
-      ? [{ name: 'Manage Assets', href: '/inventory/manage/groups', iconKey: 'Settings' }]
+      ? [{ name: 'Asset Administration', href: '/inventory/manage/groups', iconKey: 'Settings' }]
       : []),
   ];
 

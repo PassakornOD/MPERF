@@ -24,7 +24,7 @@ const FloatingInput = ({ label, value, onFocus, onBlur, ...props }: FloatingInpu
           onBlur?.(e);
         }}
         className={`
-          peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-2xl text-xs font-bold bg-slate-50/50 
+          peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-xl text-xs font-bold bg-slate-50/50 
           focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all placeholder-transparent
           ${props.className || ''}
         `}

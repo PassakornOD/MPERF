@@ -47,7 +47,7 @@ export default function FolderTabs({ tabs, children }: FolderTabsProps) {
             <button
               key={tab.name}
               onClick={() => router.push(tab.href)}
-              className={`group flex items-center justify-center gap-3 px-10 py-4 text-xm font-black capitalize tracking-widest transition-all duration-300 relative z-10 
+              className={`group flex items-center justify-center gap-3 px-10 py-4 text-xs font-black capitalize tracking-widest transition-all duration-300 relative z-10 
                 rounded-t-[1.25rem] border-t border-x skew-x-[-12deg]
                 ${isActive
                   ? 'bg-white border-slate-200 text-blue-600 shadow-[0_-8px_20px_-4px_rgba(0,0,0,0.05)] translate-y-[1px] border-b-2 border-b-white'

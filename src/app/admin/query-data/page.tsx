@@ -82,22 +82,22 @@ const QueryDataPage = () => {
         </div>
 
         {queryData.length > 0 && (
-          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="px-8 py-5 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <TableIcon className="w-4 h-4 text-blue-600" />
                     <span className="text-xs font-black text-slate-800 capitalize tracking-widest">Query Result Set</span>
                 </div>
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-lg text-[9px] font-black capitalize tracking-tighter shadow-md shadow-blue-100">{queryData.length} Records</span>
+                <span className="bg-blue-600 text-white px-3 py-1 rounded-xl text-[9px] font-black capitalize tracking-tighter shadow-md shadow-blue-100">{queryData.length} Records</span>
             </div>
-            <div className="overflow-x-auto custom-scrollbar">
+            <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-xl shadow-inner bg-slate-50/20 mx-8 my-8">
               <table className="w-full text-xs text-left border-collapse">
                 <thead>
-                  <tr className="bg-white text-slate-400 font-black capitalize text-[9px] tracking-widest border-b border-slate-50">
+                  <tr className="bg-white text-slate-400 font-black capitalize text-[9px] tracking-widest border-b border-slate-100">
                     {Object.keys(queryData[0]).map(key => <th key={key} className="px-8 py-5 whitespace-nowrap">{key}</th>)}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50">
+                <tbody className="divide-y divide-slate-100/50 bg-white">
                   {queryData.map((row, idx) => (
                     <tr key={idx} className="hover:bg-blue-50/30 transition-all duration-200 group">
                       {Object.values(row).map((val: any, i) => (

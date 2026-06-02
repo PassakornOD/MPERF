@@ -128,7 +128,7 @@ const IngestPage = () => {
                   <button
                     key={m.id}
                     onClick={() => setFormData({ ...formData, mode: m.id })}
-                    className={`flex items-center gap-3.5 px-5 py-4 rounded-2xl border-2 transition-all text-xs font-black capitalize tracking-wider ${
+                    className={`flex items-center gap-3.5 px-5 py-4 rounded-xl border-2 transition-all text-xs font-black capitalize tracking-wider ${
                       formData.mode === m.id 
                       ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm' 
                       : 'border-slate-50 bg-slate-50/30 text-slate-400 hover:border-slate-200 hover:bg-slate-50'
@@ -149,21 +149,21 @@ const IngestPage = () => {
               </label>
               <div className="space-y-4">
                 <div className="relative group">
-                    <select value={formData.hostgroup} onChange={(e) => setFormData({ ...formData, hostgroup: e.target.value, hostname: '' })} className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 px-5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
+                    <select value={formData.hostgroup} onChange={(e) => setFormData({ ...formData, hostgroup: e.target.value, hostname: '' })} className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 px-5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
                         <option value="">Global Scan (All Groups)</option>
                         {hostgroups.map(hg => <option key={hg.hostgroup_id} value={hg.hostgroup_id}>{hg.hostgroup}</option>)}
                     </select>
                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
                 </div>
                 <div className="relative group">
-                    <select value={formData.hostname} onChange={(e) => setFormData({ ...formData, hostname: e.target.value })} className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 px-5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
+                    <select value={formData.hostname} onChange={(e) => setFormData({ ...formData, hostname: e.target.value })} className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 px-5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
                         <option value="">Consolidated Scan (All Hosts)</option>
                         {filteredHostnames.map(hn => <option key={hn.hostname_id} value={hn.hostname}>{hn.hostname}</option>)}
                     </select>
                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
                 </div>
                 <div className="relative group">
-                    <select value={formData.dataType} onChange={(e) => setFormData({ ...formData, dataType: e.target.value })} className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 px-5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
+                    <select value={formData.dataType} onChange={(e) => setFormData({ ...formData, dataType: e.target.value })} className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 px-5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
                         <option value="All">Unified Metrics</option>
                         <option value="cpu">CPU Dimensional Only</option>
                         <option value="mem">Memory Resource Only</option>
@@ -208,14 +208,14 @@ const IngestPage = () => {
                     </div>
                 )}
               </div>
-              <button disabled={ingesting || loading} onClick={handleStartIngestion} className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-500/20 disabled:shadow-none capitalize tracking-[0.2em] text-xs">
+              <button disabled={ingesting || loading} onClick={handleStartIngestion} className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-500/20 disabled:shadow-none capitalize tracking-[0.2em] text-xs">
                 {ingesting ? <><Loader2 className="w-4 h-4 animate-spin" /> Commencing Ingestion...</> : <><Play className="w-4 h-4" /> Start Ingestion Cycle</>}
               </button>
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)] overflow-hidden min-h-[400px] flex flex-col transition-all">
+        <div className="bg-slate-900 rounded-[2rem] border border-slate-800 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)] overflow-hidden min-h-[400px] flex flex-col transition-all">
             <div className="px-10 py-5 bg-slate-800/50 border-b border-slate-800 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className={`w-2.5 h-2.5 rounded-full ${ingesting ? 'bg-blue-500 animate-pulse' : results.length > 0 ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-slate-600'}`}></div>
@@ -224,7 +224,7 @@ const IngestPage = () => {
                 {results.length > 0 && (
                   <button 
                     onClick={() => setResults([])}
-                    className="text-xs font-black text-slate-500 hover:text-white transition-all capitalize tracking-widest bg-slate-700/50 px-3 py-1 rounded-lg"
+                    className="text-xs font-black text-slate-500 hover:text-white transition-all capitalize tracking-widest bg-slate-700/50 px-3 py-1 rounded-xl"
                   >
                     Flush Log
                   </button>
@@ -238,7 +238,7 @@ const IngestPage = () => {
                   </div>
                 ) : (
                   results.map((line, idx) => (
-                    <div key={idx} className="flex gap-6 border-b border-slate-800/30 py-2 last:border-0 hover:bg-white/5 transition-all group rounded-lg px-2 -mx-2">
+                    <div key={idx} className="flex gap-6 border-b border-slate-800/30 py-2 last:border-0 hover:bg-white/5 transition-all group rounded-xl px-2 -mx-2">
                         <span className="text-slate-600 w-10 text-right select-none font-bold tabular-nums">{(idx + 1).toString().padStart(3, '0')}</span>
                         <span className={`
                             ${line.includes('[Success]') ? 'text-emerald-400 font-bold' : ''}

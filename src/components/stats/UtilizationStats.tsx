@@ -60,7 +60,7 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
 
   return (
     <Block title={`${type} Utilization`} subtitle={`Long-term ${type === 'CPU' ? 'Processor' : 'Memory'} usage stats (Last 12 Months)`}>
-      <div className="bg-slate-50/50 p-6 sm:p-8 rounded-3xl border border-slate-100 mb-8 flex flex-wrap gap-6 items-end justify-start sm:justify-center transition-all shadow-inner">
+      <div className="bg-slate-50/50 p-6 sm:p-8 rounded-xl border border-slate-100 mb-8 flex flex-wrap gap-6 items-end justify-start sm:justify-center transition-all shadow-inner">
         <div className="flex-1 min-w-[250px]">
           <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Hostgroup Scope</label>
           <div className="relative group">
@@ -76,12 +76,17 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
         </button>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden animate-ease-in">
+      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden animate-ease-in">
         <div className="overflow-x-auto custom-scrollbar">
           {isFetching ? (
-            <div className="text-center py-32">
-              <Loader2 className="w-16 h-16 animate-spin mx-auto text-blue-600 opacity-20" />
-              <p className="mt-8 text-xs font-black text-slate-300 capitalize tracking-[0.3em]">Processing Annual Aggregates...</p>
+            <div className="p-10 space-y-4">
+              <div className="flex gap-4">
+                <div className="w-40 h-10 skeleton"></div>
+                <div className="flex-1 h-10 skeleton"></div>
+              </div>
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className="w-full h-12 skeleton opacity-50"></div>
+              ))}
             </div>
           ) : queryEnabled ? (
             stats && stats.length > 0 ? (
@@ -123,7 +128,7 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
                         }
                         return (
                           <td key={`${m.month}-${m.year}`} className="px-3 py-5 text-center whitespace-nowrap">
-                            <span className={`px-2 py-1 rounded-lg font-bold tabular-nums text-[11px] ${displayVal === '-' ? 'text-slate-300 font-medium' :
+                            <span className={`px-2 py-1 rounded-xl font-bold tabular-nums text-[11px] ${displayVal === '-' ? 'text-slate-300 font-medium' :
                               isHigh ? 'bg-red-50 text-red-600' : 'text-slate-600'
                               }`}>
                               {displayVal}
@@ -136,7 +141,7 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
                 </tbody>
               </table>
             ) : (
-              <div className="flex flex-col items-center justify-center py-40 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100 mx-10 my-10">
+              <div className="flex flex-col items-center justify-center py-40 bg-slate-50/50 rounded-xl border-2 border-dashed border-slate-100 mx-10 my-10">
                 <AlertCircle className="w-12 h-12 text-slate-200 mb-4" />
                 <p className="text-xs font-black text-slate-300 capitalize tracking-[0.2em]">No operational records found for sector</p>
               </div>

@@ -1,54 +1,103 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc; /* slate-50 */
-  --foreground: #0f172a; /* slate-900 */
+  --background: #f1f5f9; /* slate-100 */
+  --foreground: #1e293b; /* slate-800 */
   --card: #ffffff;
-  --border: #f1f5f9; /* slate-100 */
+  --card-foreground: #1e293b;
+  --popover: #ffffff;
+  --popover-foreground: #1e293b;
   --primary: #2563eb; /* blue-600 */
   --primary-foreground: #ffffff;
-  --muted: #64748b; /* slate-500 */
-  --radius: 1.5rem; /* 24px */
+  --secondary: #e2e8f0; /* slate-200 */
+  --secondary-foreground: #1e293b;
+  --muted: #f8fafc;
+  --muted-foreground: #94a3b8; /* slate-400 */
+  --accent: #f1f5f9;
+  --accent-foreground: #1e293b;
+  --destructive: #ef4444; /* red-600 */
+  --destructive-foreground: #ffffff;
+  --border: #e2e8f0; /* slate-200 */
+  --input: #f1f5f9;
+  --ring: #3b82f6; /* blue-500 */
+  --radius: 0.75rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
-  --color-border: var(--border);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --radius-2xl: 1rem;
-  --radius-3xl: 1.5rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #030712;
-    --foreground: #f9fafb;
-    --card: #111827;
-    --border: #1f2937;
-    --muted: #9ca3af;
-  }
+  --radius-2xl: 0.75rem;
+  --radius-3xl: 1rem;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  font-size: 13px; /* Precise body size */
+  font-weight: 500;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global Font Reset */
+* {
+  font-family: inherit;
+}
+
+/* Highcharts Style Protection */
+.highcharts-container, .highcharts-container text {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Typography Precise Scales */
+.prose {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.label-caps {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted-foreground);
+}
+
+.text-body-small {
+  font-size: 12px;
+  font-weight: 500;
 }
 
 /* Custom Utilities for Modern UI */
 .modern-card {
   background: var(--card);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(226, 232, 240, 0.6); /* Very subtle border */
   border-radius: var(--radius);
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modern-card:hover {
@@ -65,23 +114,7 @@ body {
   text-transform: capitalize;
   letter-spacing: 0.05em;
   font-size: 0.625rem; /* 10px */
-  color: var(--muted);
-}
-
-.responsive-container {
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-@media (min-width: 640px) {
-  .responsive-container { padding-left: 1.5rem; padding-right: 1.5rem; }
-}
-
-@media (min-width: 1024px) {
-  .responsive-container { padding-left: 2rem; padding-right: 2rem; }
+  color: var(--muted-foreground);
 }
 
 /* Scrollbar Customization */
@@ -115,15 +148,64 @@ body {
   letter-spacing: -0.025em;
 }
 
-/* Highcharts Style Protection */
-.highcharts-container {
-  font-family: var(--font-sans) !important;
+/* Cleopatra Style Components */
+
+/* Buttons */
+.btn-primary {
+  @apply bg-blue-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95;
 }
 
-.highcharts-title {
-  fill: var(--foreground) !important;
-  font-weight: 700 !important;
-  font-size: 1.25rem !important;
+.btn-secondary {
+  @apply bg-slate-100 text-slate-700 font-bold py-2 px-6 rounded-xl hover:bg-slate-200 transition-all active:scale-95;
+}
+
+/* Badges */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold capitalize;
+}
+
+.badge-blue {
+  @apply bg-blue-50 text-blue-700 border border-blue-100;
+}
+
+.badge-emerald {
+  @apply bg-emerald-50 text-emerald-700 border border-emerald-100;
+}
+
+/* Alerts & Toasts */
+.alert {
+  @apply p-4 rounded-2xl border flex gap-3 items-start shadow-sm;
+}
+
+.alert-info {
+  @apply bg-blue-50 border-blue-100 text-blue-800;
+}
+
+/* Progress & Skeleton */
+.progress-bar {
+  @apply h-2 w-full bg-slate-100 rounded-full overflow-hidden;
+}
+
+.progress-value {
+  @apply h-full bg-blue-600 transition-all duration-500 ease-out;
+}
+
+.skeleton {
+  @apply animate-pulse bg-slate-200 rounded-lg;
+}
+
+/* Checkbox */
+.checkbox {
+  @apply w-5 h-5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 transition-all;
+}
+
+/* Collapse */
+.collapse-trigger {
+  @apply flex items-center justify-between w-full p-4 hover:bg-slate-50 transition-all;
+}
+
+.collapse-content {
+  @apply overflow-hidden transition-all duration-300 ease-in-out;
 }
 
 @keyframes slideDown {

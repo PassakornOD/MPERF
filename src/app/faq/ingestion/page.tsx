@@ -13,17 +13,17 @@ const CopyButton = ({ text }: { text: string }) => {
   return (
     <button
       onClick={handleCopy}
-      className="absolute right-3 top-3 p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 transition-all border border-gray-600"
+      className="absolute right-3 top-3 p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all border border-slate-600"
       title="Copy to clipboard"
     >
-      {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-gray-400" />}
+      {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-slate-400" />}
     </button>
   );
 };
 
 const Section = ({ title, children, icon }: { title: string, children: React.ReactNode, icon?: React.ReactNode }) => (
   <section className="mb-16">
-    <h3 className="text-xs font-bold text-gray-400 capitalize tracking-widest mb-8 flex items-center gap-2">
+    <h3 className="font-black text-slate-400 capitalize tracking-widest text-[9px] mb-8 flex items-center gap-2">
       {icon ? icon : <ChevronRight size={16} className="text-blue-500" />} {title}
     </h3>
     {children}
@@ -34,7 +34,7 @@ export default function IngestionDBGuidePage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-20 animate-ease-in pb-32">
       <header className="mb-24 text-center">
-        <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-blue-50 text-blue-600 text-xs font-black capitalize tracking-[0.2em] mb-8 border border-blue-100 shadow-sm shadow-blue-500/5">
+        <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-blue-50 text-blue-600 text-xs font-black capitalize tracking-widest mb-8 border border-blue-100 shadow-sm shadow-blue-500/5">
           <Database size={16} /> Technical Architecture
         </div>
         <h1 className="text-6xl font-black text-slate-900 tracking-tight mb-6 capitalize italic">Ingestion Pipeline</h1>
@@ -59,8 +59,8 @@ export default function IngestionDBGuidePage() {
                     {item.icon}
                 </div>
                 <div className="pt-2">
-                    <span className="text-blue-600 font-black text-xs capitalize tracking-[0.2em]">{item.step} Stage</span>
-                    <h4 className="font-black text-slate-900 text-base mt-1 mb-2 capitalize tracking-tight">{item.title}</h4>
+                    <span className="font-black text-slate-400 capitalize tracking-widest text-[9px]">{item.step} Stage</span>
+                    <h4 className="font-black text-slate-900 text-base mt-1 mb-2 capitalize italic tracking-tight">{item.title}</h4>
                     <p className="text-slate-500 text-xs leading-relaxed font-medium">{item.desc}</p>
                 </div>
                 </div>
@@ -83,7 +83,7 @@ export default function IngestionDBGuidePage() {
                     {mode.icon}
                 </div>
                 <div className="pt-3">
-                    <h4 className="font-black text-slate-900 text-base mb-2 capitalize tracking-tight">{mode.title}</h4>
+                    <h4 className="font-black text-slate-900 text-base mb-2 capitalize italic tracking-tight">{mode.title}</h4>
                     <p className="text-slate-500 text-xs leading-relaxed font-medium">{mode.desc}</p>
                 </div>
                 </div>
@@ -100,7 +100,7 @@ export default function IngestionDBGuidePage() {
             <div>
                 <div className="flex items-center justify-between mb-10">
                     <h4 className="font-black text-slate-900 text-xl flex items-center gap-4 capitalize italic tracking-tight"><Globe size={24} className="text-blue-600" /> Web Console</h4>
-                    <span className="bg-slate-100 text-slate-400 px-4 py-1 rounded-full text-xs font-black capitalize tracking-widest border border-slate-200 shadow-inner">Operational UI</span>
+                    <span className="font-black text-slate-400 capitalize tracking-widest text-[9px] bg-slate-100 px-4 py-1 rounded-full border border-slate-200 shadow-inner">Operational UI</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {[
@@ -123,7 +123,7 @@ export default function IngestionDBGuidePage() {
             {/* CLI & API */}
             <div className="pt-16 border-t border-slate-100 space-y-16">
                 <div>
-                    <h5 className="text-emerald-600 font-black mb-8 flex items-center gap-3 text-sm capitalize tracking-[0.3em]"><Terminal size={24}/> CLI Core (Automation)</h5>
+                    <h5 className="text-emerald-600 font-black mb-8 flex items-center gap-3 text-sm capitalize tracking-widest italic"><Terminal size={24}/> CLI Core (Automation)</h5>
                     <div className="space-y-8">
                         {[
                             { desc: "Specific target for Datawarehouse cluster", cmd: 'npx ts-node MPERF/scripts/ingest_sar.ts --hostgroup Datawarehouse --dataType cpu --day "2026-05-19"' },
@@ -133,9 +133,9 @@ export default function IngestionDBGuidePage() {
                             <div key={i} className="relative group">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                    <p className="text-slate-400 text-xs font-black capitalize tracking-[0.2em]"># {ex.desc}</p>
+                                    <p className="font-black text-slate-400 capitalize tracking-widest text-[9px]"># {ex.desc}</p>
                                 </div>
-                                <code className="block bg-slate-950 p-6 rounded-[1.5rem] text-blue-400 text-xs font-mono shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-800 group-hover:border-emerald-500/30 transition-all duration-500">{ex.cmd}</code>
+                                <code className="block bg-slate-950 p-6 rounded-[1.5rem] text-blue-400 text-[11px] font-mono shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-800 group-hover:border-emerald-500/30 transition-all duration-500">{ex.cmd}</code>
                                 <div className="absolute right-4 top-[52px]">
                                     <CopyButton text={ex.cmd} />
                                 </div>
@@ -144,10 +144,10 @@ export default function IngestionDBGuidePage() {
                     </div>
                 </div>
                 <div>
-                    <h5 className="text-sky-600 font-black mb-8 flex items-center gap-3 text-sm capitalize tracking-[0.3em]"><Globe size={24}/> API REST Integration</h5>
-                    <div className="flex gap-4 p-5 bg-blue-50/50 rounded-2xl border border-blue-100 mb-8 items-center max-w-fit">
-                        <span className="text-xs font-black text-blue-400 capitalize tracking-widest">ENDPOINT</span>
-                        <code className="bg-white px-4 py-1 rounded-xl border border-blue-200 text-blue-600 font-black text-xs">/api/admin/ingest</code>
+                    <h5 className="text-sky-600 font-black mb-8 flex items-center gap-3 text-sm capitalize tracking-widest italic"><Globe size={24}/> API REST Integration</h5>
+                    <div className="flex gap-4 p-5 bg-blue-50/50 rounded-xl border border-blue-100 mb-8 items-center max-w-fit shadow-inner">
+                        <span className="font-black text-slate-400 capitalize tracking-widest text-[9px]">ENDPOINT</span>
+                        <code className="bg-white px-4 py-1 rounded-xl border border-blue-200 text-blue-600 font-black text-xs shadow-sm">/api/admin/ingest</code>
                     </div>
                     <div className="space-y-8">
                         {[
@@ -157,9 +157,9 @@ export default function IngestionDBGuidePage() {
                             <div key={i} className="relative group">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="w-2 h-2 rounded-full bg-sky-500"></div>
-                                    <p className="text-slate-400 text-xs font-black capitalize tracking-[0.2em]"># {ex.desc}</p>
+                                    <p className="font-black text-slate-400 capitalize tracking-widest text-[9px]"># {ex.desc}</p>
                                 </div>
-                                <code className="block bg-slate-950 p-6 rounded-[1.5rem] text-sky-400 text-xs font-mono shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-800 group-hover:border-sky-500/30 transition-all duration-500">{ex.payload}</code>
+                                <code className="block bg-slate-950 p-6 rounded-[1.5rem] text-sky-400 text-[11px] font-mono shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-800 group-hover:border-sky-500/30 transition-all duration-500">{ex.payload}</code>
                                 <div className="absolute right-4 top-[52px]">
                                     <CopyButton text={ex.payload} />
                                 </div>
@@ -177,7 +177,7 @@ export default function IngestionDBGuidePage() {
           <div className="overflow-x-auto custom-scrollbar">
             <table className="w-full text-left border-collapse">
                 <thead className="bg-slate-50/50 border-b border-slate-100">
-                <tr className="text-slate-400 capitalize text-[9px] tracking-[0.2em] font-black">
+                <tr className="font-black text-slate-400 capitalize tracking-widest text-[9px]">
                     <th className="px-10 py-6">Key Indicator</th>
                     <th className="px-10 py-6">Validated Format</th>
                     <th className="px-10 py-6 text-right">Functional Description</th>
@@ -208,21 +208,21 @@ export default function IngestionDBGuidePage() {
       {/* 5. Critical Guidelines */}
       <Section title="Operational Protocols" icon={<ShieldCheck size={18} className="text-blue-600"/>}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div className="bg-amber-50/30 border border-amber-100 rounded-[2.5rem] p-10 flex gap-8 items-start shadow-sm transition-all hover:shadow-xl hover:shadow-amber-500/5 group">
-                <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-amber-500 shadow-sm border border-amber-100 flex-shrink-0 group-hover:scale-110 transition-transform duration-500 group-hover:bg-amber-500 group-hover:text-white">
+            <div className="bg-amber-50/30 border border-amber-100 rounded-[2rem] p-10 flex gap-8 items-start shadow-sm transition-all hover:shadow-xl hover:shadow-amber-500/5 group">
+                <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center text-amber-500 shadow-sm border border-amber-100 flex-shrink-0 group-hover:scale-110 transition-transform duration-500 group-hover:bg-amber-500 group-hover:text-white">
                     <AlertTriangle size={28} />
                 </div>
                 <div>
-                    <h4 className="font-black text-amber-900 text-base capitalize tracking-tight mb-3 italic">Resource Threshold</h4>
+                    <h4 className="font-black text-amber-900 text-base capitalize italic tracking-tight mb-3">Resource Threshold</h4>
                     <p className="text-amber-800/70 text-xs leading-relaxed font-bold capitalize tracking-tight">Global fleet scans (<b>"Global"</b> scope) are computationally intensive. Delegate these tasks to the <b>CLI Engine</b> during off-peak windows.</p>
                 </div>
             </div>
-            <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 flex gap-8 items-start shadow-2xl transition-all hover:shadow-blue-900/20 group">
-                <div className="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center text-blue-400 shadow-inner flex-shrink-0 group-hover:scale-110 transition-transform duration-500 group-hover:bg-blue-600 group-hover:text-white">
+            <div className="bg-slate-900 border border-slate-800 rounded-[2rem] p-10 flex gap-8 items-start shadow-2xl transition-all hover:shadow-blue-900/20 group">
+                <div className="w-16 h-16 rounded-xl bg-slate-800 flex items-center justify-center text-blue-400 shadow-inner flex-shrink-0 group-hover:scale-110 transition-transform duration-500 group-hover:bg-blue-600 group-hover:text-white">
                     <Clock size={28} />
                 </div>
                 <div>
-                    <h4 className="font-black text-white text-base capitalize tracking-tight mb-3 italic">Retention Lifecycle</h4>
+                    <h4 className="font-black text-white text-base capitalize italic tracking-tight mb-3">Retention Lifecycle</h4>
                     <p className="text-slate-400 text-xs leading-relaxed font-bold capitalize tracking-tight">Audit logs in <code>insertion_logs</code> are purged after <b>90 cycles</b>. Synchronize critical audit data with external archives periodically.</p>
                 </div>
             </div>

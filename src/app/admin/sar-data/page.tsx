@@ -18,7 +18,7 @@ const SarAdminPage = () => {
           </div>
 
           {/* Tabs */}
-          <div className="bg-slate-100 p-1 rounded-2xl inner-shadow flex w-fit border border-slate-200/50">
+          <div className="bg-slate-100 p-1 rounded-xl inner-shadow flex w-fit border border-slate-200/50">
             <button
               onClick={() => setActiveTab('ingest')}
               className={`px-8 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] transition-all duration-300 flex items-center gap-2.5 ${

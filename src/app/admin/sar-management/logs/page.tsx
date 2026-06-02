@@ -38,7 +38,7 @@ const LogsPage = () => {
   };
 
   return (
-    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden mt-10 animate-in fade-in slide-in-from-top-4 duration-500">
+    <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden mt-10 animate-in fade-in slide-in-from-top-4 duration-500">
       <div className="px-8 py-6 border-b border-slate-50 bg-slate-50/30 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-lg shadow-slate-200">
@@ -86,26 +86,26 @@ const LogsPage = () => {
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto custom-scrollbar">
+          <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-xl shadow-inner bg-slate-50/20 mx-8 mb-8">
             <table className="w-full text-xs text-left border-collapse">
               <thead>
-                <tr className="bg-white text-slate-400 font-black capitalize text-[9px] tracking-widest border-b border-slate-50">
-                  <th className="px-8 py-5">Timestamp</th>
-                  <th className="px-8 py-5">Operator</th>
-                  <th className="px-8 py-5">Target Table</th>
-                  <th className="px-8 py-5">State</th>
-                  <th className="px-8 py-5">Delta</th>
-                  <th className="px-8 py-5">System Message</th>
+                <tr className="bg-white border-b border-slate-100">
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Timestamp</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Operator</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Target Table</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">State</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Delta</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">System Message</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-50">
+              <tbody className="divide-y divide-slate-100/50 bg-white">
                 {logs.map((log: any, idx: number) => (
                   <tr key={idx} className="hover:bg-blue-50/30 transition-all duration-200 group">
                     <td className="px-8 py-4 text-slate-400 font-medium tabular-nums">{new Date(new Date(log.timestamp).getTime() + 7 * 60 * 60 * 1000).toISOString().replace('T', ' ').substring(0, 19)}</td>
                     <td className="px-8 py-4 font-black text-slate-700 capitalize tracking-tight">{log.user}</td>
                     <td className="px-8 py-4 font-bold text-blue-600"><code className="bg-blue-50/50 px-2 py-0.5 rounded text-xs">{log.table_name}</code></td>
                     <td className="px-8 py-4">
-                      <span className={`px-2.5 py-1 rounded-lg font-black text-[8px] capitalize tracking-widest border ${
+                      <span className={`px-2.5 py-1 rounded-xl font-black text-[8px] capitalize tracking-widest border ${
                           log.status === 'Success' ? 'bg-emerald-50 text-emerald-700 border-emerald-100 shadow-sm' : 
                           log.status === 'Error' ? 'bg-red-50 text-red-700 border-red-100 shadow-sm' : 
                           'bg-slate-100 text-slate-500 border-slate-200'
@@ -123,12 +123,12 @@ const LogsPage = () => {
           <div className="px-8 py-6 bg-slate-50/30 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-3">
                   <span className="text-xs font-black text-slate-400 capitalize tracking-[0.2em]">Historical Sequence</span>
-                  <div className="bg-white border border-slate-200 px-3 py-1 rounded-lg font-black text-xs text-blue-600 shadow-sm">{page} <span className="text-slate-300 font-medium px-1">/</span> {totalPages || 1}</div>
+                  <div className="bg-white border border-slate-200 px-4 py-1.5 rounded-xl font-black text-xs text-blue-600 shadow-sm">{page} <span className="text-slate-300 font-medium px-1">/</span> {totalPages || 1}</div>
                   <span className="text-xs font-black text-slate-300 capitalize tracking-widest ml-4">Total: {total.toLocaleString()} Records</span>
               </div>
               <div className="flex gap-2">
-                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1} className="px-6 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-black capitalize tracking-widest hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-20 shadow-sm active:scale-95">Prev</button>
-                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="px-6 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-black capitalize tracking-widest hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-20 shadow-sm active:scale-95">Next</button>
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1} className="px-8 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-black capitalize tracking-widest hover:bg-slate-50 hover:border-blue-300 hover:text-blue-600 transition-all disabled:opacity-20 shadow-sm active:scale-95">Previous</button>
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="px-8 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-black capitalize tracking-widest hover:bg-slate-50 hover:border-blue-300 hover:text-blue-600 transition-all disabled:opacity-20 shadow-sm active:scale-95">Next Cycle</button>
               </div>
           </div>
         </>

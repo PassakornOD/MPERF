@@ -140,7 +140,7 @@ const IngestPage = () => {
                   <button
                     key={m.id}
                     onClick={() => setFormData({ ...formData, mode: m.id })}
-                    className={`flex items-center gap-3.5 px-5 py-4 rounded-2xl border-2 transition-all text-xs font-black capitalize tracking-wider ${
+                    className={`flex items-center gap-3.5 px-5 py-4 rounded-xl border-2 transition-all text-xs font-black capitalize tracking-wider ${
                       formData.mode === m.id 
                       ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm' 
                       : 'border-slate-50 bg-slate-50/30 text-slate-400 hover:border-slate-200 hover:bg-slate-50'
@@ -166,7 +166,7 @@ const IngestPage = () => {
                   <select
                     value={formData.hostgroup}
                     onChange={(e) => setFormData({ ...formData, hostgroup: e.target.value, hostname: '' })}
-                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner"
+                    className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 pl-12 pr-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner"
                   >
                     <option value="">Global Scan (All Groups)</option>
                     {hostgroups.map(hg => (
@@ -180,7 +180,7 @@ const IngestPage = () => {
                   <select
                     value={formData.hostname}
                     onChange={(e) => setFormData({ ...formData, hostname: e.target.value })}
-                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner"
+                    className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 pl-12 pr-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner"
                   >
                     <option value="">Consolidated Scan (All Hosts)</option>
                     {filteredHostnames.map(hn => (
@@ -194,7 +194,7 @@ const IngestPage = () => {
                   <select
                     value={formData.os}
                     onChange={(e) => setFormData({ ...formData, os: e.target.value })}
-                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner"
+                    className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 pl-12 pr-4 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner"
                   >
                     <option value="All">Unified Platforms</option>
                     <option value="RedHat">RedHat Enterprise Linux</option>
@@ -267,7 +267,7 @@ const IngestPage = () => {
               <button
                 disabled={ingesting || loading}
                 onClick={handleStartIngestion}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-500/20 disabled:shadow-none capitalize tracking-[0.2em] text-xs"
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-500/20 disabled:shadow-none capitalize tracking-[0.2em] text-xs"
               >
                 {ingesting ? (
                   <>
@@ -285,7 +285,7 @@ const IngestPage = () => {
         </div>
 
         {/* Results Log Section */}
-        <div className="bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col transition-all">
+        <div className="bg-slate-900 rounded-[2rem] border border-slate-800 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col transition-all">
           <div className="px-10 py-5 bg-slate-800/50 border-b border-slate-800 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className={`w-2.5 h-2.5 rounded-full ${ingesting ? 'bg-blue-500 animate-pulse' : results.length > 0 ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-slate-600'}`}></div>
@@ -294,7 +294,7 @@ const IngestPage = () => {
             {results.length > 0 && (
               <button 
                 onClick={() => setResults([])}
-                className="text-xs font-black text-slate-500 hover:text-white transition-all capitalize tracking-widest bg-slate-700/50 px-3 py-1 rounded-lg"
+                className="text-xs font-black text-slate-500 hover:text-white transition-all capitalize tracking-widest bg-slate-700/50 px-3 py-1 rounded-xl"
               >
                 Flush Log
               </button>
@@ -309,7 +309,7 @@ const IngestPage = () => {
               </div>
             ) : (
               results.map((line, idx) => (
-                <div key={idx} className="flex gap-6 border-b border-slate-800/30 py-2 last:border-0 hover:bg-white/5 transition-all group rounded-lg px-2 -mx-2">
+                <div key={idx} className="flex gap-6 border-b border-slate-800/30 py-2 last:border-0 hover:bg-white/5 transition-all group rounded-xl px-2 -mx-2">
                   <span className="text-slate-600 w-10 text-right select-none font-bold tabular-nums">{(idx + 1).toString().padStart(3, '0')}</span>
                   <span className={`
                     ${line.includes('[Success]') ? 'text-emerald-400 font-bold' : ''}

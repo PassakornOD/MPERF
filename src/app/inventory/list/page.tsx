@@ -47,7 +47,7 @@ const InventoryList = () => {
     <div className="space-y-10 animate-ease-in">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
         <div className="space-y-2">
-          <h2 className="text-2xl font-black text-slate-900 capitalize italic tracking-tight leading-none">Global Inventory</h2>
+          <h2 className="text-2xl font-black text-slate-900 capitalize italic tracking-tight leading-none">Asset Registry</h2>
           <p className="text-sm font-medium text-slate-400 tracking-tight">Full-stack visibility of managed infrastructure nodes</p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
@@ -56,36 +56,36 @@ const InventoryList = () => {
             <input
               type="text"
               placeholder="Search Node or Group..."
-              className="bg-white border border-slate-100 rounded-2xl pl-12 pr-6 py-3.5 text-xs font-black capitalize tracking-tight w-full sm:w-80 shadow-sm focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all shadow-inner"
+              className="bg-white border border-slate-100 rounded-xl pl-12 pr-6 py-3.5 text-xs font-black capitalize tracking-tight w-full sm:w-80 shadow-sm focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all shadow-inner"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={expandAll} className="flex-1 sm:flex-none bg-slate-900 text-white px-6 py-3.5 rounded-2xl text-xs font-black capitalize tracking-widest hover:bg-black transition-all shadow-lg shadow-slate-200">Expand All</button>
-            <button onClick={collapseAll} className="flex-1 sm:flex-none bg-slate-50 text-slate-400 border border-slate-100 px-6 py-3.5 rounded-2xl text-xs font-black capitalize tracking-widest hover:bg-white hover:text-slate-600 transition-all shadow-sm">Collapse</button>
+            <button onClick={expandAll} className="flex-1 sm:flex-none bg-slate-900 text-white px-6 py-3.5 rounded-xl text-xs font-black capitalize tracking-widest hover:bg-black transition-all shadow-lg shadow-slate-200">Expand All</button>
+            <button onClick={collapseAll} className="flex-1 sm:flex-none bg-slate-50 text-slate-400 border border-slate-100 px-6 py-3.5 rounded-xl text-xs font-black capitalize tracking-widest hover:bg-white hover:text-slate-600 transition-all shadow-sm">Collapse</button>
           </div>
           <div className="relative">
             <button
               onClick={() => setIsColumnDropdownOpen(!isColumnDropdownOpen)}
-              className={`p-3 rounded-2xl border transition-all ${isColumnDropdownOpen ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-900 shadow-sm'}`}
+              className={`p-3 rounded-xl border transition-all ${isColumnDropdownOpen ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-900 shadow-sm'}`}
               title="Grid Configuration"
             >
               <Settings2 className="w-5 h-5" />
             </button>
             {isColumnDropdownOpen && (
-              <div className="absolute right-0 mt-4 bg-white border border-slate-100 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] p-6 w-72 z-50 animate-in fade-in zoom-in duration-300">
-                <p className="text-[9px] font-black text-slate-400 capitalize tracking-[0.2em] mb-4 px-2">Visibility Engine</p>
-                <div className="max-h-72 overflow-y-auto pr-2 space-y-1.5 custom-scrollbar">
+              <div className="absolute right-0 mt-4 bg-white border border-slate-100 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] p-8 w-72 z-50 animate-in fade-in zoom-in duration-300">
+                <p className="text-[10px] font-black text-slate-400 capitalize tracking-[0.2em] mb-6 px-2">Visibility Engine</p>
+                <div className="max-h-72 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
                   {allColumns.map(col => (
-                    <label key={col} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 cursor-pointer transition-all group border border-transparent hover:border-slate-100">
-                      <span className="text-[11px] font-black text-slate-600 capitalize tracking-tight group-hover:text-blue-600 transition-colors">{col}</span>
+                    <label key={col} className="flex items-center justify-between p-3 rounded-xl hover:bg-blue-50/50 cursor-pointer transition-all group border border-transparent hover:border-blue-100">
+                      <span className="text-xs font-black text-slate-600 capitalize tracking-tight group-hover:text-blue-600 transition-colors">{col}</span>
                       <div className="relative">
                         <input
                           type="checkbox"
                           checked={columns.includes(col)}
                           onChange={() => toggleColumn(col)}
-                          className="w-4 h-4 rounded-lg border-slate-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                          className="checkbox"
                         />
                       </div>
                     </label>
@@ -98,7 +98,7 @@ const InventoryList = () => {
       </div>
 
       {isFetching ? (
-        <div className="text-center py-40 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm">
+        <div className="text-center py-40 bg-white rounded-[2rem] border border-slate-100 shadow-sm">
           <Loader2 className="w-16 h-16 animate-spin mx-auto text-blue-600 opacity-20" />
           <p className="mt-8 text-xs font-black text-slate-300 capitalize tracking-[0.3em]">Synching with Infrastructure...</p>
         </div>
@@ -113,7 +113,7 @@ const InventoryList = () => {
                   onClick={() => toggleGroup(hg.hostgroup_id)}
                 >
                   <div className="flex-1 min-w-0 flex items-center gap-6">
-                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/30 rotate-3' : 'bg-slate-50 text-blue-600 group-hover:bg-blue-50'}`}>
+                    <div className={`w-16 h-16 rounded-xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/30 rotate-3' : 'bg-slate-50 text-blue-600 group-hover:bg-blue-50'}`}>
                       <Server className="w-7 h-7" />
                     </div>
                     <div className="space-y-1">
@@ -125,37 +125,37 @@ const InventoryList = () => {
                           <User className="w-3.5 h-3.5 text-blue-500 opacity-50" /> {hg.owner || 'ORPHAN_NODE'}
                         </div>
                         <div className="h-3 w-px bg-slate-200"></div>
-                        <div className="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-100 capitalize tracking-tighter">
+                        <div className="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-xl border border-blue-100 capitalize tracking-tighter">
                           {hg.hostnames?.length || 0} Nodes Enrolled
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-slate-900 text-white rotate-180' : 'bg-slate-50 text-slate-300 group-hover:text-slate-500'}`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-slate-900 text-white rotate-180' : 'bg-slate-50 text-slate-300 group-hover:text-slate-500'}`}>
                     <ChevronDown className="w-5 h-5" />
                   </div>
                 </div>
 
                 {isExpanded && (
-                  <div className="p-8 animate-in fade-in slide-in-from-top-4 duration-500 bg-white">
-                    <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-3xl shadow-inner bg-slate-50/20">
+                  <div className="p-8 bg-white border-t border-slate-50 animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-[2rem] shadow-inner bg-slate-50/20">
                       {hg.hostnames?.length > 0 ? (
                         <table className="w-full text-xs text-left border-collapse">
                           <thead>
-                            <tr className="bg-white border-b border-slate-100">
+                            <tr className="bg-blue-50/50 border-b border-blue-100">
                               {columns.map(col => (
-                                <th key={col} className="px-6 py-5 text-slate-400 font-black text-[9px] capitalize tracking-widest whitespace-nowrap">{col}</th>
+                                <th key={col} className="px-6 py-5 text-blue-800 font-black text-[9px] capitalize tracking-widest whitespace-nowrap">{col}</th>
                               ))}
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-100/50">
+                          <tbody className="divide-y divide-blue-50">
                             {hg.hostnames?.map((h: any) => (
-                              <tr key={h.hostname_id} className="hover:bg-blue-50/40 transition-all duration-200 group/row">
+                              <tr key={h.hostname_id} className="hover:bg-blue-100/50 transition-all duration-200 group/row">
                                 {columns.map(col => {
                                   const key = Object.keys(h).find(k => k.toLowerCase() === col.toLowerCase());
                                   const isMain = col.toLowerCase() === 'hostname' || col.toLowerCase() === 'ip';
                                   return (
-                                    <td key={col} className={`px-6 py-4 font-bold whitespace-nowrap transition-colors ${isMain ? 'text-slate-900 font-black group-hover/row:text-blue-700' : 'text-slate-500'}`}>
+                                    <td key={col} className={`px-6 py-4 font-bold whitespace-nowrap transition-colors ${isMain ? 'text-blue-900 font-black group-hover/row:text-blue-900' : 'text-slate-600'}`}>
                                       {key ? h[key] : '---'}
                                     </td>
                                   );
@@ -177,7 +177,7 @@ const InventoryList = () => {
             );
           })}
           {filteredHostgroups?.length === 0 && (
-            <div className="py-40 text-center bg-white rounded-[2.5rem] border border-slate-100 shadow-sm">
+            <div className="py-40 text-center bg-white rounded-[2rem] border border-slate-100 shadow-sm">
               <Search className="w-16 h-16 text-slate-100 mx-auto mb-6" />
               <p className="text-sm font-black text-slate-300 capitalize tracking-[0.3em]">No match found for query: "{searchTerm}"</p>
             </div>

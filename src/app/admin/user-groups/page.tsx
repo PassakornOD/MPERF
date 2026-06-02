@@ -83,112 +83,117 @@ const ManageUserGroups = () => {
 
     if (loading) return <div className="p-4 text-center"><Loader2 className="animate-spin w-6 h-6 mx-auto text-blue-600" /></div>;
 
-    return (
-        <div className="space-y-8 animate-ease-in">
-            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden transition-all hover:shadow-md">
-                <div className="p-8 space-y-8">
-                    <div className="flex justify-between items-center border-b border-slate-50 pb-6">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
-                                <Users className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Group Governance</h3>
-                                <p className="text-xs font-bold text-slate-400 capitalize mt-0.5">Organize users into logical administrative units</p>
-                            </div>
-                        </div>
-                        <button onClick={() => setIsCreateModalOpen(true)} className="bg-slate-900 text-white px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-all shadow-md flex items-center gap-2 group">
-                            <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                            <span className="text-xs font-black capitalize tracking-widest">Create Group</span>
-                        </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {data.groups.map((g: any) => {
-                            const currentPgs = mappings.groupPgs.filter((m: any) => m.ug_id === g.ug_id);
-                            const groupMembers = mappings.userGroups
-                                .filter((m: any) => m.ug_id === g.ug_id)
-                                .filter((m: any) => data.users.some((u: any) => u.user_id === m.user_id));
-                            
-                            return (
-                                <div key={g.ug_id} className="bg-slate-50/30 rounded-[1.5rem] border border-slate-100 p-6 flex flex-col gap-5 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 group">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-110 transition-transform">
-                                                <Users className="w-5 h-5" />
-                                            </div>
-                                            <h4 className="font-black text-slate-900 text-xs truncate max-w-[140px]">{g.ug_name}</h4>
-                                        </div>
-                                        <div className="relative">
-                                            {!['admin', 'sysadmin', 'operation'].includes(g.ug_name.toLowerCase()) && (
-                                                <>
-                                                    <button 
-                                                        onClick={() => setActiveMenu(activeMenu === g.ug_id ? null : g.ug_id)} 
-                                                        className={`p-2 rounded-xl transition-all ${activeMenu === g.ug_id ? 'bg-white shadow-sm text-slate-900' : 'text-slate-300 hover:text-slate-600 hover:bg-white hover:shadow-sm'}`}
-                                                    >
-                                                        <MoreVertical className="w-4 h-4" />
-                                                    </button>
-                                                    {activeMenu === g.ug_id && (
-                                                        <div className="absolute right-0 top-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] py-2 z-20 w-32 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                                                            <button onClick={() => {
-                                                                setEditingGroup(g);
-                                                                setEditFields({
-                                                                    ug_name: g.ug_name,
-                                                                    member_ids: groupMembers.map((m: any) => m.user_id),
-                                                                    pg_ids: currentPgs.map((m: any) => m.pg_id)
-                                                                });
-                                                                setActiveTab(0);
-                                                                setExpandedPgs([]);
-                                                                setIsAddingUser(false);
-                                                                setIsAddingPg(false);
-                                                                setActiveMenu(null);
-                                                            }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all">
-                                                                <Edit2 className="w-3.5 h-3.5" /> Edit Group
-                                                            </button>
-                                                            <button onClick={() => { setDeleteTargetId(g.ug_id); setIsDeleteModalOpen(true); setActiveMenu(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 transition-all border-t border-slate-50">
-                                                                <Trash2 className="w-3.5 h-3.5" /> Remove Group
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="space-y-4 pt-4 border-t border-slate-100/50 mt-auto">
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-[9px] font-black text-slate-400 capitalize tracking-widest">Enrolled Users</span>
-                                                <span className="bg-slate-200/50 text-slate-600 px-2 py-0.5 rounded-lg text-[9px] font-black tracking-tighter">{groupMembers.length}</span>
-                                            </div>
-                                            <div className="flex flex-wrap gap-1.5">
-                                                {groupMembers.length > 0 ? groupMembers.slice(0, 3).map((m: any) => {
-                                                    const user = data.users.find((u: any) => u.user_id === m.user_id);
-                                                    return user ? <span key={user.user_id} className="bg-white border border-slate-100 text-slate-500 px-2 py-1 rounded-lg font-bold text-[9px] shadow-sm">{user.username}</span> : null;
-                                                }) : <span className="text-[9px] font-bold text-slate-300 capitalize tracking-wider italic">No Members</span>}
-                                                {groupMembers.length > 3 && <span className="text-[9px] font-black text-blue-600 ml-1">+{groupMembers.length - 3} more</span>}
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-[9px] font-black text-slate-400 capitalize tracking-widest">Permissions</span>
-                                                <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-lg text-[9px] font-black tracking-tighter">{currentPgs.length} Active</span>
-                                            </div>
-                                            <div className="flex flex-wrap gap-1.5">
-                                                {currentPgs.length > 0 ? currentPgs.map((p: any) => {
-                                                    const pg = data.pgs.find((item: any) => item.pg_id === (p as any).pg_id);
-                                                    return pg ? <span key={(pg as any).pg_id} className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-1 rounded-lg font-black text-[8px] capitalize tracking-tighter shadow-sm">{pg.pg_name}</span> : null;
-                                                }) : <span className="text-[9px] font-bold text-slate-300 capitalize tracking-wider italic">None Assigned</span>}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
+  return (
+    <div className="space-y-8 animate-ease-in">
+      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden transition-all hover:shadow-md">
+        <div className="p-8 space-y-8">
+          <div className="flex items-center justify-between border-b border-slate-50 pb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                <Users className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Group Governance</h3>
+                <p className="text-xs font-bold text-slate-400 capitalize mt-0.5">Organize users into logical administrative units</p>
+              </div>
             </div>
+            <button onClick={() => setIsCreateModalOpen(true)} className="btn-primary flex items-center gap-2 group">
+                <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                <span className="text-xs font-black capitalize tracking-widest">Create Group</span>
+            </button>
+          </div>
+
+          <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-xl shadow-inner bg-slate-50/20">
+            <table className="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr className="bg-white border-b border-slate-100">
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Designation</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Enrolled Force</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Active Permissions</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100/50 bg-white">
+                {data.groups.map((g: any) => {
+                  const currentPgs = mappings.groupPgs.filter((m: any) => m.ug_id === g.ug_id);
+                  const groupMembers = mappings.userGroups
+                    .filter((m: any) => m.ug_id === g.ug_id)
+                    .filter((m: any) => data.users.some((u: any) => u.user_id === m.user_id));
+                  
+                  return (
+                    <tr key={g.ug_id} className="group/row hover:bg-emerald-50/40 transition-all duration-200 border-b border-slate-100/30 last:border-0">
+                      <td className="px-8 py-5">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm group-hover/row:scale-105 transition-all">
+                            <Users className="w-5 h-5" />
+                          </div>
+                          <p className="font-black text-slate-900 text-sm capitalize tracking-tight leading-none group-hover/row:text-emerald-700 transition-colors">{g.ug_name}</p>
+                        </div>
+                      </td>
+                      <td className="px-8 py-5">
+                        <div className="flex items-center gap-3">
+                          <div className="flex -space-x-2">
+                            {groupMembers.slice(0, 3).map((m: any) => (
+                              <div key={m.user_id} className="w-6 h-6 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[8px] font-black text-slate-400">
+                                {data.users.find(u => u.user_id === m.user_id)?.username.charAt(0).toUpperCase()}
+                              </div>
+                            ))}
+                          </div>
+                          <span className="text-[11px] font-black text-slate-600 tabular-nums">{groupMembers.length} <span className="text-[8px] text-slate-300 uppercase tracking-widest">Operators</span></span>
+                        </div>
+                      </td>
+                      <td className="px-8 py-5">
+                        <div className="flex flex-wrap gap-2 max-w-[280px]">
+                          {currentPgs.length > 0 ? currentPgs.map((p: any) => {
+                            const pg = data.pgs.find((item: any) => item.pg_id === (p as any).pg_id);
+                            return pg ? <span key={(pg as any).pg_id} className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2.5 py-1 rounded-xl font-black text-[8px] capitalize tracking-tighter shadow-sm whitespace-nowrap">{pg.pg_name}</span> : null;
+                          }) : <span className="text-[9px] font-bold text-slate-300 capitalize tracking-widest italic">Baseline Access</span>}
+                        </div>
+                      </td>
+                      <td className="px-8 py-5 text-right">
+                        <div className="relative flex justify-end">
+                          {!['admin', 'sysadmin', 'operation'].includes(g.ug_name.toLowerCase()) && (
+                            <>
+                              <button 
+                                onClick={() => setActiveMenu(activeMenu === g.ug_id ? null : g.ug_id)} 
+                                className={`p-2.5 rounded-xl transition-all border ${activeMenu === g.ug_id ? 'bg-white shadow-md text-slate-900 border-slate-200' : 'text-slate-300 hover:text-slate-600 border-transparent hover:bg-white hover:shadow-sm hover:border-slate-100'}`}
+                              >
+                                <MoreVertical className="w-4.5 h-4.5" />
+                              </button>
+                              {activeMenu === g.ug_id && (
+                                <div className="absolute right-0 top-full mt-2 bg-white border border-slate-100 rounded-xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15)] py-2 z-[100] w-44 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                                  <button onClick={() => {
+                                    setEditingGroup(g);
+                                    setEditFields({
+                                      ug_name: g.ug_name,
+                                      member_ids: groupMembers.map((m: any) => m.user_id),
+                                      pg_ids: currentPgs.map((m: any) => m.pg_id)
+                                    });
+                                    setActiveTab(0);
+                                    setExpandedPgs([]);
+                                    setIsAddingUser(false);
+                                    setIsAddingPg(false);
+                                    setActiveMenu(null);
+                                  }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all capitalize tracking-widest text-left">
+                                    <Edit2 className="w-4 h-4" /> Modify Group
+                                  </button>
+                                  <button onClick={() => { setDeleteTargetId(g.ug_id); setIsDeleteModalOpen(true); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-red-500 hover:bg-red-50 transition-all border-t border-slate-50 capitalize tracking-widest text-left">
+                                    <Trash2 className="w-4 h-4" /> Decommission
+                                  </button>
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
             <TabbedModal
                 isOpen={!!editingGroup}
@@ -200,8 +205,8 @@ const ManageUserGroups = () => {
                     {
                         label: 'General', content: (
                             <div className="space-y-8">
-                                <div className="flex gap-4 p-6 bg-slate-50/50 rounded-2xl items-center border border-slate-100 shadow-inner">
-                                    <div className="bg-white p-4 rounded-2xl text-emerald-600 shadow-sm border border-slate-100"><Users className="w-8 h-8" /></div>
+                                <div className="flex gap-4 p-6 bg-slate-50/50 rounded-xl items-center border border-slate-100 shadow-inner">
+                                    <div className="bg-white p-4 rounded-xl text-emerald-600 shadow-sm border border-slate-100"><Users className="w-8 h-8" /></div>
                                     <div>
                                         <p className="text-xs font-black text-slate-400 capitalize tracking-widest mb-0.5">Identification</p>
                                         <p className="font-black text-xl text-slate-900 tracking-tight">{editingGroup?.ug_name}</p>
@@ -229,7 +234,7 @@ const ManageUserGroups = () => {
                                     </button>
                                 </div>
 
-                                <div className="relative border border-slate-100 rounded-3xl p-6 pt-10 bg-slate-50/20 shadow-inner">
+                                <div className="relative border border-slate-100 rounded-xl p-6 pt-10 bg-slate-50/20 shadow-inner">
                                     <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-blue-600 border border-slate-100 rounded-full shadow-sm flex items-center gap-2">
                                         <User className="w-3.5 h-3.5" /> Group Members
                                     </span>
@@ -239,7 +244,7 @@ const ManageUserGroups = () => {
                                             {editFields.member_ids.map(uId => {
                                                 const user = data.users.find((u: any) => u.user_id === uId);
                                                 return user ? (
-                                                    <div key={uId} className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-2xl group/item hover:border-blue-200 transition-all shadow-sm">
+                                                    <div key={uId} className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl group/item hover:border-blue-200 transition-all shadow-sm">
                                                         <div className="flex items-center gap-3 overflow-hidden">
                                                             <div className="bg-slate-50 p-2 rounded-xl group-hover/item:scale-110 transition-transform flex-shrink-0"><User className="w-4 h-4 text-blue-600" /></div>
                                                             <span className="text-xs font-black text-slate-700 truncate">{user.username}</span>
@@ -263,7 +268,7 @@ const ManageUserGroups = () => {
                                 </div>
 
                                 {isAddingUser && (
-                                    <div className="relative border-2 border-dashed border-blue-100 rounded-3xl p-6 pt-10 bg-blue-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
+                                    <div className="relative border-2 border-dashed border-blue-100 rounded-xl p-6 pt-10 bg-blue-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
                                         <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
                                             <Plus className="w-3.5 h-3.5" /> Available Users
                                         </span>
@@ -278,7 +283,7 @@ const ManageUserGroups = () => {
                                                         await axios.post('/api/admin/user-groups/update', { ug_id: editingGroup.ug_id, ...editFields, member_ids: nextMembers });
                                                         fetchData();
                                                         setIsAddingUser(false);
-                                                    }} className="flex items-center gap-3 p-3 bg-white hover:bg-blue-600 hover:text-white border border-slate-100 rounded-2xl transition-all shadow-sm group/btn overflow-hidden text-left">
+                                                    }} className="flex items-center gap-3 p-3 bg-white hover:bg-blue-600 hover:text-white border border-slate-100 rounded-xl transition-all shadow-sm group/btn overflow-hidden text-left">
                                                         <div className="bg-slate-50 p-2 rounded-xl group-hover/btn:bg-blue-500 transition-colors shadow-inner"><User className="w-4 h-4 text-blue-600 group-hover/btn:text-white" /></div>
                                                         <span className="text-xs font-black capitalize tracking-tight truncate">{u.username}</span>
                                                     </button>
@@ -315,7 +320,7 @@ const ManageUserGroups = () => {
                                                         <span className="font-black text-xs text-slate-800 tracking-tight">{pg.pg_name}</span>
                                                     </div>
                                                     <div className="flex items-center gap-3">
-                                                        <span className="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg text-[9px] font-black capitalize tracking-tighter border border-emerald-100">{associatedHgs.length} Hostgroups</span>
+                                                        <span className="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-xl text-[9px] font-black capitalize tracking-tighter border border-emerald-100">{associatedHgs.length} Hostgroups</span>
                                                         {isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-slate-300" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-300" />}
                                                         <button onClick={async (e) => {
                                                             e.stopPropagation();
@@ -348,7 +353,7 @@ const ManageUserGroups = () => {
                                 </div>
 
                                 {isAddingPg && (
-                                    <div className="relative border-2 border-dashed border-emerald-100 rounded-3xl p-6 pt-10 bg-emerald-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
+                                    <div className="relative border-2 border-dashed border-emerald-100 rounded-xl p-6 pt-10 bg-emerald-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
                                         <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-emerald-600 border border-emerald-100 rounded-full shadow-sm flex items-center gap-2">
                                             <ShieldCheck className="w-3.5 h-3.5" /> Available Permissions
                                         </span>
@@ -363,7 +368,7 @@ const ManageUserGroups = () => {
                                                         await axios.post('/api/admin/user-groups/update', { ug_id: editingGroup.ug_id, ...editFields, pg_ids: nextPgs });
                                                         fetchData();
                                                         setIsAddingPg(false);
-                                                    }} className="flex items-center gap-3 p-3 bg-white hover:bg-emerald-600 hover:text-white border border-slate-100 rounded-2xl transition-all shadow-sm group/btn overflow-hidden text-left">
+                                                    }} className="flex items-center gap-3 p-3 bg-white hover:bg-emerald-600 hover:text-white border border-slate-100 rounded-xl transition-all shadow-sm group/btn overflow-hidden text-left">
                                                         <div className="bg-emerald-50 p-2 rounded-xl group-hover/btn:bg-emerald-500 transition-colors shadow-inner"><ShieldCheck className="w-4 h-4 text-emerald-600 group-hover/btn:text-white" /></div>
                                                         <span className="text-xs font-black capitalize tracking-tight truncate">{pg.pg_name}</span>
                                                     </button>
@@ -389,7 +394,7 @@ const ManageUserGroups = () => {
                         className={createError ? 'border-red-500 ring-4 ring-red-500/10' : ''}
                     />
                     {createError && <p className="text-xs font-bold text-red-500 pl-1 italic">{createError}</p>}
-                    <button onClick={createGroup} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-xs capitalize tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
+                    <button onClick={createGroup} className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-xs capitalize tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
                         Register Group <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </button>
                 </div>

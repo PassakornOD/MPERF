@@ -23,7 +23,7 @@ const UnifiedAdminDashboard = () => {
         </div>
         
         {/* Tabs */}
-        <div className="bg-slate-100 p-1 rounded-2xl inner-shadow flex w-fit border border-slate-200/50">
+        <div className="bg-slate-100 p-1 rounded-xl inner-shadow flex w-fit border border-slate-200/50">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (

@@ -116,7 +116,7 @@ const SarManagementPage = () => {
                 <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Analytics Scope</h3>
                 <p className="text-xs font-bold text-slate-400 capitalize">Select metric dimension for exploration</p>
             </div>
-            <div className="flex bg-slate-100 p-1 rounded-2xl inner-shadow w-fit border border-slate-200/50">
+            <div className="flex bg-slate-100 p-1 rounded-xl inner-shadow w-fit border border-slate-200/50">
               <button 
                 onClick={() => setType('cpu')} 
                 className={`px-8 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] transition-all duration-300 ${type === 'cpu' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
@@ -211,7 +211,7 @@ const SarManagementPage = () => {
       />
 
       {filterLevel === 'month' && summaryData.length > 0 && (
-          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-10 space-y-10 transition-all hover:shadow-lg">
+          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-10 space-y-10 transition-all hover:shadow-lg">
             <div className="flex items-center justify-between border-b border-slate-50 pb-6">
                 <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">
@@ -238,7 +238,7 @@ const SarManagementPage = () => {
                                 <span className="text-[11px] font-black text-slate-800 capitalize tracking-tight">{hostname}</span>
                                 <span className="text-[9px] font-black text-slate-300 capitalize tracking-widest">System ID: {id}</span>
                             </div>
-                            <div className="flex flex-wrap gap-2.5 p-6 bg-slate-50/30 rounded-3xl border border-slate-100 shadow-inner">
+                            <div className="flex flex-wrap gap-2.5 p-6 bg-slate-50/30 rounded-xl border border-slate-100 shadow-inner">
                                 {records.map((s: any) => {
                                     const dateObj = new Date(s.date);
                                     const d = String(dateObj.getDate()).padStart(2, '0');
@@ -259,15 +259,15 @@ const SarManagementPage = () => {
       )}
 
       {queryData.length > 0 && (
-        <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden transition-all hover:shadow-lg animate-in fade-in slide-in-from-top-4 duration-500">
-          <div className="overflow-x-auto custom-scrollbar">
+        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden transition-all hover:shadow-lg animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-xl shadow-inner bg-slate-50/20 mx-10 my-10">
             <table className="w-full text-xs text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50/50 text-slate-400 font-black capitalize text-[9px] tracking-widest border-b border-slate-100">
+                <tr className="bg-white text-slate-400 font-black capitalize text-[9px] tracking-widest border-b border-slate-100">
                   {Object.keys(queryData[0]).map(key => <th key={key} className="px-10 py-6 whitespace-nowrap">{key}</th>)}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-50">
+              <tbody className="divide-y divide-slate-100/50 bg-white">
                 {queryData.map((row, idx) => (
                   <tr key={idx} className="hover:bg-blue-50/30 transition-all duration-200 group">
                     {Object.entries(row).map(([key, val]: [string, any], i) => (
@@ -283,7 +283,7 @@ const SarManagementPage = () => {
           <div className="px-10 py-8 bg-slate-50/30 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-3">
                   <span className="text-xs font-black text-slate-400 capitalize tracking-[0.2em]">Viewing Page</span>
-                  <div className="bg-white border border-slate-200 px-3 py-1 rounded-lg font-black text-xs text-blue-600 shadow-sm">{page} <span className="text-slate-300 font-medium px-1">/</span> {totalPages}</div>
+                  <div className="bg-white border border-slate-200 px-3 py-1 rounded-xl font-black text-xs text-blue-600 shadow-sm">{page} <span className="text-slate-300 font-medium px-1">/</span> {totalPages}</div>
                   <span className="text-xs font-black text-slate-300 capitalize tracking-widest ml-4">Total Population: {total.toLocaleString()} Records</span>
               </div>
               <div className="flex gap-2">

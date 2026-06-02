@@ -46,7 +46,7 @@ export default function Dashboard() {
           { href: "/inventory/list", title: "Inventory", desc: "Asset management & browsing", icon: Package, color: "purple" }
         ].map((item) => (
           <Link key={item.title} href={item.href} className="modern-card p-8 flex flex-col gap-5 group">
-            <div className={`w-12 h-12 rounded-2xl bg-${item.color}-50 text-${item.color}-600 flex items-center justify-center shadow-sm group-hover:bg-${item.color}-600 group-hover:text-white transition-all duration-300`}>
+            <div className={`w-12 h-12 rounded-xl bg-${item.color}-50 text-${item.color}-600 flex items-center justify-center shadow-sm group-hover:bg-${item.color}-600 group-hover:text-white transition-all duration-300`}>
               <item.icon className="w-6 h-6" />
             </div>
             <div>
@@ -84,13 +84,13 @@ export default function Dashboard() {
         {/* Display Filtered Hostnames */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {selectedGroups.map((group: any) => (
-            <div key={group.hostgroup_id} className="bg-slate-50/50 rounded-2xl border border-slate-100 p-6 flex flex-col gap-4 animate-ease-in">
+            <div key={group.hostgroup_id} className="bg-slate-50/50 rounded-xl border border-slate-100 p-6 flex flex-col gap-4 animate-ease-in">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h4 className="font-black text-slate-800 capitalize tracking-tight text-sm flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-500" />
                   {group.hostgroup}
                 </h4>
-                <span className="text-xs font-black text-slate-400 bg-white px-2 py-0.5 rounded-lg border border-slate-100">{group.hostnames.length} Hosts</span>
+                <span className="text-xs font-black text-slate-400 bg-white px-2 py-0.5 rounded-xl border border-slate-100">{group.hostnames.length} Hosts</span>
               </div>
               <ul className="grid grid-cols-1 gap-2">
                 {group.hostnames.map((h: any) => (
@@ -103,7 +103,7 @@ export default function Dashboard() {
             </div>
           ))}
           {selectedGroupIds.length === 0 && (
-            <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-100 rounded-3xl">
+            <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-100 rounded-xl">
               <Package className="w-12 h-12 text-slate-100 mx-auto mb-4" />
               <p className="text-sm font-bold text-slate-300 capitalize tracking-widest">No groups selected to explore</p>
             </div>

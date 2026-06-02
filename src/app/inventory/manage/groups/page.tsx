@@ -12,7 +12,7 @@ import { useToast } from '@/components/common/Toast';
 import FloatingInput from '@/components/common/FloatingInput';
 
 const allColumns = [
-    { id: 'hostname', label: 'Hostname' },
+    { id: 'hostname', label: 'Network Node' },
     { id: 'IP', label: 'IP Address' },
     { id: 'OS', label: 'OS' },
     { id: 'CPU', label: 'CPU' },
@@ -34,7 +34,7 @@ const ManageAssetsPage = () => {
 
   const canCreate = checkPermission(user?.role, 'create');
   const canUpdate = checkPermission(user?.role, 'update');
-  const canDelete = checkPermission(user?.role, 'delete');
+  const canDecommission = checkPermission(user?.role, 'delete');
   
   const [expandedGroups, setExpandedGroups] = useState<number[]>([]);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
@@ -77,7 +77,7 @@ const ManageAssetsPage = () => {
       setIsGroupModalOpen(false);
       setEditingGroup(null);
       setNewGroup({ hostgroup: '', owner: '', pg_id: '' });
-      showToast(editingGroup ? "Hostgroup updated" : "Hostgroup created", 'success');
+      showToast(editingGroup ? "Infrastructure Group updated" : "Infrastructure Group created", 'success');
     },
     onError: (err: any) => {
       showToast(err.response?.data?.error || 'Failed to save hostgroup', 'error');
@@ -88,7 +88,7 @@ const ManageAssetsPage = () => {
     mutationFn: (id: number) => axios.delete(`/api/inventory/hostgroups?id=${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['hostgroups-manage-all'] });
-      showToast("Hostgroup deleted successfully", 'success');
+      showToast("Infrastructure Group deleted successfully", 'success');
     },
     onError: (err: any) => {
       showToast(err.response?.data?.error || 'Failed to delete hostgroup', 'error');
@@ -102,7 +102,7 @@ const ManageAssetsPage = () => {
         setIsHostModalOpen(false);
         setEditingHost(null);
         setHostForm({ hostname: '', hostgroup_id: '', System: '', Location: '', IP: '', Model: '', CPU: '', Disk: '', OS: '', Serial: '', MA: '', mem: '', Pagesize: '4096' });
-        showToast(editingHost ? "Hostname updated successfully" : "Hostname created successfully", 'success');
+        showToast(editingHost ? "Network Node updated successfully" : "Network Node created successfully", 'success');
     },
     onError: (err: any) => {
       showToast(err.response?.data?.error || 'Failed to save host', 'error');
@@ -113,7 +113,7 @@ const ManageAssetsPage = () => {
     mutationFn: (id: string) => axios.delete(`/api/inventory/hostnames?id=${id}`),
     onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['hostnames-manage-all'] });
-        showToast("Hostname deleted successfully", 'success');
+        showToast("Network Node deleted successfully", 'success');
     },
     onError: (err: any) => {
         showToast(err.response?.data?.error || 'Failed to delete host', 'error');
@@ -144,12 +144,12 @@ const ManageAssetsPage = () => {
       setIsHostModalOpen(true);
   };
 
-  const handleDeleteClick = (type: 'group' | 'host', id: number | string) => {
+  const handleDecommissionClick = (type: 'group' | 'host', id: number | string) => {
       setConfirmData({ type, id });
       setIsConfirmOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDecommission = () => {
       if (!confirmData) return;
       if (confirmData.type === 'group') {
           deleteGroupMutation.mutate(confirmData.id as number);
@@ -194,10 +194,10 @@ const ManageAssetsPage = () => {
                     placeholder="Search Infrastructure..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-12 pr-10 py-3 bg-white border border-slate-100 rounded-2xl text-xs font-black capitalize tracking-tight focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all shadow-inner"
+                    className="w-full pl-12 pr-10 py-3 bg-white border border-slate-100 rounded-xl text-xs font-black capitalize tracking-tight focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all shadow-inner"
                 />
                 {searchTerm && (
-                    <button onClick={() => setSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 hover:bg-slate-50 rounded-lg transition-all text-slate-300 hover:text-slate-600">
+                    <button onClick={() => setSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 hover:bg-slate-50 rounded-xl transition-all text-slate-300 hover:text-slate-600">
                         <X className="w-3.5 h-3.5" />
                     </button>
                 )}
@@ -205,7 +205,7 @@ const ManageAssetsPage = () => {
             <div className="relative">
                 <button 
                     onClick={() => setShowColumnSelector(!showColumnSelector)} 
-                    className={`p-3 rounded-2xl border transition-all ${showColumnSelector ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-900 shadow-sm'}`}
+                    className={`p-3 rounded-xl border transition-all ${showColumnSelector ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-900 shadow-sm'}`}
                     title="Grid Configuration"
                 >
                     <Settings2 className="w-5 h-5" />
@@ -230,10 +230,10 @@ const ManageAssetsPage = () => {
             </div>
             {canCreate && (
               <div className="flex items-center gap-2">
-                <button onClick={() => { setEditingGroup(null); setNewGroup({ hostgroup: '', owner: '', pg_id: '' }); setIsGroupModalOpen(true); }} className="bg-blue-600 text-white px-6 py-3 rounded-2xl text-xs font-black capitalize tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2">
+                <button onClick={() => { setEditingGroup(null); setNewGroup({ hostgroup: '', owner: '', pg_id: '' }); setIsGroupModalOpen(true); }} className="bg-blue-600 text-white px-6 py-3 rounded-xl text-xs font-black capitalize tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2">
                     <Plus className="w-4 h-4" /> Group
                 </button>
-                <button onClick={() => { setEditingHost(null); setHostForm({ hostname: '', hostgroup_id: '', System: '', Location: '', IP: '', Model: '', CPU: '', Disk: '', OS: '', Serial: '', MA: '', mem: '', Pagesize: '4096' }); setIsHostModalOpen(true); }} className="bg-slate-900 text-white px-6 py-3 rounded-2xl text-xs font-black capitalize tracking-widest hover:bg-black transition-all shadow-lg shadow-slate-200 flex items-center gap-2">
+                <button onClick={() => { setEditingHost(null); setHostForm({ hostname: '', hostgroup_id: '', System: '', Location: '', IP: '', Model: '', CPU: '', Disk: '', OS: '', Serial: '', MA: '', mem: '', Pagesize: '4096' }); setIsHostModalOpen(true); }} className="bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black capitalize tracking-widest hover:bg-black transition-all shadow-lg shadow-slate-200 flex items-center gap-2">
                     <Plus className="w-4 h-4" /> Node
                 </button>
               </div>
@@ -254,14 +254,14 @@ const ManageAssetsPage = () => {
                 onClick={() => toggleGroup(hg.hostgroup_id)}
               >
                 <div className="flex-1 min-w-0 flex items-center gap-6">
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/30 rotate-3' : 'bg-slate-50 text-blue-600 group-hover:bg-blue-50'}`}>
+                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/30 rotate-3' : 'bg-slate-50 text-blue-600 group-hover:bg-blue-50'}`}>
                         <Folder className="w-6 h-6" />
                     </div>
                     <div className="space-y-1">
                         <h4 className="font-black text-slate-900 text-lg capitalize tracking-tight leading-none">{hg.hostgroup}</h4>
                         <div className="flex items-center gap-3">
                             <span className="text-xs font-black text-slate-400 capitalize tracking-[0.2em]">{groupHosts.length} Active Nodes</span>
-                            {isProtected && <span className="bg-slate-900 text-white text-[8px] font-black capitalize px-2 py-0.5 rounded-lg tracking-tighter">System Protected</span>}
+                            {isProtected && <span className="bg-slate-900 text-white text-[8px] font-black capitalize px-2 py-0.5 rounded-xl tracking-tighter">System Protected</span>}
                         </div>
                     </div>
                 </div>
@@ -269,8 +269,8 @@ const ManageAssetsPage = () => {
                     {canUpdate && !isProtected && (
                         <button onClick={(e) => { e.stopPropagation(); setEditingGroup(hg); setIsGroupModalOpen(true); }} className="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-blue-600 hover:bg-white hover:shadow-sm rounded-xl transition-all border border-transparent hover:border-slate-100"><Edit className="w-4.5 h-4.5" /></button>
                     )}
-                    {canDelete && !isProtected && (
-                        <button onClick={(e) => { e.stopPropagation(); handleDeleteClick('group', hg.hostgroup_id); }} className="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-red-600 hover:bg-white hover:shadow-sm rounded-xl transition-all border border-transparent hover:border-slate-100"><Trash2 className="w-4.5 h-4.5" /></button>
+                    {canDecommission && !isProtected && (
+                        <button onClick={(e) => { e.stopPropagation(); handleDecommissionClick('group', hg.hostgroup_id); }} className="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-red-600 hover:bg-white hover:shadow-sm rounded-xl transition-all border border-transparent hover:border-slate-100"><Trash2 className="w-4.5 h-4.5" /></button>
                     )}
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-slate-900 text-white rotate-180' : 'bg-slate-50 text-slate-300 group-hover:text-slate-500'}`}>
                       <ChevronDown className="w-5 h-5" />
@@ -280,7 +280,7 @@ const ManageAssetsPage = () => {
               
               {isExpanded && (
                 <div className="p-8 animate-in fade-in slide-in-from-top-4 duration-500 bg-white">
-                    <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-3xl shadow-inner bg-slate-50/20">
+                    <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-xl shadow-inner bg-slate-50/20">
                         <table className="w-full text-xs text-left border-collapse">
                             <thead>
                                 <tr className="bg-white border-b border-slate-100">
@@ -316,8 +316,8 @@ const ManageAssetsPage = () => {
                                                 {canUpdate && (
                                                     <button onClick={() => handleEditHost(h)} className="p-2 bg-white text-slate-400 hover:text-blue-600 border border-slate-100 rounded-xl shadow-sm hover:shadow-md transition-all"><Edit className="w-3.5 h-3.5" /></button>
                                                 )}
-                                                {canDelete && (
-                                                    <button onClick={() => handleDeleteClick('host', h.hostname_id)} className="p-2 bg-white text-slate-400 hover:text-red-500 border border-slate-100 rounded-xl shadow-sm hover:shadow-md transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
+                                                {canDecommission && (
+                                                    <button onClick={() => handleDecommissionClick('host', h.hostname_id)} className="p-2 bg-white text-slate-400 hover:text-red-500 border border-slate-100 rounded-xl shadow-sm hover:shadow-md transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
                                                 )}
                                             </div>
                                         </td>
@@ -341,7 +341,7 @@ const ManageAssetsPage = () => {
       </div>
 
       {/* Group Modal */}
-      <Modal isOpen={isGroupModalOpen} onClose={() => { setIsGroupModalOpen(false); setEditingGroup(null); }} title={editingGroup ? "Modify Hostgroup Configuration" : "New Hostgroup Registration"} maxWidth="max-w-md">
+      <Modal isOpen={isGroupModalOpen} onClose={() => { setIsGroupModalOpen(false); setEditingGroup(null); }} title={editingGroup ? "Modify Infrastructure Group Configuration" : "New Infrastructure Group Registration"} maxWidth="max-w-md">
           <div className="space-y-6 pt-2">
             <FloatingInput 
                 label="Group Identity Name" 
@@ -355,7 +355,7 @@ const ManageAssetsPage = () => {
             />
             <div className="relative group">
                 <select 
-                    className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-2xl text-xs font-black capitalize tracking-tight bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner" 
+                    className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-xl text-xs font-black capitalize tracking-tight bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner" 
                     value={editingGroup ? editingGroup.pg_id : newGroup.pg_id} 
                     onChange={e => editingGroup ? setEditingGroup({...editingGroup, pg_id: e.target.value}) : setNewGroup({...newGroup, pg_id: e.target.value})}
                 >
@@ -368,7 +368,7 @@ const ManageAssetsPage = () => {
             <button 
                 onClick={() => groupMutation.mutate(editingGroup ? { hostgroup_id: editingGroup.hostgroup_id, hostgroup: editingGroup.hostgroup, owner: editingGroup.owner, pg_id: editingGroup.pg_id } : newGroup)} 
                 disabled={groupMutation.isPending}
-                className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-xs capitalize tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50 mt-4 flex items-center justify-center group"
+                className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-xs capitalize tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50 mt-4 flex items-center justify-center group"
             >
                 {groupMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : (
                     <>
@@ -379,7 +379,7 @@ const ManageAssetsPage = () => {
           </div>
       </Modal>
 
-      {/* Hostname Modal */}
+      {/* Network Node Modal */}
       <Modal isOpen={isHostModalOpen} onClose={() => { setIsHostModalOpen(false); setEditingHost(null); }} title={editingHost ? `Update node: ${editingHost.hostname}` : "New Node Registration"} maxWidth="max-w-2xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
             {Object.keys(hostForm).map(key => (
@@ -389,7 +389,7 @@ const ManageAssetsPage = () => {
                             <select 
                                 value={hostForm.hostgroup_id} 
                                 onChange={e => setHostForm({...hostForm, hostgroup_id: e.target.value})} 
-                                className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-2xl text-xs font-black capitalize tracking-tight bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner"
+                                className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-xl text-xs font-black capitalize tracking-tight bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner"
                             >
                                 <option value="" disabled hidden></option>
                                 {hostGroups.map((g: any) => <option key={g.hostgroup_id} value={g.hostgroup_id}>{g.hostgroup}</option>)}
@@ -402,7 +402,7 @@ const ManageAssetsPage = () => {
                             <select 
                                 value={hostForm.OS} 
                                 onChange={e => setHostForm({...hostForm, OS: e.target.value})} 
-                                className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-2xl text-xs font-black capitalize tracking-tight bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner"
+                                className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-xl text-xs font-black capitalize tracking-tight bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner"
                             >
                                 <option value="" disabled hidden></option>
                                 <option value="Red Hat">Red Hat Enterprise Linux</option>
@@ -428,7 +428,7 @@ const ManageAssetsPage = () => {
             <button 
                 onClick={() => hostMutation.mutate(editingHost ? { ...hostForm, hostname_id: editingHost.hostname_id } : hostForm)} 
                 disabled={hostMutation.isPending}
-                className="md:col-span-2 bg-slate-900 text-white py-4 rounded-2xl font-black text-xs capitalize tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-slate-200 disabled:opacity-50 mt-4 flex items-center justify-center group"
+                className="md:col-span-2 bg-slate-900 text-white py-4 rounded-xl font-black text-xs capitalize tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-slate-200 disabled:opacity-50 mt-4 flex items-center justify-center group"
             >
                 {hostMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : (
                     <>
@@ -442,8 +442,8 @@ const ManageAssetsPage = () => {
       <ConfirmModal 
         isOpen={isConfirmOpen} 
         onClose={() => setIsConfirmOpen(false)} 
-        onConfirm={handleConfirmDelete}
-        title={confirmData?.type === 'group' ? 'Delete Hostgroup' : 'Delete Hostname'}
+        onConfirm={handleConfirmDecommission}
+        title={confirmData?.type === 'group' ? 'Decommission Infrastructure Group' : 'Decommission Network Node'}
         message={
             confirmData?.type === 'group' 
             ? "Are you sure you want to delete this hostgroup? All associated hostnames and their performance data tables will be permanently removed. This action cannot be undone."

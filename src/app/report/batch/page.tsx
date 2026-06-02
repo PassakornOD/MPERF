@@ -425,14 +425,14 @@ const BatchReportPage = () => {
 
     return (
         <div className="max-w-7xl mx-auto space-y-10 animate-ease-in px-4 sm:px-6">
-            <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden">
+            <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700"><FileText size={120} /></div>
                 <div className="relative z-10 space-y-2">
-                    <h2 className="text-2xl font-black text-slate-900 capitalize italic tracking-tight leading-none">Automated Batches</h2>
+                    <h2 className="text-2xl font-black text-slate-900 capitalize italic tracking-tight leading-none">Batch Processing</h2>
                     <p className="text-sm font-medium text-slate-400 tracking-tight">Deploy pre-configured reporting cycles for global infrastructure visibility</p>
                 </div>
-                <button onClick={() => { setEditingTemplateId(null); setTemplateName(''); setReportTitle(''); setSelectedHostnames([]); setStep(1); setIsModalOpen(true); }} className="relative z-10 flex items-center justify-center gap-3 bg-blue-600 text-white px-8 py-3 rounded-2xl font-black text-xs capitalize tracking-[0.2em] transition-all hover:bg-blue-700 shadow-xl shadow-blue-500/20 active:scale-95 group">
-                    <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" /> New Architecture
+                <button onClick={() => { setEditingTemplateId(null); setTemplateName(''); setReportTitle(''); setSelectedHostnames([]); setStep(1); setIsModalOpen(true); }} className="relative z-10 flex items-center justify-center gap-3 bg-blue-600 text-white px-8 py-3 rounded-xl font-black text-xs capitalize tracking-[0.2em] transition-all hover:bg-blue-700 shadow-xl shadow-blue-500/20 active:scale-95 group">
+                    <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" /> Create Template
                 </button>
             </header>
 
@@ -444,26 +444,26 @@ const BatchReportPage = () => {
                         </div>
                         <h3 className="text-sm font-black text-slate-800 capitalize tracking-widest">Saved Configurations</h3>
                     </div>
-                    <span className="bg-slate-100 text-slate-400 px-3 py-1 rounded-lg text-[9px] font-black capitalize tracking-widest border border-slate-50">{templates.length} Units</span>
+                    <span className="bg-slate-100 text-slate-400 px-3 py-1 rounded-xl text-[9px] font-black capitalize tracking-widest border border-slate-50">{templates.length} Units</span>
                 </div>
                 {isLoadingTemplates ? (
-                    <div className="py-32 text-center bg-white rounded-[2.5rem] border border-slate-100 shadow-sm">
+                    <div className="py-32 text-center bg-white rounded-[2rem] border border-slate-100 shadow-sm">
                         <Loader2 className="w-16 h-16 animate-spin mx-auto text-blue-600 opacity-20" />
                         <p className="text-xs font-black text-slate-300 capitalize tracking-[0.3em] mt-8">Synchronizing blueprints...</p>
                     </div>
                 ) : templates.length > 0 ? (
                     <div className="grid grid-cols-1 gap-4">
                         {templates.map((template) => (
-                            <div key={template.id} className="flex flex-col lg:flex-row lg:items-center gap-6 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)] hover:border-blue-200 transition-all duration-500 group">
+                            <div key={template.id} className="flex flex-col lg:flex-row lg:items-center gap-6 bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)] hover:border-blue-200 transition-all duration-500 group">
                                 {/* Col 1 */}
                                 <div className="flex items-center gap-5 min-w-[240px]">
-                                    <div className="bg-slate-50 p-4 rounded-2xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-inner">
+                                    <div className="bg-slate-50 p-4 rounded-xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-inner">
                                         <FileText className="w-6 h-6" />
                                     </div>
                                     <div className="flex flex-col">
                                         <div className="flex items-center gap-3 mb-1">
                                             <h4 className="font-black text-slate-900 text-sm capitalize tracking-tight leading-tight">{template.name}</h4>
-                                            <span className="bg-slate-100 text-slate-400 text-[8px] font-black capitalize px-2 py-0.5 rounded-lg border border-slate-50 tracking-widest">#{template.id}</span>
+                                            <span className="bg-slate-100 text-slate-400 text-[8px] font-black capitalize px-2 py-0.5 rounded-xl border border-slate-50 tracking-widest">#{template.id}</span>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <Clock className="w-3.5 h-3.5 text-slate-300" />
@@ -479,10 +479,10 @@ const BatchReportPage = () => {
                                         <span className="text-xs font-black capitalize tracking-tight truncate max-w-[300px]">{template.reportTitle || 'NO_HEADING_DEFINED'}</span>
                                     </div>
                                     <div className="flex flex-wrap gap-3">
-                                        <span className="bg-white border border-slate-100 text-slate-500 px-4 py-1 rounded-lg text-[9px] font-black capitalize tracking-widest flex items-center gap-2 shadow-sm">
+                                        <span className="bg-white border border-slate-100 text-slate-500 px-4 py-1 rounded-xl text-[9px] font-black capitalize tracking-widest flex items-center gap-2 shadow-sm">
                                             <Monitor className="w-3.5 h-3.5 text-blue-500 opacity-40" /> {template.hosts.length} NODES
                                         </span>
-                                        <span className="bg-white border border-slate-100 text-slate-500 px-4 py-1 rounded-lg text-[9px] font-black capitalize tracking-widest flex items-center gap-2 shadow-sm">
+                                        <span className="bg-white border border-slate-100 text-slate-500 px-4 py-1 rounded-xl text-[9px] font-black capitalize tracking-widest flex items-center gap-2 shadow-sm">
                                             <BarChart3 className="w-3.5 h-3.5 text-emerald-500 opacity-40" /> {template.charts.length} DIMENSIONS
                                         </span>
                                     </div>
@@ -505,12 +505,12 @@ const BatchReportPage = () => {
                                     <div className="relative">
                                         <button onClick={() => setActiveDropdown(activeDropdown === template.id ? null : template.id)} className={`p-2.5 rounded-xl transition-all border ${activeDropdown === template.id ? 'bg-slate-100 border-slate-200 text-slate-900' : 'bg-white border-slate-100 text-slate-300 hover:text-slate-600 shadow-sm'}`}><MoreVertical className="w-4.5 h-4.5" /></button>
                                         {activeDropdown === template.id && (
-                                            <div className="absolute right-0 top-full mt-3 w-40 bg-white rounded-2xl border border-slate-100 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] z-[60] overflow-hidden p-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                                            <div className="absolute right-0 top-full mt-3 w-40 bg-white rounded-xl border border-slate-100 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] z-[60] overflow-hidden p-2 animate-in fade-in slide-in-from-top-2 duration-300">
                                                 <button onClick={() => { handleEditTemplate(template); setActiveDropdown(null); }} className="w-full flex items-center gap-3 px-4 py-3 text-xs font-black capitalize tracking-widest text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-xl transition-all">
                                                     <Edit2 className="w-3.5 h-3.5" /> Modify
                                                 </button>
                                                 <button onClick={() => { handleDeleteTemplate(template.id); setActiveDropdown(null); }} className="w-full flex items-center gap-3 px-4 py-3 text-xs font-black capitalize tracking-widest text-red-500 hover:bg-red-50 rounded-xl transition-all border-t border-slate-50">
-                                                    <Trash2 className="w-3.5 h-3.5" /> Purge
+                                                    <Trash2 className="w-3.5 h-3.5" /> Delete
                                                 </button>
                                             </div>
                                         )}
@@ -539,7 +539,7 @@ const BatchReportPage = () => {
                     <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-[9px] font-black capitalize tracking-[0.1em] shadow-lg shadow-blue-500/20">{backgroundJobs.length} Monitor Streams</span>
                 </div>
 
-                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden transition-all hover:shadow-md animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden transition-all hover:shadow-md animate-in fade-in slide-in-from-top-4 duration-500">
                     <div className="overflow-x-auto custom-scrollbar">
                         <table className="w-full text-left border-collapse">
                             <thead>
@@ -574,8 +574,8 @@ const BatchReportPage = () => {
                                                         </div>
                                                         <span className="text-xs font-black text-slate-400 tabular-nums">{job.progress}%</span>
                                                     </div>
-                                                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden shadow-inner border border-slate-50">
-                                                        <div className={`h-full transition-all duration-1000 ease-out rounded-full ${
+                                                    <div className="progress-bar border border-slate-50 shadow-inner">
+                                                        <div className={`progress-value ${
                                                             job.status === 'completed' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' :
                                                             job.status === 'failed' ? 'bg-red-500' : 'bg-blue-600'
                                                             }`} style={{ width: `${job.progress}%` }}></div>
@@ -591,7 +591,7 @@ const BatchReportPage = () => {
                                                                 download
                                                                 className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-[9px] font-black capitalize tracking-widest hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 shadow-sm"
                                                             >
-                                                                <Download className="w-3.5 h-3.5" /> Acquire PDF
+                                                                <Download className="w-3.5 h-3.5" /> Export PDF
                                                             </a>
                                                             <button
                                                                 onClick={() => {
@@ -599,7 +599,7 @@ const BatchReportPage = () => {
                                                                     setIsDeleteJobConfirmOpen(true);
                                                                 }}
                                                                 className="p-2.5 bg-white text-slate-300 hover:text-red-600 rounded-xl hover:bg-red-50 transition-all border border-slate-100 hover:border-red-100 shadow-sm"
-                                                                title="Purge Stream Data"
+                                                                title="Delete Stream Data"
                                                             >
                                                                 <Trash2 className="w-4 h-4" />
                                                             </button>
@@ -626,14 +626,14 @@ const BatchReportPage = () => {
                                                                     setIsDeleteJobConfirmOpen(true);
                                                                 }}
                                                                 className="p-2.5 bg-white text-slate-300 hover:text-red-600 rounded-xl hover:bg-red-50 transition-all border border-slate-100 hover:border-red-100 shadow-sm"
-                                                                title="Purge Stream Data"
+                                                                title="Delete Stream Data"
                                                             >
                                                                 <Trash2 className="w-4 h-4" />
                                                             </button>
                                                         </>
                                                     ) : (
                                                         <div className="px-4 py-2 bg-slate-50 text-slate-400 rounded-xl text-[9px] font-black capitalize tracking-[0.2em] border border-slate-100 flex items-center gap-2 italic opacity-60">
-                                                            <Clock className="w-3.5 h-3.5" /> Processing Sequence...
+                                                            <Clock className="w-3.5 h-3.5" /> Processing...
                                                         </div>
                                                     )}
                                                 </div>
@@ -681,7 +681,7 @@ const BatchReportPage = () => {
                                 <select
                                     value={month}
                                     onChange={e => setMonth(e.target.value)}
-                                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl p-4 text-xs font-black capitalize tracking-tight outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center cursor-pointer"
+                                    className="w-full bg-slate-50/50 border border-slate-100 rounded-xl p-4 text-xs font-black capitalize tracking-tight outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center cursor-pointer"
                                 >
                                     {Array.from({ length: 12 }, (_, i) => <option key={i + 1} value={String(i + 1)}>{new Date(2000, i).toLocaleString('en-US', { month: 'long' })}</option>)}
                                 </select>
@@ -694,16 +694,16 @@ const BatchReportPage = () => {
                                 type="number"
                                 value={year}
                                 onChange={e => setYear(e.target.value)}
-                                className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl p-4 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner text-center"
+                                className="w-full bg-slate-50/50 border border-slate-100 rounded-xl p-4 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner text-center"
                             />
                         </div>
                     </div>
 
                     <div className="pt-6 border-t border-slate-50 flex gap-4">
-                        <button onClick={() => setIsBackgroundModalOpen(false)} className="flex-1 py-4 rounded-2xl font-black text-xs capitalize text-slate-300 hover:text-slate-900 transition-all tracking-[0.2em] border border-transparent hover:border-slate-100">Cancel</button>
+                        <button onClick={() => setIsBackgroundModalOpen(false)} className="flex-1 py-4 rounded-xl font-black text-xs capitalize text-slate-300 hover:text-slate-900 transition-all tracking-[0.2em] border border-transparent hover:border-slate-100">Cancel</button>
                         <button
                             onClick={triggerBackgroundJob}
-                            className="flex-1 bg-slate-900 text-white py-4 rounded-2xl font-black text-xs capitalize hover:bg-black transition-all shadow-xl shadow-slate-200 tracking-[0.2em] flex items-center justify-center gap-3 group active:scale-95"
+                            className="flex-1 bg-slate-900 text-white py-4 rounded-xl font-black text-xs capitalize hover:bg-black transition-all shadow-xl shadow-slate-200 tracking-[0.2em] flex items-center justify-center gap-3 group active:scale-95"
                         >
                             <Zap className="w-4 h-4 text-yellow-400 group-hover:scale-125 transition-transform duration-500" /> Commence
                         </button>
@@ -770,16 +770,16 @@ const BatchReportPage = () => {
                     </div>
 
                     <div className="flex justify-between items-center pt-8 border-t border-slate-100">
-                        <button onClick={() => setIsModalOpen(false)} className="px-8 py-3 rounded-2xl font-black text-xs capitalize tracking-[0.2em] text-slate-300 hover:text-slate-900 transition-all border border-transparent hover:border-slate-100">Abort</button>
+                        <button onClick={() => setIsModalOpen(false)} className="px-8 py-3 rounded-xl font-black text-xs capitalize tracking-[0.2em] text-slate-300 hover:text-slate-900 transition-all border border-transparent hover:border-slate-100">Abort</button>
                         <div className="flex gap-3">
-                            {step > 1 && <button onClick={() => setStep(step - 1)} className="px-8 py-3 rounded-2xl font-black text-xs capitalize tracking-[0.2em] bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-100 transition-all shadow-sm">Previous</button>}
+                            {step > 1 && <button onClick={() => setStep(step - 1)} className="px-8 py-3 rounded-xl font-black text-xs capitalize tracking-[0.2em] bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-100 transition-all shadow-sm">Previous</button>}
                             {step < 3 ? (
-                                <button onClick={() => setStep(step + 1)} className="px-12 py-3 rounded-2xl font-black text-xs capitalize tracking-[0.2em] bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-500/20 transition-all flex items-center gap-2 group">Continue <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></button>
+                                <button onClick={() => setStep(step + 1)} className="px-12 py-3 rounded-xl font-black text-xs capitalize tracking-[0.2em] bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-500/20 transition-all flex items-center gap-2 group">Continue <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></button>
                             ) : (
                                 <button
                                     onClick={handleSaveTemplate}
                                     disabled={!templateName.trim() || selectedHostnames.length === 0 || activeReports.filter(r => r.enabled).length === 0}
-                                    className="px-12 py-3 rounded-2xl font-black text-xs capitalize tracking-[0.2em] bg-slate-900 text-white hover:bg-black disabled:opacity-20 transition-all shadow-xl shadow-slate-200 flex items-center gap-3 group"
+                                    className="px-12 py-3 rounded-xl font-black text-xs capitalize tracking-[0.2em] bg-slate-900 text-white hover:bg-black disabled:opacity-20 transition-all shadow-xl shadow-slate-200 flex items-center gap-3 group"
                                 >
                                     Commit Blueprint <CheckCircle className="w-4.5 h-4.5 text-emerald-400 group-hover:scale-110 transition-transform" />
                                 </button>
@@ -869,7 +869,7 @@ const BatchReportPage = () => {
                         <div className="pt-8 border-t border-slate-100 flex justify-center gap-8">
                             <button
                                 onClick={async () => { setGeneratingTemplate(generatingTemplate); setIsGenerationModalOpen(false); setSelectedTemplateForBg(generatingTemplate); setIsBackgroundModalOpen(true); }}
-                                className="flex items-center gap-3 bg-slate-900 text-white px-16 py-4 rounded-2xl font-black text-[11px] capitalize tracking-[0.3em] hover:bg-black transition-all shadow-2xl shadow-slate-200 group active:scale-95"
+                                className="flex items-center gap-3 bg-slate-900 text-white px-16 py-4 rounded-xl font-black text-[11px] capitalize tracking-[0.3em] hover:bg-black transition-all shadow-2xl shadow-slate-200 group active:scale-95"
                             >
                                 <Zap className="w-5 h-5 text-yellow-400 group-hover:scale-125 transition-transform" /> Start Batch Engine
                             </button>
@@ -892,7 +892,7 @@ const BatchReportPage = () => {
             <Modal isOpen={!!pdfUrl} onClose={() => setPdfUrl(null)} title="REPORT PREVIEW" maxWidth="max-w-6xl" onDownload={() => {
                 const link = document.createElement('a'); link.href = pdfUrl!; link.download = `MFEC_SAR_REPORT_${Date.now()}.pdf`; link.click();
             }}>
-                {pdfUrl && <iframe src={pdfUrl} className="w-full h-[80vh] rounded-3xl border border-gray-100 shadow-inner" title="PDF Viewer" />}
+                {pdfUrl && <iframe src={pdfUrl} className="w-full h-[80vh] rounded-xl border border-slate-100 shadow-inner" title="PDF Viewer" />}
             </Modal>
 
             <ConfirmModal
@@ -929,11 +929,11 @@ const BatchReportPage = () => {
                     <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-amber-100 shadow-sm">
                         <AlertCircle className="w-10 h-10 text-amber-500" />
                     </div>
-                    <h3 className="text-xl font-black text-gray-900 mb-4 capitalize tracking-tight italic">Maximum 50 Hosts</h3>
-                    <p className="text-gray-600 font-medium leading-relaxed mb-8">{limitMessage}</p>
+                    <h3 className="text-xl font-black text-slate-900 mb-4 capitalize tracking-tight italic">Maximum 50 Hosts</h3>
+                    <p className="text-slate-600 font-medium leading-relaxed mb-8">{limitMessage}</p>
                     <button
                         onClick={() => setIsLimitModalOpen(false)}
-                        className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-sm tracking-widest transition-all shadow-lg active:scale-[0.98] capitalize"
+                        className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-black text-sm tracking-widest transition-all shadow-lg active:scale-[0.98] capitalize"
                     >
                         Understand
                     </button>

@@ -12,7 +12,7 @@ import { Loader2, Download, Activity, ChevronDown, AlertCircle } from 'lucide-re
 
 const SarChart = dynamic(() => import('@/components/charts/SarChart'), {
   ssr: false,
-  loading: () => <div className="w-full h-[435px] bg-gray-50 animate-pulse flex items-center justify-center">Loading Chart...</div>
+  loading: () => <div className="w-full h-[435px] bg-slate-50 animate-pulse flex items-center justify-center">Loading Chart...</div>
 });
 
 interface HostName { hostname_id: number; hostname: string; }
@@ -214,12 +214,12 @@ const CpuDailyPage = () => {
 
   return (
     <Block title="CPU Performance Metrics" subtitle="Daily Processor Utilization Analysis" tabs={[]}>
-      <div className="bg-slate-50/50 p-6 rounded-3xl border border-slate-100 mb-8 flex flex-nowrap gap-3 items-end justify-center transition-all shadow-inner">
+      <div className="bg-slate-50/50 p-6 rounded-xl border border-slate-100 mb-8 flex flex-nowrap gap-3 items-end justify-center transition-all shadow-inner">
         <div className="flex-1 min-w-[180px]">
           <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Hostgroup</label>
           <div className="relative group">
             <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
-              <option value="">Select Group</option>
+              <option value="">Select Infrastructure</option>
               {hostGroups?.map(g => <option key={g.hostgroup_id} value={g.hostgroup}>{g.hostgroup}</option>)}
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
@@ -229,7 +229,7 @@ const CpuDailyPage = () => {
           <label className="text-xs font-black text-slate-400 capitalize tracking-widest mb-2 ml-1 block">Hostname</label>
           <div className="relative group">
             <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm disabled:opacity-30" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
-              <option value="">Select Node</option>
+              <option value="">Select Network Node</option>
               {hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.map(h => <option key={h.hostname_id} value={String(h.hostname_id)}>{h.hostname}</option>)}
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
@@ -255,7 +255,7 @@ const CpuDailyPage = () => {
           <input type="date" className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-black capitalize outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
         </div>
         <div className="flex items-end">
-          <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-slate-900 text-white px-4 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-slate-200 disabled:opacity-30 h-[42px] active:scale-95 whitespace-nowrap" disabled={!selectedGroup || !selectedHostnameId}>Execute</button>
+          <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-slate-900 text-white px-4 py-2.5 rounded-xl text-xs font-black capitalize tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-slate-200 disabled:opacity-30 h-[42px] active:scale-95 whitespace-nowrap" disabled={!selectedGroup || !selectedHostnameId}>Query</button>
         </div>
       </div>
 
@@ -272,7 +272,7 @@ const CpuDailyPage = () => {
         )}
       </div>
 
-      <div id="container" className="min-h-[500px] bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-10 animate-ease-in relative overflow-hidden">
+      <div id="container" className="min-h-[500px] bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-10 animate-ease-in relative overflow-hidden">
         {isFetching ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm z-10">
             <Loader2 className="w-16 h-16 animate-spin text-blue-600 opacity-20" />
@@ -286,7 +286,7 @@ const CpuDailyPage = () => {
               <SarChart ref={chartRef} options={getChartOptions()} />
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-40 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100">
+            <div className="flex flex-col items-center justify-center py-40 bg-slate-50/50 rounded-xl border-2 border-dashed border-slate-100">
               <AlertCircle className="w-12 h-12 text-slate-200 mb-4" />
               <p className="text-xs font-black text-slate-300 capitalize tracking-[0.2em]">No performance metrics retrieved for cycle</p>
             </div>

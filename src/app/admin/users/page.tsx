@@ -107,7 +107,7 @@ const AdminUsersPage = () => {
         <div className="p-8 space-y-8">
           <div className="flex items-center justify-between border-b border-slate-50 pb-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+              <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
                 <User className="w-6 h-6" />
               </div>
               <div>
@@ -121,74 +121,83 @@ const AdminUsersPage = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {users.map(u => {
-              const userGroups = userMappings.filter((m: any) => m.user_id === u.user_id);
-              const isSelf = Number(u.user_id) === Number((session?.user as any)?.id);
-              
-              return (
-                <div key={u.user_id} className="bg-slate-50/30 rounded-[1.5rem] border border-slate-100 p-6 flex flex-col gap-5 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 group">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-blue-600 shadow-sm group-hover:scale-110 transition-transform">
-                        <User className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h4 className="font-black text-slate-900 text-xs truncate max-w-[120px]">{u.username}</h4>
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black capitalize tracking-tighter ${
-                            u.role === 'admin' ? 'bg-blue-600 text-white shadow-sm' : 
-                            u.role === 'sysadmin' ? 'bg-slate-900 text-white' : 
-                            'bg-slate-200 text-slate-600'
-                          }`}>{u.role}</span>
-                          {isSelf && <span className="bg-emerald-50 text-emerald-600 text-[8px] font-black capitalize px-1.5 py-0.5 rounded-lg">You</span>}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <button 
-                        onClick={() => setActiveMenu(activeMenu === u.user_id ? null : u.user_id)} 
-                        className={`p-2 rounded-xl transition-all ${activeMenu === u.user_id ? 'bg-white shadow-sm text-slate-900' : 'text-slate-300 hover:text-slate-600 hover:bg-white hover:shadow-sm'}`}
-                      >
-                        <MoreVertical className="w-4 h-4" />
-                      </button>
-                      {activeMenu === u.user_id && (
-                          <div className="absolute right-0 top-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] py-2 z-20 w-32 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                              <button onClick={() => { 
-                                  setEditUser(u); 
-                                  setEditFields({ role: u.role, group_ids: userMappings.filter((m: any) => m.user_id === u.user_id).map((m: any) => m.ug_id) }); 
-                                  setActiveTab(0);
-                                  setIsAddingGroup(false);
-                                  setActiveMenu(null);
-                              }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all">
-                                  <Edit2 className="w-3.5 h-3.5" /> Edit Profile
-                              </button>
-                              {!isSelf && !['sysreport', 'mfadmin'].includes(u.username) && (
-                                  <button onClick={() => { deleteUser(u.user_id); setActiveMenu(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 transition-all border-t border-slate-50">
-                                      <Trash2 className="w-3.5 h-3.5" /> Remove User
-                                  </button>
-                              )}
+          <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-xl shadow-inner bg-slate-50/20">
+            <table className="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr className="bg-white border-b border-slate-100">
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Identity</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Role Authority</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest">Memberships</th>
+                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize tracking-widest text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100/50 bg-white">
+                {users.map(u => {
+                  const userGroups = userMappings.filter((m: any) => m.user_id === u.user_id);
+                  const isSelf = Number(u.user_id) === Number((session?.user as any)?.id);
+                  
+                  return (
+                    <tr key={u.user_id} className="group/row hover:bg-blue-50/40 transition-all duration-200 border-b border-slate-100/30 last:border-0">
+                      <td className="px-8 py-5">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-blue-600 shadow-sm group-hover/row:scale-105 transition-all">
+                            <User className="w-5 h-5" />
                           </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-3 pt-4 border-t border-slate-100/50 mt-auto">
-                      <div className="flex items-center justify-between">
-                          <span className="text-[9px] font-black text-slate-400 capitalize tracking-widest">Memberships</span>
-                          <span className="bg-slate-200/50 text-slate-600 px-2 py-0.5 rounded-lg text-[9px] font-black tracking-tighter">{userGroups.length} Groups</span>
-                      </div>
-                      <div className="flex flex-wrap gap-1.5">
-                          {userGroups.length > 0 ? userGroups.slice(0, 3).map((m: any) => {
+                          <div>
+                            <p className="font-black text-slate-900 text-sm capitalize tracking-tight leading-none mb-1 group-hover/row:text-blue-700 transition-colors">{u.username}</p>
+                            {isSelf && <span className="bg-emerald-50 text-emerald-600 text-[8px] font-black capitalize px-1.5 py-0.5 rounded-xl border border-emerald-100 shadow-sm">Current Session</span>}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-8 py-5">
+                        <span className={`px-3 py-1 rounded-full text-[9px] font-black capitalize tracking-widest border ${
+                          u.role === 'admin' ? 'bg-blue-600 text-white border-blue-700 shadow-md shadow-blue-500/20' : 
+                          u.role === 'sysadmin' ? 'bg-slate-900 text-white border-slate-800' : 
+                          'bg-slate-100 text-slate-600 border-slate-200 shadow-inner'
+                        }`}>{u.role}</span>
+                      </td>
+                      <td className="px-8 py-5">
+                        <div className="flex flex-wrap gap-2 max-w-[280px]">
+                          {userGroups.length > 0 ? userGroups.slice(0, 2).map((m: any) => {
                               const group = groups.find((g: any) => g.ug_id === m.ug_id);
-                              return group ? <span key={group.ug_id} className="bg-white border border-slate-100 text-slate-500 px-2 py-1 rounded-lg font-bold text-[9px] shadow-sm">{group.ug_name}</span> : null;
-                          }) : <span className="text-[9px] font-bold text-slate-300 capitalize tracking-wider italic">No Active Groups</span>}
-                          {userGroups.length > 3 && <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded-lg font-black text-[9px] shadow-sm">+{userGroups.length - 3} More</span>}
-                      </div>
-                  </div>
-                </div>
-              );
-            })}
+                              return group ? <span key={group.ug_id} className="bg-white border border-slate-100 text-slate-500 px-2.5 py-1 rounded-xl font-bold text-[9px] shadow-sm whitespace-nowrap">{group.ug_name}</span> : null;
+                          }) : <span className="text-[9px] font-bold text-slate-300 capitalize tracking-widest italic">No Active Groups</span>}
+                          {userGroups.length > 2 && <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded-xl font-black text-[9px] shadow-sm border border-blue-100">+{userGroups.length - 2}</span>}
+                        </div>
+                      </td>
+                      <td className="px-8 py-5 text-right">
+                        <div className="relative flex justify-end">
+                          <button 
+                            onClick={() => setActiveMenu(activeMenu === u.user_id ? null : u.user_id)} 
+                            className={`p-2.5 rounded-xl transition-all border ${activeMenu === u.user_id ? 'bg-white shadow-md text-slate-900 border-slate-200' : 'text-slate-300 hover:text-slate-600 border-transparent hover:bg-white hover:shadow-sm hover:border-slate-100'}`}
+                          >
+                            <MoreVertical className="w-4.5 h-4.5" />
+                          </button>
+                          {activeMenu === u.user_id && (
+                              <div className="absolute right-0 top-full mt-2 bg-white border border-slate-100 rounded-xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15)] py-2 z-[100] w-44 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                                  <button onClick={() => { 
+                                      setEditUser(u); 
+                                      setEditFields({ role: u.role, group_ids: userMappings.filter((m: any) => m.user_id === u.user_id).map((m: any) => m.ug_id) }); 
+                                      setActiveTab(0);
+                                      setIsAddingGroup(false);
+                                      setActiveMenu(null);
+                                  }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all capitalize tracking-widest">
+                                      <Edit2 className="w-4 h-4" /> Edit Profile
+                                  </button>
+                                  {!isSelf && !['sysreport', 'mfadmin'].includes(u.username) && (
+                                      <button onClick={() => { deleteUser(u.user_id); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-black text-red-500 hover:bg-red-50 transition-all border-t border-slate-50 capitalize tracking-widest">
+                                          <Trash2 className="w-4 h-4" /> Remove Access
+                                      </button>
+                                  )}
+                              </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -202,8 +211,8 @@ const AdminUsersPage = () => {
         tabs={[
             { label: 'General', content: (
                 <div className="space-y-8">
-                    <div className="flex gap-4 p-6 bg-slate-50/50 rounded-2xl items-center border border-slate-100 shadow-inner">
-                        <div className="bg-white p-4 rounded-2xl text-blue-600 shadow-sm border border-slate-100"><User className="w-8 h-8" /></div>
+                    <div className="flex gap-4 p-6 bg-slate-50/50 rounded-xl items-center border border-slate-100 shadow-inner">
+                        <div className="bg-white p-4 rounded-xl text-blue-600 shadow-sm border border-slate-100"><User className="w-8 h-8" /></div>
                         <div>
                             <p className="text-xs font-black text-slate-400 capitalize tracking-widest mb-0.5">Identification</p>
                             <p className="font-black text-xl text-slate-900 tracking-tight">{editUser?.username}</p>
@@ -227,7 +236,7 @@ const AdminUsersPage = () => {
                                             setEditFields({...editFields, role: r.role_name});
                                             fetchData();
                                         }} 
-                                        className={`px-4 py-3 rounded-2xl text-xs font-black capitalize tracking-widest transition-all duration-300 border ${
+                                        className={`px-4 py-3 rounded-xl text-xs font-black capitalize tracking-widest transition-all duration-300 border ${
                                             isSelected 
                                             ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20' 
                                             : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300 hover:text-slate-600 shadow-sm'
@@ -249,7 +258,7 @@ const AdminUsersPage = () => {
                         </button>
                     </div>
 
-                    <div className="relative border border-slate-100 rounded-3xl p-6 pt-10 bg-slate-50/20 shadow-inner">
+                    <div className="relative border border-slate-100 rounded-xl p-6 pt-10 bg-slate-50/20 shadow-inner">
                         <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-blue-600 border border-slate-100 rounded-full shadow-sm flex items-center gap-2">
                             <Users className="w-3.5 h-3.5" /> Active Memberships
                         </span>
@@ -261,7 +270,7 @@ const AdminUsersPage = () => {
                                     const isPersonalGroup = group?.ug_name.toLowerCase() === editUser?.username.toLowerCase();
 
                                     return group ? (
-                                        <div key={ugId} className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-2xl group/item hover:border-blue-200 transition-all shadow-sm">
+                                        <div key={ugId} className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl group/item hover:border-blue-200 transition-all shadow-sm">
                                             <div className="flex items-center gap-3 overflow-hidden">
                                                 <div className="bg-slate-50 p-2 rounded-xl group-hover/item:scale-110 transition-transform flex-shrink-0"><Users className="w-4 h-4 text-blue-600" /></div>
                                                 <div className="flex flex-col truncate">
@@ -290,7 +299,7 @@ const AdminUsersPage = () => {
                     </div>
 
                     {isAddingGroup && (
-                        <div className="relative border-2 border-dashed border-blue-100 rounded-3xl p-6 pt-10 bg-blue-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
+                        <div className="relative border-2 border-dashed border-blue-100 rounded-xl p-6 pt-10 bg-blue-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
                             <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
                                 <Plus className="w-3.5 h-3.5" /> Available Groups
                             </span>
@@ -305,7 +314,7 @@ const AdminUsersPage = () => {
                                             await axios.post('/api/admin/user-group-mapping', { user_id: editUser.user_id, group_ids: nextGroups, type: 'user_to_group' });
                                             fetchData();
                                             setIsAddingGroup(false); 
-                                        }} className="flex items-center gap-3 p-3 bg-white hover:bg-blue-600 hover:text-white border border-slate-100 rounded-2xl transition-all shadow-sm group/btn overflow-hidden text-left">
+                                        }} className="flex items-center gap-3 p-3 bg-white hover:bg-blue-600 hover:text-white border border-slate-100 rounded-xl transition-all shadow-sm group/btn overflow-hidden text-left">
                                             <div className="bg-slate-50 p-2 rounded-xl group-hover/btn:bg-blue-500 transition-colors shadow-inner"><Users className="w-4 h-4 text-blue-600 group-hover/btn:text-white" /></div>
                                             <span className="text-xs font-black capitalize tracking-tight truncate">{g.ug_name}</span>
                                         </button>
@@ -328,7 +337,7 @@ const AdminUsersPage = () => {
                         if (groupPgs.length === 0) return null;
 
                         return (
-                            <div key={ugId} className="relative border border-slate-100 rounded-3xl p-6 pt-10 bg-slate-50/10">
+                            <div key={ugId} className="relative border border-slate-100 rounded-xl p-6 pt-10 bg-slate-50/10">
                                 <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] font-black capitalize tracking-widest text-slate-500 border border-slate-100 rounded-full shadow-sm flex items-center gap-2 italic">
                                     Inherited from: {group?.ug_name}
                                 </span>
@@ -337,14 +346,14 @@ const AdminUsersPage = () => {
                                         const associatedHgs = pgh.filter((m: any) => m.pg_id === pg.pg_id);
                                         const isExpanded = expandedPgs.includes(pg.pg_id);
                                         return (
-                                            <div key={pg.pg_id} className="border border-slate-100 rounded-2xl overflow-hidden shadow-sm bg-white hover:border-blue-100 transition-all">
+                                            <div key={pg.pg_id} className="border border-slate-100 rounded-xl overflow-hidden shadow-sm bg-white hover:border-blue-100 transition-all">
                                                 <div className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-slate-50" onClick={() => setExpandedPgs(prev => isExpanded ? prev.filter(i => i !== pg.pg_id) : [...prev, pg.pg_id])}>
                                                     <div className="flex items-center gap-3">
                                                         <ShieldCheck className="w-4 h-4 text-emerald-500" />
                                                         <span className="font-black text-xs text-slate-800 tracking-tight">{pg.pg_name}</span>
                                                     </div>
                                                     <div className="flex items-center gap-3">
-                                                        <span className="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg text-[9px] font-black capitalize tracking-tighter border border-emerald-100">
+                                                        <span className="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-xl text-[9px] font-black capitalize tracking-tighter border border-emerald-100">
                                                             {associatedHgs.length} Hostgroups
                                                         </span>
                                                         {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-300" /> : <ChevronRight className="w-4 h-4 text-slate-300" />}
@@ -369,7 +378,7 @@ const AdminUsersPage = () => {
                         );
                     })}
                     {editFields.group_ids.length === 0 && (
-                        <div className="py-20 text-center border border-slate-100 rounded-3xl bg-slate-50/30">
+                        <div className="py-20 text-center border border-slate-100 rounded-xl bg-slate-50/30">
                             <ShieldCheck className="w-12 h-12 text-slate-100 mx-auto mb-3" />
                             <p className="text-xs text-slate-300 font-black capitalize tracking-widest italic">No groups or permissions found</p>
                         </div>
@@ -409,7 +418,7 @@ const AdminUsersPage = () => {
 
             <div className="relative group">
                 <select 
-                    className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-2xl text-xs font-bold bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none" 
+                    className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-xl text-xs font-bold bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none" 
                     value={newUser.role} 
                     onChange={e => setNewUser({...newUser, role: e.target.value})}
                 >
@@ -420,7 +429,7 @@ const AdminUsersPage = () => {
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
             </div>
 
-            <button onClick={handleCreateUser} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-xs capitalize tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
+            <button onClick={handleCreateUser} className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-xs capitalize tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
                 Register Account <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>

@@ -24,6 +24,9 @@ Highcharts.setOptions({
   chart: {
     shadow: false,
     backgroundColor: undefined, // Transparent like legacy
+    style: {
+      fontFamily: "var(--font-inter), ui-sans-serif, system-ui, sans-serif"
+    }
   },
   tooltip: {
     enabled: true,
@@ -60,7 +63,7 @@ const SarChart = forwardRef(({ options }: SarChartProps, ref) => {
   }, []);
 
   if (!isClient) {
-    return <div data-testid="highcharts-mock" className="w-full h-[435px] bg-gray-50 animate-pulse flex items-center justify-center border border-gray-100 rounded text-gray-400">Loading Chart Components...</div>;
+    return <div data-testid="highcharts-mock" className="w-full h-[435px] bg-slate-50 animate-pulse flex items-center justify-center border border-slate-100 rounded text-slate-400">Loading Chart Components...</div>;
   }
 
   return (

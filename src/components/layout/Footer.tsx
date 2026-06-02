@@ -1,10 +1,17 @@
+'use client';
+
 const Footer = () => {
   return (
-    <footer className="w-full py-8 text-center bg-transparent border-t border-gray-100/50">
-      <div className="max-w-7xl mx-auto px-4">
-        <p className="text-sm font-medium text-gray-400">
-          &copy; {new Date().getFullYear()} Metrisar Dashboard &bull; Designed by Passakorn Jonlapon
+    <footer className="w-full py-8 mt-auto border-t border-slate-200/50 bg-slate-50/50">
+      <div className="max-w-[1400px] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+          &copy; {new Date().getFullYear()} Metrisar Analytics &bull; Professional Infrastructure Intelligence
         </p>
+        <div className="flex items-center gap-6">
+          <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">v2.8.0 Production</span>
+          <div className="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+          <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Systems Online</span>
+        </div>
       </div>
     </footer>
   );

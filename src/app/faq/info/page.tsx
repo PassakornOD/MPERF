@@ -5,7 +5,7 @@ import { Terminal, ShieldCheck, Container, FileText, ChevronRight, Check } from 
 
 const Section = ({ title, children, icon }: { title: string, children: React.ReactNode, icon?: React.ReactNode }) => (
   <section className="mb-16">
-    <h3 className="text-xs font-bold text-gray-400 capitalize tracking-widest mb-8 flex items-center gap-2">
+    <h3 className="text-xs font-bold text-slate-400 capitalize tracking-widest mb-8 flex items-center gap-2">
       {icon ? icon : <ChevronRight size={16} className="text-blue-500" />} {title}
     </h3>
     {children}
@@ -52,7 +52,7 @@ export default function DockerGuidePage() {
                         <div className="w-2 h-2 rounded-full bg-slate-700"></div>
                         <p className="text-slate-500 font-black capitalize tracking-[0.2em] text-xs"># 01. Build production image set</p>
                     </div>
-                    <code className="block bg-slate-900/50 p-6 rounded-2xl text-blue-400 border border-slate-800/50 shadow-inner group-hover:border-blue-500/30 transition-all duration-300">
+                    <code className="block bg-slate-900/50 p-6 rounded-xl text-blue-400 border border-slate-800/50 shadow-inner group-hover:border-blue-500/30 transition-all duration-300">
                       docker build -t mperf-app .
                     </code>
                 </div>
@@ -61,7 +61,7 @@ export default function DockerGuidePage() {
                         <div className="w-2 h-2 rounded-full bg-slate-700"></div>
                         <p className="text-slate-500 font-black capitalize tracking-[0.2em] text-xs"># 02. Deploy services via Compose</p>
                     </div>
-                    <code className="block bg-slate-900/50 p-6 rounded-2xl text-emerald-400 border border-slate-800/50 shadow-inner group-hover:border-emerald-500/30 transition-all duration-300">
+                    <code className="block bg-slate-900/50 p-6 rounded-xl text-emerald-400 border border-slate-800/50 shadow-inner group-hover:border-emerald-500/30 transition-all duration-300">
                       docker-compose up -d
                     </code>
                 </div>
@@ -72,7 +72,7 @@ export default function DockerGuidePage() {
       {/* 3. Environment Variables */}
       <Section title="Variable Configuration" icon={<FileText size={18} className="text-blue-600"/>}>
         <div className="modern-card p-10 bg-white">
-            <div className="flex gap-4 p-5 bg-blue-50/50 rounded-2xl border border-blue-100 mb-8 items-center">
+            <div className="flex gap-4 p-5 bg-blue-50/50 rounded-xl border border-blue-100 mb-8 items-center">
                 <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0"><FileText size={20} /></div>
                 <p className="text-xs text-blue-800 font-bold">Initialize a <code className="bg-white px-2 py-0.5 rounded border border-blue-200">.env</code> file in the project root by cloning <code className="bg-white px-2 py-0.5 rounded border border-blue-200">.env.example</code>.</p>
             </div>
