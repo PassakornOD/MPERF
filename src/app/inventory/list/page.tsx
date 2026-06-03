@@ -47,7 +47,7 @@ const InventoryList = () => {
     <div className="space-y-10 animate-ease-in">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
         <div className="space-y-2">
-          <h2 className="text-2xl font-black text-slate-900 capitalize italic tracking-tight leading-none">Asset Registry</h2>
+          <h2 className="text-2xl text-slate-900 capitalize tracking-tight leading-none">Asset Registry</h2>
           <p className="text-sm font-medium text-slate-400 tracking-tight">Full-stack visibility of managed infrastructure nodes</p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
@@ -56,14 +56,14 @@ const InventoryList = () => {
             <input
               type="text"
               placeholder="Search Node or Group..."
-              className="bg-white border border-slate-100 rounded-xl pl-12 pr-6 py-3.5 text-xs font-black capitalize tracking-tight w-full sm:w-80 shadow-sm focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all shadow-inner"
+              className="bg-white border border-slate-100 rounded-xl pl-12 pr-6 py-3.5 text-xs capitalize tracking-tight w-full sm:w-80 shadow-sm focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all shadow-inner"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={expandAll} className="flex-1 sm:flex-none bg-slate-900 text-white px-6 py-3.5 rounded-xl text-xs font-black capitalize  hover:bg-black transition-all shadow-lg shadow-slate-200">Expand All</button>
-            <button onClick={collapseAll} className="flex-1 sm:flex-none bg-slate-50 text-slate-400 border border-slate-100 px-6 py-3.5 rounded-xl text-xs font-black capitalize  hover:bg-white hover:text-slate-600 transition-all shadow-sm">Collapse</button>
+            <button onClick={expandAll} className="flex-1 sm:flex-none bg-slate-900 text-white px-6 py-3.5 rounded-xl text-xs capitalize  hover:bg-black transition-all shadow-lg shadow-slate-200">Expand All</button>
+            <button onClick={collapseAll} className="flex-1 sm:flex-none bg-slate-50 text-slate-400 border border-slate-100 px-6 py-3.5 rounded-xl text-xs capitalize  hover:bg-white hover:text-slate-600 transition-all shadow-sm">Collapse</button>
           </div>
           <div className="relative">
             <button
@@ -75,11 +75,11 @@ const InventoryList = () => {
             </button>
             {isColumnDropdownOpen && (
               <div className="absolute right-0 mt-4 bg-white border border-slate-100 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] p-8 w-72 z-50 animate-in fade-in zoom-in duration-300">
-                <p className="text-[10px] font-black text-slate-400 capitalize  mb-6 px-2">Visibility Engine</p>
+                <p className="text-[10px] text-slate-400 capitalize  mb-6 px-2">Visibility Engine</p>
                 <div className="max-h-72 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
                   {allColumns.map(col => (
                     <label key={col} className="flex items-center justify-between p-3 rounded-xl hover:bg-blue-50/50 cursor-pointer transition-all group border border-transparent hover:border-blue-100">
-                      <span className="text-xs font-black text-slate-600 capitalize tracking-tight group-hover:text-blue-600 transition-colors">{col}</span>
+                      <span className="text-xs text-slate-600 capitalize tracking-tight group-hover:text-blue-600 transition-colors">{col}</span>
                       <div className="relative">
                         <input
                           type="checkbox"
@@ -100,7 +100,7 @@ const InventoryList = () => {
       {isFetching ? (
         <div className="text-center py-40 bg-white rounded-[2rem] border border-slate-100 shadow-sm">
           <Loader2 className="w-16 h-16 animate-spin mx-auto text-blue-600 opacity-20" />
-          <p className="mt-8 text-xs font-black text-slate-300 capitalize ">Synching with Infrastructure...</p>
+          <p className="mt-8 text-xs text-slate-300 capitalize ">Synching with Infrastructure...</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6">
@@ -117,15 +117,15 @@ const InventoryList = () => {
                       <Server className="w-7 h-7" />
                     </div>
                     <div className="space-y-1">
-                      <h4 className="font-black text-slate-900 text-lg capitalize tracking-tight leading-none">
-                        {hg.hostgroup} <span className="text-slate-300 font-bold text-xs ml-3">ID: {hg.hostgroup_id}</span>
+                      <h4 className="text-slate-900 text-lg capitalize tracking-tight leading-none">
+                        {hg.hostgroup} <span className="text-slate-300 text-xs ml-3">ID: {hg.hostgroup_id}</span>
                       </h4>
                       <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 text-xs font-black text-slate-400 capitalize ">
-                          <User className="w-3.5 h-3.5 text-blue-500 opacity-50" /> {hg.owner || 'ORPHAN_NODE'}
+                        <div className="flex items-center gap-2 text-xs text-slate-400 capitalize ">
+                          <User className="w-3.5 h-3.5 text-blue-500 opacity-50" /> {hg.owner || '-'}
                         </div>
                         <div className="h-3 w-px bg-slate-200"></div>
-                        <div className="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-xl border border-blue-100 capitalize tracking-tighter">
+                        <div className="text-xs text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-xl border border-blue-100 capitalize tracking-tighter">
                           {hg.hostnames?.length || 0} Nodes Enrolled
                         </div>
                       </div>
@@ -144,7 +144,7 @@ const InventoryList = () => {
                           <thead>
                             <tr className="bg-blue-50/50 border-b border-blue-100">
                               {columns.map(col => (
-                                <th key={col} className="px-6 py-5 text-blue-800 font-black text-[9px] capitalize  whitespace-nowrap">{col}</th>
+                                <th key={col} className="px-6 py-5 text-blue-800 text-xs capitalize  whitespace-nowrap">{col}</th>
                               ))}
                             </tr>
                           </thead>
@@ -155,7 +155,7 @@ const InventoryList = () => {
                                   const key = Object.keys(h).find(k => k.toLowerCase() === col.toLowerCase());
                                   const isMain = col.toLowerCase() === 'hostname' || col.toLowerCase() === 'ip';
                                   return (
-                                    <td key={col} className={`px-6 py-4 font-bold whitespace-nowrap transition-colors ${isMain ? 'text-blue-900 font-black group-hover/row:text-blue-900' : 'text-slate-600'}`}>
+                                    <td key={col} className={`px-6 py-4 whitespace-nowrap transition-colors ${isMain ? 'text-blue-900 group-hover/row:text-blue-900' : 'text-slate-600'}`}>
                                       {key ? h[key] : '---'}
                                     </td>
                                   );
@@ -167,7 +167,7 @@ const InventoryList = () => {
                       ) : (
                         <div className="py-16 text-center">
                           <Monitor className="w-12 h-12 text-slate-100 mx-auto mb-4" />
-                          <p className="text-xs text-slate-300 font-black capitalize  italic">No Nodes registered in this sector</p>
+                          <p className="text-xs text-slate-300 capitalize  italic">No Nodes registered in this sector</p>
                         </div>
                       )}
                     </div>
@@ -179,7 +179,7 @@ const InventoryList = () => {
           {filteredHostgroups?.length === 0 && (
             <div className="py-40 text-center bg-white rounded-[2rem] border border-slate-100 shadow-sm">
               <Search className="w-16 h-16 text-slate-100 mx-auto mb-6" />
-              <p className="text-sm font-black text-slate-300 capitalize ">No match found for query: "{searchTerm}"</p>
+              <p className="text-sm text-slate-300 capitalize ">No match found for query: "{searchTerm}"</p>
             </div>
           )}
         </div>

@@ -37,44 +37,44 @@ const QueryDataPage = () => {
         <div className="modern-card p-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-end">
             <div className="space-y-2 lg:col-span-1">
-                <label className="text-xs font-black text-slate-400 capitalize  ml-1">Database Table</label>
+                <label className="text-xs text-slate-400 capitalize ml-1">Database Table</label>
                 <input 
                   placeholder="e.g. BSS:u"
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs font-black capitalize tracking-tight outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs capitalize tracking-tight outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner"
                   value={formData.table}
                   onChange={(e) => setFormData({...formData, table: e.target.value})}
                 />
             </div>
             <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 capitalize  ml-1">Year</label>
+                <label className="text-xs text-slate-400 capitalize ml-1">Year</label>
                 <input 
                   placeholder="YYYY"
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner"
                   value={formData.year}
                   onChange={(e) => setFormData({...formData, year: e.target.value})}
                 />
             </div>
             <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 capitalize  ml-1">Month</label>
+                <label className="text-xs text-slate-400 capitalize ml-1">Month</label>
                 <input 
                   placeholder="MM"
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner"
                   value={formData.month}
                   onChange={(e) => setFormData({...formData, month: e.target.value})}
                 />
             </div>
             <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 capitalize  ml-1">Day</label>
+                <label className="text-xs text-slate-400 capitalize ml-1">Day</label>
                 <input 
                   placeholder="DD"
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner"
                   value={formData.day}
                   onChange={(e) => setFormData({...formData, day: e.target.value})}
                 />
             </div>
             <button 
               onClick={handleQuery}
-              className="bg-slate-900 hover:bg-black text-white rounded-xl px-8 py-3.5 text-xs font-black capitalize  flex items-center justify-center gap-2.5 transition-all shadow-xl shadow-slate-200 h-[46px]"
+              className="bg-slate-900 hover:bg-black text-white rounded-xl px-8 py-3.5 text-xs capitalize flex items-center justify-center gap-2.5 transition-all shadow-xl shadow-slate-200 h-[46px]"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Search className="w-4 h-4" />} Execute Query
             </button>
@@ -86,14 +86,14 @@ const QueryDataPage = () => {
             <div className="px-8 py-5 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <TableIcon className="w-4 h-4 text-blue-600" />
-                    <span className="text-xs font-black text-slate-800 capitalize ">Query Result Set</span>
+                    <span className="text-xs text-slate-800 capitalize">Query Result Set</span>
                 </div>
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-xl text-[9px] font-black capitalize tracking-tighter shadow-md shadow-blue-100">{queryData.length} Records</span>
+                <span className="bg-blue-600 text-white px-3 py-1 rounded-xl text-[9px] capitalize tracking-tighter shadow-md shadow-blue-100">{queryData.length} Records</span>
             </div>
             <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-xl shadow-inner bg-slate-50/20 mx-8 my-8">
               <table className="w-full text-xs text-left border-collapse">
                 <thead>
-                  <tr className="bg-white text-slate-400 font-black capitalize text-[9px]  border-b border-slate-100">
+                  <tr className="bg-white text-slate-400 capitalize text-[9px] border-b border-slate-100">
                     {Object.keys(queryData[0]).map(key => <th key={key} className="px-8 py-5 whitespace-nowrap">{key}</th>)}
                   </tr>
                 </thead>
@@ -111,7 +111,7 @@ const QueryDataPage = () => {
               </table>
             </div>
             <div className="p-4 bg-slate-50/30 border-t border-slate-50 text-center">
-                <p className="text-[9px] font-black text-slate-300 capitalize  italic">End of query results</p>
+                <p className="text-[9px] text-slate-300 capitalize italic">End of query results</p>
             </div>
           </div>
         )}

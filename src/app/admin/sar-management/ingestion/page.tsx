@@ -116,7 +116,7 @@ const IngestPage = () => {
         <div className="modern-card p-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             <div className="space-y-6">
-              <label className="flex items-center gap-2.5 text-xs font-black text-slate-400 capitalize  px-1">
+              <label className="flex items-center gap-2.5 text-xs text-slate-400 capitalize  px-1">
                 <Clock className="w-3.5 h-3.5" /> Ingestion Strategy
               </label>
               <div className="grid grid-cols-1 gap-2.5">
@@ -128,7 +128,7 @@ const IngestPage = () => {
                   <button
                     key={m.id}
                     onClick={() => setFormData({ ...formData, mode: m.id })}
-                    className={`flex items-center gap-3.5 px-5 py-4 rounded-xl border-2 transition-all text-xs font-black capitalize tracking-wider ${
+                    className={`flex items-center gap-3.5 px-5 py-4 rounded-xl border-2 transition-all text-xs capitalize tracking-wider ${
                       formData.mode === m.id 
                       ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm' 
                       : 'border-slate-50 bg-slate-50/30 text-slate-400 hover:border-slate-200 hover:bg-slate-50'
@@ -144,26 +144,26 @@ const IngestPage = () => {
             </div>
 
             <div className="space-y-6">
-              <label className="flex items-center gap-2.5 text-xs font-black text-slate-400 capitalize  px-1">
+              <label className="flex items-center gap-2.5 text-xs text-slate-400 capitalize  px-1">
                 <Layers className="w-3.5 h-3.5" /> Granular Filtering
               </label>
               <div className="space-y-4">
                 <div className="relative group">
-                    <select value={formData.hostgroup} onChange={(e) => setFormData({ ...formData, hostgroup: e.target.value, hostname: '' })} className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 px-5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
+                    <select value={formData.hostgroup} onChange={(e) => setFormData({ ...formData, hostgroup: e.target.value, hostname: '' })} className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 px-5 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
                         <option value="">Global Scan (All Groups)</option>
                         {hostgroups.map(hg => <option key={hg.hostgroup_id} value={hg.hostgroup_id}>{hg.hostgroup}</option>)}
                     </select>
                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
                 </div>
                 <div className="relative group">
-                    <select value={formData.hostname} onChange={(e) => setFormData({ ...formData, hostname: e.target.value })} className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 px-5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
+                    <select value={formData.hostname} onChange={(e) => setFormData({ ...formData, hostname: e.target.value })} className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 px-5 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
                         <option value="">Consolidated Scan (All Hosts)</option>
                         {filteredHostnames.map(hn => <option key={hn.hostname_id} value={hn.hostname}>{hn.hostname}</option>)}
                     </select>
                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
                 </div>
                 <div className="relative group">
-                    <select value={formData.dataType} onChange={(e) => setFormData({ ...formData, dataType: e.target.value })} className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 px-5 text-xs font-black capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
+                    <select value={formData.dataType} onChange={(e) => setFormData({ ...formData, dataType: e.target.value })} className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 px-5 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner">
                         <option value="All">Unified Metrics</option>
                         <option value="cpu">CPU Dimensional Only</option>
                         <option value="mem">Memory Resource Only</option>
@@ -174,41 +174,41 @@ const IngestPage = () => {
             </div>
 
             <div className="space-y-6">
-              <label className="flex items-center gap-2.5 text-xs font-black text-slate-400 capitalize  px-1">
+              <label className="flex items-center gap-2.5 text-xs text-slate-400 capitalize  px-1">
                 <Calendar className="w-3.5 h-3.5" /> Timeline Context
               </label>
               <div className="space-y-4 p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 shadow-inner flex flex-col justify-center min-h-[180px]">
                 {formData.mode === 'yesterday' && (
                   <div className="text-center py-4 space-y-2">
-                    <p className="text-xs font-black text-slate-400 capitalize ">Targeting Window</p>
-                    <p className="text-sm font-black text-blue-600 capitalize  italic animate-pulse">Yesterday's SAR Cycle</p>
+                    <p className="text-xs text-slate-400 capitalize ">Targeting Window</p>
+                    <p className="text-sm text-blue-600 capitalize  italic animate-pulse">Yesterday's SAR Cycle</p>
                   </div>
                 )}
                 {formData.mode === 'specific' && (
                     <div className="space-y-1 animate-in fade-in zoom-in duration-300">
-                        <label className="text-[9px] font-black text-slate-400 capitalize ml-1">Target Date</label>
-                        <input type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} className="w-full bg-white border border-slate-100 rounded-xl py-3 px-4 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all" />
+                        <label className="text-[9px] text-slate-400 capitalize ml-1">Target Date</label>
+                        <input type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} className="w-full bg-white border border-slate-100 rounded-xl py-3 px-4 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all" />
                     </div>
                 )}
                 {formData.mode === 'month' && (
                     <div className="grid grid-cols-2 gap-3 animate-in fade-in zoom-in duration-300">
                         <div className="space-y-1">
-                            <label className="text-[9px] font-black text-slate-400 capitalize ml-1">Month</label>
-                            <select value={formData.month} onChange={(e) => setFormData({ ...formData, month: e.target.value })} className="w-full bg-white border border-slate-100 rounded-xl py-3 px-2 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all text-center appearance-none">
+                            <label className="text-[9px] text-slate-400 capitalize ml-1">Month</label>
+                            <select value={formData.month} onChange={(e) => setFormData({ ...formData, month: e.target.value })} className="w-full bg-white border border-slate-100 rounded-xl py-3 px-2 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all text-center appearance-none">
                                 <option value="">Select</option>
                                 {months.map(m => <option key={m} value={m}>{m}</option>)}
                             </select>
                         </div>
                         <div className="space-y-1">
-                            <label className="text-[9px] font-black text-slate-400 capitalize ml-1">Year</label>
-                            <select value={formData.year} onChange={(e) => setFormData({ ...formData, year: e.target.value })} className="w-full bg-white border border-slate-100 rounded-xl py-3 px-2 text-xs font-black outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all text-center appearance-none">
+                            <label className="text-[9px] text-slate-400 capitalize ml-1">Year</label>
+                            <select value={formData.year} onChange={(e) => setFormData({ ...formData, year: e.target.value })} className="w-full bg-white border border-slate-100 rounded-xl py-3 px-2 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all text-center appearance-none">
                                 {years.map(y => <option key={y} value={y}>{y}</option>)}
                             </select>
                         </div>
                     </div>
                 )}
               </div>
-              <button disabled={ingesting || loading} onClick={handleStartIngestion} className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-500/20 disabled:shadow-none capitalize  text-xs">
+              <button disabled={ingesting || loading} onClick={handleStartIngestion} className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-500/20 disabled:shadow-none capitalize  text-xs">
                 {ingesting ? <><Loader2 className="w-4 h-4 animate-spin" /> Commencing Ingestion...</> : <><Play className="w-4 h-4" /> Start Ingestion Cycle</>}
               </button>
             </div>
@@ -219,12 +219,12 @@ const IngestPage = () => {
             <div className="px-10 py-5 bg-slate-800/50 border-b border-slate-800 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className={`w-2.5 h-2.5 rounded-full ${ingesting ? 'bg-blue-500 animate-pulse' : results.length > 0 ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-slate-600'}`}></div>
-                  <span className="text-xs font-black text-slate-400 capitalize ">Operational Stream Log</span>
+                  <span className="text-xs text-slate-400 capitalize ">Operational Stream Log</span>
                 </div>
                 {results.length > 0 && (
                   <button 
                     onClick={() => setResults([])}
-                    className="text-xs font-black text-slate-500 hover:text-white transition-all capitalize  bg-slate-700/50 px-3 py-1 rounded-xl"
+                    className="text-xs text-slate-500 hover:text-white transition-all capitalize  bg-slate-700/50 px-3 py-1 rounded-xl"
                   >
                     Flush Log
                   </button>
@@ -234,7 +234,7 @@ const IngestPage = () => {
                 {results.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-slate-700 py-32 space-y-4">
                     <Database className="w-16 h-12 mb-2 opacity-10" />
-                    <p className="text-xs font-black capitalize  opacity-40">System ready for data intake</p>
+                    <p className="text-xs capitalize  opacity-40">System ready for data intake</p>
                   </div>
                 ) : (
                   results.map((line, idx) => (
@@ -244,7 +244,7 @@ const IngestPage = () => {
                             ${line.includes('[Success]') ? 'text-emerald-400 font-bold' : ''}
                             ${line.includes('[Error]') ? 'text-red-400 font-bold bg-red-500/10 px-2 rounded' : ''}
                             ${line.includes('[Skip]') ? 'text-amber-400 font-bold italic opacity-80' : ''}
-                            ${line.startsWith('Error') ? 'text-red-500 font-black text-xs' : ''}
+                            ${line.startsWith('Error') ? 'text-red-500 text-xs' : ''}
                         `}>{line}</span>
                     </div>
                   ))

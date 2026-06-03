@@ -36,7 +36,7 @@ const ReportConfiguration: React.FC<ReportConfigurationProps> = ({
             <div className="mb-4 space-y-2">
                 <div className="flex items-center gap-2 text-blue-700 border-b border-slate-50 pb-1">
                     <Type className="w-3.5 h-3.5" />
-                    <h4 className="text-[9px] font-bold capitalize tracking-wider">Branding</h4>
+                    <h4 className="text-[9px] font-bold capitalize tracking-wider">Report Details</h4>
                 </div>
                 <FloatingInput
                     label="Official Report Title"

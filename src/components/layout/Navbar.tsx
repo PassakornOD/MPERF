@@ -54,11 +54,11 @@ const Navbar = () => {
         <div className="flex items-center gap-10">
           <div className="flex items-center gap-3 group cursor-pointer">
             <div className="w-11 h-11 rounded-xl bg-blue-700 flex items-center justify-center shadow-lg shadow-blue-700/20 transition-transform group-hover:scale-105 duration-300">
-              <span className="text-white font-black text-xl italic">M</span>
+              <span className="text-white  text-xl italic">M</span>
             </div>
             <div className="flex flex-col leading-tight">
-              <h1 className="text-lg font-black tracking-tight text-slate-900 capitalize italic">Metrisar</h1>
-              <span className="text-xs font-black text-muted capitalize ">Infrastructure</span>
+              <h1 className="text-lg  tracking-tight text-slate-900 capitalize italic">Metrisar</h1>
+              <span className="text-xs  text-muted capitalize ">Infrastructure</span>
             </div>
           </div>
 
@@ -69,7 +69,7 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-black capitalize  transition-all duration-300 ${isActive ? 'bg-blue-700 text-white shadow-lg shadow-blue-700/20' : 'text-muted hover:bg-blue-50 hover:text-blue-700'}`}
+                  className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs  capitalize  transition-all duration-300 ${isActive ? 'bg-blue-700 text-white shadow-lg shadow-blue-700/20' : 'text-muted hover:bg-blue-50 hover:text-blue-700'}`}
                 >
                   <item.icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-blue-600'}`} /> {item.name}
                 </Link>
@@ -106,9 +106,9 @@ const Navbar = () => {
                       <User className="w-10 h-10 text-blue-300" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-xs font-black text-blue-400 capitalize ">Operator</p>
-                      <p className="text-base font-black text-slate-900 leading-tight">{session?.user?.name || 'Guest User'}</p>
-                      <div className="inline-block px-4 py-1 rounded-full bg-blue-700 text-white text-[9px] font-black capitalize  border border-blue-800 shadow-md shadow-blue-200 mt-2">
+                      <p className="text-xs  text-blue-400 capitalize ">Operator</p>
+                      <p className="text-base  text-slate-900 leading-tight">{session?.user?.name || 'Guest User'}</p>
+                      <div className="inline-block px-4 py-1 rounded-full bg-blue-700 text-white text-[9px]  capitalize  border border-blue-800 shadow-md shadow-blue-200 mt-2">
                         {userRole || 'Guest'}
                       </div>
                     </div>
@@ -135,7 +135,7 @@ const Navbar = () => {
                         await signOut({ redirect: false });
                         window.location.href = '/login';
                       }}
-                      className="w-full flex items-center gap-3 px-5 py-4 text-red-600 hover:bg-red-50 rounded-xl transition-all font-black capitalize  text-xs mt-2 border border-transparent hover:border-red-100"
+                      className="w-full flex items-center gap-3 px-5 py-4 text-red-600 hover:bg-red-50 rounded-xl transition-all  capitalize  text-xs mt-2 border border-transparent hover:border-red-100"
                     >
                       <LogOut className="w-4 h-4" /> Sign Out
                     </button>
@@ -170,7 +170,7 @@ const Navbar = () => {
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-4 px-6 py-5 rounded-xl text-sm font-black capitalize  transition-all ${isActive ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-50'}`}
+                    className={`flex items-center gap-4 px-6 py-5 rounded-xl text-sm  capitalize  transition-all ${isActive ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-50'}`}
                   >
                     <item.icon className={`w-5 h-5 ${isActive ? 'text-blue-400' : ''}`} /> {item.name}
                   </Link>

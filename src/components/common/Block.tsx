@@ -13,11 +13,11 @@ const Block: React.FC<BlockProps> = ({ title, subtitle, tabs, children }) => {
     <div className="modern-card overflow-hidden mb-12">
       <div className="bg-slate-50/30 border-b border-slate-50 px-6 py-6 sm:px-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="space-y-1">
-          <h2 className="text-xl font-black text-slate-900 capitalize italic tracking-tight leading-tight">
+          <h2 className="text-xl  text-slate-900 capitalize tracking-tight leading-tight">
             {title}
           </h2>
           {subtitle && (
-            <p className="text-[9px] font-black text-slate-400 capitalize ">
+            <p className="text-xs  text-slate-400 capitalize ">
               {subtitle}
             </p>
           )}

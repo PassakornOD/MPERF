@@ -84,7 +84,7 @@ const HostSelector: React.FC<HostSelectorProps> = ({
                                     </button>
                                     <span className={`text-xs font-bold truncate ${isGroupSelected ? 'text-white' : 'text-slate-900'}`}>{g.hostgroup}</span>
                                 </div>
-                                {isGroupSelected && <div className="bg-white/20 px-1.5 py-0.5 rounded text-[8px] font-black capitalize">All</div>}
+                                {isGroupSelected && <div className="bg-white/20 px-1.5 py-0.5 rounded text-[8px]  capitalize">All</div>}
                             </div>
                             {isExpanded && (
                                 <div className="p-0.5 space-y-0.5 bg-slate-50/30 border-t border-slate-50">

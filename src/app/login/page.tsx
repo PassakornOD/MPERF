@@ -51,16 +51,16 @@ export default function LoginPage() {
           {/* Header */}
           <div className="mb-12 flex flex-col items-center text-center">
             <div className="w-20 h-20 rounded-[2rem] bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-600/30 mb-6 rotate-3 hover:rotate-0 transition-transform duration-500 cursor-default">
-              <span className="text-white font-black text-4xl italic">M</span>
+              <span className="text-white text-4xl italic">M</span>
             </div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 capitalize italic leading-none">Metrisar</h1>
-            <p className="text-[10px] font-black text-slate-400 capitalize  mt-3">Infrastructure Analytics Platform</p>
+            <h1 className="text-3xl tracking-tight text-slate-900 capitalize italic leading-none">Metrisar</h1>
+            <p className="text-[10px] text-slate-400 capitalize  mt-3">Infrastructure Analytics Platform</p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-400 capitalize  ml-4 block mb-1">Username</label>
+              <label className="text-[10px] text-slate-400 capitalize  ml-4 block mb-1">Username</label>
               <div className="relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors">
                   <User size={18} />
@@ -77,7 +77,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-400 capitalize  ml-4 block mb-1">Password</label>
+              <label className="text-[10px] text-slate-400 capitalize  ml-4 block mb-1">Password</label>
               <div className="relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors">
                   <Lock size={18} />
@@ -96,7 +96,7 @@ export default function LoginPage() {
             <div className="pt-4">
               <button
                 disabled={isLoading}
-                className="w-full bg-slate-900 text-white py-5 rounded-xl font-black text-xl capitalize  hover:bg-black transition-all shadow-2xl shadow-slate-200 active:scale-[0.98] group flex items-center justify-center gap-3 disabled:opacity-50"
+                className="w-full bg-slate-900 text-white py-5 rounded-xl text-xl capitalize  hover:bg-black transition-all shadow-2xl shadow-slate-200 active:scale-[0.98] group flex items-center justify-center gap-3 disabled:opacity-50"
               >
                 {isLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -111,7 +111,7 @@ export default function LoginPage() {
 
           {/* Footer */}
           <div className="mt-16 text-center border-t border-slate-50 pt-8">
-            <p className="text-[9px] font-black text-slate-300 capitalize  leading-relaxed">
+            <p className="text-[9px] text-slate-300 capitalize  leading-relaxed">
               Metrisar Management Console v2.7.0-CLEO<br />
               &copy; {new Date().getFullYear()} MFEC Infrastructure Services
             </p>

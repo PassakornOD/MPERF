@@ -45,24 +45,24 @@ const LogsPage = () => {
                 <Database className="w-5 h-5" />
             </div>
             <div>
-                <h2 className="text-sm font-black text-slate-800 capitalize  leading-none">Ingestion History</h2>
+                <h2 className="text-sm text-slate-800 capitalize  leading-none">Ingestion History</h2>
                 <p className="text-xs font-bold text-slate-400 capitalize mt-1">Audit log of automated data cycles</p>
             </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-            <button onClick={() => setIsConfirmOpen(true)} className="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-black capitalize  hover:bg-red-100 flex items-center gap-2 transition-all">
+            <button onClick={() => setIsConfirmOpen(true)} className="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs capitalize  hover:bg-red-100 flex items-center gap-2 transition-all">
                 <Trash2 className="w-3.5 h-3.5"/> Purge All
             </button>
             <button 
                 onClick={() => window.location.href = `/api/admin/ingest-logs/export?date=${date}&status=${status}`}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-2 text-xs font-black capitalize  shadow-lg shadow-emerald-100 transition-all flex items-center gap-2"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-2 text-xs capitalize  shadow-lg shadow-emerald-100 transition-all flex items-center gap-2"
             >
                 <Download className="w-3.5 h-3.5" /> Export CSV
             </button>
             <div className="flex items-center gap-2 bg-white border border-slate-200 p-1.5 rounded-xl shadow-inner">
-                <input type="date" className="bg-transparent border-none text-xs font-black capitalize outline-none px-2 text-slate-600" value={date} onChange={e => { setDate(e.target.value); setPage(1); }} />
+                <input type="date" className="bg-transparent border-none text-xs capitalize outline-none px-2 text-slate-600" value={date} onChange={e => { setDate(e.target.value); setPage(1); }} />
                 <div className="w-px h-4 bg-slate-100 mx-1"></div>
-                <select className="bg-transparent border-none text-xs font-black capitalize outline-none px-2 text-slate-600 cursor-pointer" value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}>
+                <select className="bg-transparent border-none text-xs capitalize outline-none px-2 text-slate-600 cursor-pointer" value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}>
                     <option value="">Status: All</option>
                     <option value="Success">Success</option>
                     <option value="Error">Error</option>
@@ -82,7 +82,7 @@ const LogsPage = () => {
       {isLoading ? (
         <div className="p-32 text-center">
             <Loader2 className="w-12 h-12 animate-spin mx-auto text-blue-600 opacity-20"/>
-            <p className="text-xs font-black text-slate-300 capitalize  mt-6">Retrieving audit stream...</p>
+            <p className="text-xs text-slate-300 capitalize  mt-6">Retrieving audit stream...</p>
         </div>
       ) : (
         <>
@@ -90,22 +90,22 @@ const LogsPage = () => {
             <table className="w-full text-xs text-left border-collapse">
               <thead>
                 <tr className="bg-white border-b border-slate-100">
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Timestamp</th>
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Operator</th>
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Target Table</th>
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">State</th>
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">Delta</th>
-                  <th className="px-8 py-5 text-[9px] font-black text-slate-400 capitalize ">System Message</th>
+                  <th className="px-8 py-5 text-[9px] text-slate-400 capitalize ">Timestamp</th>
+                  <th className="px-8 py-5 text-[9px] text-slate-400 capitalize ">Operator</th>
+                  <th className="px-8 py-5 text-[9px] text-slate-400 capitalize ">Target Table</th>
+                  <th className="px-8 py-5 text-[9px] text-slate-400 capitalize ">State</th>
+                  <th className="px-8 py-5 text-[9px] text-slate-400 capitalize ">Delta</th>
+                  <th className="px-8 py-5 text-[9px] text-slate-400 capitalize ">System Message</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100/50 bg-white">
                 {logs.map((log: any, idx: number) => (
                   <tr key={idx} className="hover:bg-blue-50/30 transition-all duration-200 group">
                     <td className="px-8 py-4 text-slate-400 font-medium tabular-nums">{new Date(new Date(log.timestamp).getTime() + 7 * 60 * 60 * 1000).toISOString().replace('T', ' ').substring(0, 19)}</td>
-                    <td className="px-8 py-4 font-black text-slate-700 capitalize tracking-tight">{log.user}</td>
+                    <td className="px-8 py-4 text-slate-700 capitalize tracking-tight">{log.user}</td>
                     <td className="px-8 py-4 font-bold text-blue-600"><code className="bg-blue-50/50 px-2 py-0.5 rounded text-xs">{log.table_name}</code></td>
                     <td className="px-8 py-4">
-                      <span className={`px-2.5 py-1 rounded-xl font-black text-[8px] capitalize  border ${
+                      <span className={`px-2.5 py-1 rounded-xl text-[8px] capitalize  border ${
                           log.status === 'Success' ? 'bg-emerald-50 text-emerald-700 border-emerald-100 shadow-sm' : 
                           log.status === 'Error' ? 'bg-red-50 text-red-700 border-red-100 shadow-sm' : 
                           'bg-slate-100 text-slate-500 border-slate-200'
@@ -113,7 +113,7 @@ const LogsPage = () => {
                           {log.status}
                       </span>
                     </td>
-                    <td className="px-8 py-4 font-black text-slate-700 tabular-nums">{log.records_processed.toLocaleString()}</td>
+                    <td className="px-8 py-4 text-slate-700 tabular-nums">{log.records_processed.toLocaleString()}</td>
                     <td className="px-8 py-4 text-slate-500 font-medium max-w-xs truncate" title={log.message}>{log.message}</td>
                   </tr>
                 ))}
@@ -122,13 +122,13 @@ const LogsPage = () => {
           </div>
           <div className="px-8 py-6 bg-slate-50/30 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-3">
-                  <span className="text-xs font-black text-slate-400 capitalize ">Historical Sequence</span>
-                  <div className="bg-white border border-slate-200 px-4 py-1.5 rounded-xl font-black text-xs text-blue-600 shadow-sm">{page} <span className="text-slate-300 font-medium px-1">/</span> {totalPages || 1}</div>
-                  <span className="text-xs font-black text-slate-300 capitalize  ml-4">Total: {total.toLocaleString()} Records</span>
+                  <span className="text-xs text-slate-400 capitalize ">Historical Sequence</span>
+                  <div className="bg-white border border-slate-200 px-4 py-1.5 rounded-xl text-xs text-blue-600 shadow-sm">{page} <span className="text-slate-300 font-medium px-1">/</span> {totalPages || 1}</div>
+                  <span className="text-xs text-slate-300 capitalize  ml-4">Total: {total.toLocaleString()} Records</span>
               </div>
               <div className="flex gap-2">
-                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1} className="px-8 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-black capitalize  hover:bg-slate-50 hover:border-blue-300 hover:text-blue-600 transition-all disabled:opacity-20 shadow-sm active:scale-95">Previous</button>
-                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="px-8 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-black capitalize  hover:bg-slate-50 hover:border-blue-300 hover:text-blue-600 transition-all disabled:opacity-20 shadow-sm active:scale-95">Next Cycle</button>
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1} className="px-8 py-2.5 rounded-xl bg-white border border-slate-200 text-xs capitalize  hover:bg-slate-50 hover:border-blue-300 hover:text-blue-600 transition-all disabled:opacity-20 shadow-sm active:scale-95">Previous</button>
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="px-8 py-2.5 rounded-xl bg-white border border-slate-200 text-xs capitalize  hover:bg-slate-50 hover:border-blue-300 hover:text-blue-600 transition-all disabled:opacity-20 shadow-sm active:scale-95">Next Cycle</button>
               </div>
           </div>
         </>

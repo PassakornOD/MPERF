@@ -53,11 +53,11 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
                 {toast.type === 'info' && <Info className="w-6 h-6" />}
               </div>
               <div className="flex flex-col gap-1">
-                <span className={`text-[10px] font-black capitalize ${toast.type === 'success' ? 'text-emerald-600' :
+                <span className={`text-[10px]  capitalize ${toast.type === 'success' ? 'text-emerald-600' :
                   toast.type === 'error' ? 'text-red-600' :
                     'text-blue-600'
                   }`}>{toast.type}</span>
-                <p className="text-xs font-black text-slate-900 leading-tight pr-6">{toast.message}</p>
+                <p className="text-xs  text-slate-900 leading-tight pr-6">{toast.message}</p>
               </div>
               <button
                 onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}

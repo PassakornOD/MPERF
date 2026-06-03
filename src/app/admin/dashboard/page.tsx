@@ -18,7 +18,7 @@ const UnifiedAdminDashboard = () => {
     <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6">
       <div className="mb-12 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
         <div className="space-y-2">
-          <h1 className="text-2xl font-black text-slate-900 capitalize italic tracking-tight leading-none">Admin Control</h1>
+          <h1 className="text-2xl text-slate-900 capitalize italic tracking-tight leading-none">Admin Control</h1>
           <p className="text-sm font-medium text-slate-400">Centralized governance for users, groups, and resource permissions</p>
         </div>
         
@@ -30,7 +30,7 @@ const UnifiedAdminDashboard = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-6 py-2.5 rounded-xl text-xs font-black capitalize  transition-all duration-300 flex items-center gap-2.5 ${
+                className={`px-6 py-2.5 rounded-xl text-xs capitalize transition-all duration-300 flex items-center gap-2.5 ${
                   isActive ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'
                 }`}
               >
