@@ -128,6 +128,18 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
     setOpenItem(openItem === name ? null : name);
   };
 
+  const docSubItems = [
+    { name: 'Manual', href: '/faq/info', icon: FileText },
+    { name: 'Operations', href: '/faq/operations', icon: Activity },
+    { name: 'Ingestion DB', href: '/faq/ingestion', icon: Database },
+    { name: 'Explorer DB', href: '/faq/explorer', icon: Database },
+    { name: 'Admin Guide', href: '/faq/admin', icon: ShieldCheck },
+  ].filter(sub => {
+    if (userRole === 'admin') return true;
+    if (userRole === 'sysadmin') return ['Manual', 'Operations', 'Admin Guide'].includes(sub.name);
+    return false;
+  });
+
   const coreItems = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     {
@@ -160,19 +172,13 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
         { name: 'Batch', href: '/report/batch', icon: FileText },
       ]
     },
-    {
+    ...(userRole !== 'operation' ? [{
       name: 'Documentation', href: '/faq/info', icon: HelpCircle,
-      subItems: [
-        { name: 'Manual', href: '/faq/info', icon: FileText },
-        { name: 'Operations', href: '/faq/operations', icon: Activity },
-        { name: 'Ingestion DB', href: '/faq/ingestion', icon: Database },
-        { name: 'Explorer DB', href: '/faq/explorer', icon: Database },
-        { name: 'Admin Guide', href: '/faq/admin', icon: ShieldCheck },
-      ]
-    }
+      subItems: docSubItems
+    }] : [])
   ];
 
-  const govItems = (userRole === 'admin' || userRole === 'sysadmin') ? [
+  const govItems = (userRole === 'admin') ? [
     {
       name: 'Admin', href: '/admin/users', icon: Settings,
       subItems: [
@@ -189,6 +195,15 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
         { name: 'Logs', href: '/admin/sar-management/logs', icon: FileText },
       ]
     },
+  ] : (userRole === 'sysadmin' ? [
+    {
+      name: 'Admin', href: '/admin/users', icon: Settings,
+      subItems: [
+        { name: 'Users', href: '/admin/users', icon: User },
+        { name: 'User Groups', href: '/admin/user-groups', icon: Users },
+        { name: 'Permissions', href: '/admin/permission-groups', icon: ShieldCheck },
+      ]
+    }
   ] : [];
 
   return (
