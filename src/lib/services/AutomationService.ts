@@ -241,7 +241,7 @@ export class AutomationService {
           totalProcessedHosts++;
           if (jobId) {
               const progress = Math.round((totalProcessedHosts / totalHostsToProcess) * 85); 
-              this.updateStatus(jobId, { progress, message: `Rendered host: ${host.name} (${totalProcessedHosts}/${totalHostsToProcess})` });
+              this.updateStatus(jobId, { progress, message: `Processing group: ${group.name}, host: ${host.name} (${totalProcessedHosts}/${totalHostsToProcess})` });
           }
       }
     }
