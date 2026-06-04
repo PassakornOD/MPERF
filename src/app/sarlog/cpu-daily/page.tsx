@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
+import ProgressBar from '@/components/common/ProgressBar';
 import Block from '@/components/common/Block';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -273,6 +274,7 @@ const CpuDailyPage = () => {
       </div>
 
       <div id="container" className="min-h-[500px] bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-10 animate-ease-in relative overflow-hidden">
+        <ProgressBar isVisible={isFetching} />
         {isFetching ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm z-10">
             <Loader2 className="w-16 h-16 animate-spin text-blue-600 opacity-20" />

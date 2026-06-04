@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useToast } from '@/components/common/Toast';
 import { Loader2, Activity, ChevronDown, AlertCircle } from 'lucide-react';
+import ProgressBar from '@/components/common/ProgressBar';
 
 const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
   const { showToast } = useToast();
@@ -76,7 +77,8 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
         </button>
       </div>
 
-      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden animate-ease-in">
+      <div id="container" className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden animate-ease-in relative">
+        <ProgressBar isVisible={isFetching} />
         <div className="overflow-x-auto custom-scrollbar">
           {isFetching ? (
             <div className="p-10 space-y-4">

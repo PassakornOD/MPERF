@@ -208,6 +208,15 @@ h1, h2, h3, h4, h5, h6 {
   @apply overflow-hidden transition-all duration-300 ease-in-out;
 }
 
+@keyframes indeterminate-bar {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
+.animate-indeterminate-bar {
+  animation: indeterminate-bar 1.5s infinite linear;
+}
+
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
