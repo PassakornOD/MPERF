@@ -13,7 +13,7 @@ import { Loader2, Download, Activity, ChevronDown, AlertCircle } from 'lucide-re
 
 const SarChart = dynamic(() => import('@/components/charts/SarChart'), {
   ssr: false,
-  loading: () => <div className="w-full h-[435px] bg-slate-50 animate-pulse flex items-center justify-center">Loading Chart...</div>
+  loading: () => <div className="w-full h-[435px] bg-background animate-pulse flex items-center justify-center">Loading Chart...</div>
 });
 
 interface HostName { hostname_id: number; hostname: string; }
@@ -215,11 +215,11 @@ const CpuDailyPage = () => {
 
   return (
     <Block title="CPU Performance Metrics" subtitle="Daily Processor Utilization Analysis" tabs={[]}>
-      <div className="bg-slate-50/50 p-6 rounded-xl border border-slate-100 mb-8 flex flex-nowrap gap-3 items-end justify-center transition-all shadow-inner">
+      <div className="bg-background/50 p-6 rounded-xl border border-border mb-8 flex flex-nowrap gap-3 items-end justify-center transition-all shadow-inner">
         <div className="flex-1 min-w-[180px]">
-          <label className="text-xs  text-slate-400 capitalize  mb-2 ml-1 block">Hostgroup</label>
+          <label className="text-xs  text-muted-foreground capitalize  mb-2 ml-1 block">Hostgroup</label>
           <div className="relative group">
-            <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
+            <select className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
               <option value="">Select Hostgroup</option>
               {hostGroups?.map(g => <option key={g.hostgroup_id} value={g.hostgroup}>{g.hostgroup}</option>)}
             </select>
@@ -227,9 +227,9 @@ const CpuDailyPage = () => {
           </div>
         </div>
         <div className="flex-1 min-w-[180px]">
-          <label className="text-xs  text-slate-400 capitalize  mb-2 ml-1 block">Hostname</label>
+          <label className="text-xs  text-muted-foreground capitalize  mb-2 ml-1 block">Hostname</label>
           <div className="relative group">
-            <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm disabled:opacity-30" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
+            <select className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm disabled:opacity-30" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
               <option value="">Select Hostname</option>
               {hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.map(h => <option key={h.hostname_id} value={String(h.hostname_id)}>{h.hostname}</option>)}
             </select>
@@ -237,9 +237,9 @@ const CpuDailyPage = () => {
           </div>
         </div>
         <div className="w-32">
-          <label className="text-xs  text-slate-400 capitalize  mb-2 ml-1 block">Type</label>
+          <label className="text-xs  text-muted-foreground capitalize  mb-2 ml-1 block">Type</label>
           <div className="relative group">
-            <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm" value={type} onChange={(e) => setType(e.target.value as any)}>
+            <select className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm" value={type} onChange={(e) => setType(e.target.value as any)}>
               <option value="Peak">Peak</option>
               <option value="Normal">Normal</option>
               <option value="Average">Average</option>
@@ -248,12 +248,12 @@ const CpuDailyPage = () => {
           </div>
         </div>
         <div className="w-40">
-          <label className="text-xs  text-slate-400 capitalize  mb-2 ml-1 block">Start Date</label>
-          <input type="date" className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs  capitalize outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+          <label className="text-xs  text-muted-foreground capitalize  mb-2 ml-1 block">Start Date</label>
+          <input type="date" className="w-full bg-card border border-border rounded-xl px-4 py-2 text-xs  capitalize outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
         </div>
         <div className="w-40">
-          <label className="text-xs  text-slate-400 capitalize  mb-2 ml-1 block">Stop Date</label>
-          <input type="date" className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs  capitalize outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+          <label className="text-xs  text-muted-foreground capitalize  mb-2 ml-1 block">Stop Date</label>
+          <input type="date" className="w-full bg-card border border-border rounded-xl px-4 py-2 text-xs  capitalize outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
         </div>
         <div className="flex items-end">
           <button onClick={() => { setQueryEnabled(true); refetch(); }} className="bg-slate-900 text-white px-4 py-2.5 rounded-xl text-xs  capitalize  hover:bg-black transition-all shadow-xl shadow-slate-200 disabled:opacity-30 h-[42px] active:scale-95 whitespace-nowrap" disabled={!selectedGroup || !selectedHostnameId}>Query</button>
@@ -263,7 +263,7 @@ const CpuDailyPage = () => {
       <div className="flex justify-between items-center mb-6 px-2">
         <div className="flex items-center gap-3">
           <div className={`w-2 h-2 rounded-full ${isFetching ? 'bg-blue-500 animate-pulse' : metrics ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300'}`}></div>
-          <span className="text-xs  text-slate-400 capitalize ">{isFetching ? 'Stream Incoming' : metrics ? 'Data Link Online' : 'System Ready'}</span>
+          <span className="text-xs  text-muted-foreground capitalize ">{isFetching ? 'Stream Incoming' : metrics ? 'Data Link Online' : 'System Ready'}</span>
         </div>
         {metrics && metrics.length > 0 && (
           <button onClick={handleExport} className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl text-xs  capitalize  hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50 active:scale-95" disabled={isExporting}>
@@ -273,12 +273,12 @@ const CpuDailyPage = () => {
         )}
       </div>
 
-      <div id="container" className="min-h-[500px] bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-10 animate-ease-in relative overflow-hidden">
+      <div id="container" className="min-h-[500px] bg-card rounded-[2rem] border border-border shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-10 animate-ease-in relative overflow-hidden">
         <ProgressBar isVisible={isFetching} />
         {isFetching ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm z-10">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-card/60 backdrop-blur-sm z-10">
             <Loader2 className="w-16 h-16 animate-spin text-blue-600 opacity-20" />
-            <p className="mt-8 text-xs  text-slate-400 capitalize ">Synchronizing Nodes...</p>
+            <p className="mt-8 text-xs  text-muted-foreground capitalize ">Synchronizing Nodes...</p>
           </div>
         ) : null}
 
@@ -288,7 +288,7 @@ const CpuDailyPage = () => {
               <SarChart ref={chartRef} options={getChartOptions()} />
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-40 bg-slate-50/50 rounded-xl border-2 border-dashed border-slate-100">
+            <div className="flex flex-col items-center justify-center py-40 bg-background/50 rounded-xl border-2 border-dashed border-border">
               <AlertCircle className="w-12 h-12 text-slate-200 mb-4" />
               <p className="text-xs  text-slate-300 capitalize ">No performance metrics retrieved for cycle</p>
             </div>

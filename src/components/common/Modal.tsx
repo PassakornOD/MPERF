@@ -55,17 +55,17 @@ const Modal = ({
       <Draggable nodeRef={nodeRef} handle=".modal-handle" bounds="parent">
         <div 
           ref={nodeRef} 
-          className={`bg-white rounded-xl w-full ${maxWidth} flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200 self-center will-change-transform`}
+          className={`bg-card rounded-xl w-full ${maxWidth} flex flex-col shadow-2xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-200 self-center will-change-transform`}
         >
-          <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 modal-handle cursor-grab active:cursor-grabbing">
-            <h2 className="text-lg font-semibold text-slate-800 leading-none">{title}</h2>
+          <div className="flex justify-between items-center px-6 py-4 border-b border-border modal-handle cursor-grab active:cursor-grabbing">
+            <h2 className="text-lg font-semibold text-foreground leading-none">{title}</h2>
             <div className="flex items-center gap-2">
               {onDownload && (
-                <button onClick={onDownload} className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors" title="Download">
+                <button onClick={onDownload} className="p-1.5 text-muted-foreground hover:text-blue-600 transition-colors" title="Download">
                   <Download className="w-5 h-5" />
                 </button>
               )}
-              <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-600 transition-colors">
+              <button onClick={onClose} className="p-1.5 text-muted-foreground hover:text-slate-600 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>

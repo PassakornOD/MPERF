@@ -49,7 +49,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav ref={navbarRef} className="sticky top-0 z-[50] bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-[0_2px_20px_-5px_rgba(0,0,0,0.05)]">
+    <nav ref={navbarRef} className="sticky top-0 z-[50] bg-card/80 backdrop-blur-md border-b border-border shadow-[0_2px_20px_-5px_rgba(0,0,0,0.05)]">
       <div className="max-w-[1450px] mx-auto px-6 sm:px-16 lg:px-32 xl:px-44 h-[80px] flex items-center justify-between">
         <div className="flex items-center gap-10">
           <div className="flex items-center gap-3 group cursor-pointer">
@@ -57,7 +57,7 @@ const Navbar = () => {
               <span className="text-white  text-xl italic">M</span>
             </div>
             <div className="flex flex-col leading-tight">
-              <h1 className="text-lg  tracking-tight text-slate-900 capitalize italic">Metrisar</h1>
+              <h1 className="text-lg  tracking-tight text-foreground capitalize italic">Metrisar</h1>
               <span className="text-xs  text-muted capitalize ">Infrastructure</span>
             </div>
           </div>
@@ -82,7 +82,7 @@ const Navbar = () => {
           <div className="relative">
             <button
               onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className={`flex items-center gap-2 p-1 rounded-xl border transition-all duration-300 ${isProfileOpen ? 'bg-blue-50 border-blue-200' : 'bg-white hover:bg-blue-50 border-blue-100 shadow-sm'}`}
+              className={`flex items-center gap-2 p-1 rounded-xl border transition-all duration-300 ${isProfileOpen ? 'bg-blue-50 border-blue-200' : 'bg-card hover:bg-blue-50 border-blue-100 shadow-sm'}`}
             >
               <div className="w-9 h-9 rounded-xl overflow-hidden border border-white flex items-center justify-center bg-blue-100 text-blue-700 shadow-sm">
                 {session?.user?.image ? (
@@ -99,15 +99,15 @@ const Navbar = () => {
                   initial={{ opacity: 0, y: 12, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 12, scale: 0.95 }}
-                  className="absolute right-0 top-[calc(100%+1rem)] w-72 bg-white border border-blue-100 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(30,58,138,0.15)] z-[110] p-5"
+                  className="absolute right-0 top-[calc(100%+1rem)] w-72 bg-card border border-blue-100 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(30,58,138,0.15)] z-[110] p-5"
                 >
                   <div className="p-6 bg-blue-50/50 rounded-[2rem] mb-4 space-y-4 flex flex-col items-center justify-center text-center border border-blue-100">
-                    <div className="w-20 h-20 rounded-xl bg-white flex items-center justify-center border border-blue-100 shadow-sm transition-transform hover:rotate-3">
+                    <div className="w-20 h-20 rounded-xl bg-card flex items-center justify-center border border-blue-100 shadow-sm transition-transform hover:rotate-3">
                       <User className="w-10 h-10 text-blue-300" />
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs  text-blue-400 capitalize ">Operator</p>
-                      <p className="text-base  text-slate-900 leading-tight">{session?.user?.name || 'Guest User'}</p>
+                      <p className="text-base  text-foreground leading-tight">{session?.user?.name || 'Guest User'}</p>
                       <div className="inline-block px-4 py-1 rounded-full bg-blue-700 text-white text-[9px]  capitalize  border border-blue-800 shadow-md shadow-blue-200 mt-2">
                         {userRole || 'Guest'}
                       </div>
@@ -147,7 +147,7 @@ const Navbar = () => {
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-3 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 transition-colors"
+            className="lg:hidden p-3 rounded-xl bg-background text-slate-600 hover:bg-slate-100 transition-colors"
           >
             <Menu className="w-6 h-6" />
           </button>
@@ -160,7 +160,7 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden border-t border-slate-50 bg-white overflow-hidden"
+            className="lg:hidden border-t border-slate-50 bg-card overflow-hidden"
           >
             <div className="px-6 py-8 space-y-2">
               {navItems.map(item => {
@@ -170,7 +170,7 @@ const Navbar = () => {
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-4 px-6 py-5 rounded-xl text-sm  capitalize  transition-all ${isActive ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-50'}`}
+                    className={`flex items-center gap-4 px-6 py-5 rounded-xl text-sm  capitalize  transition-all ${isActive ? 'bg-slate-900 text-white' : 'text-muted-foreground hover:bg-background'}`}
                   >
                     <item.icon className={`w-5 h-5 ${isActive ? 'text-blue-400' : ''}`} /> {item.name}
                   </Link>

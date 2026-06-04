@@ -11,7 +11,7 @@ import { Loader2, Activity, ChevronDown } from 'lucide-react';
 
 const SarChart = dynamic(() => import('@/components/charts/SarChart'), {
   ssr: false,
-  loading: () => <div className="w-full h-[435px] bg-slate-50 animate-pulse flex items-center justify-center">Loading Chart...</div>
+  loading: () => <div className="w-full h-[435px] bg-background animate-pulse flex items-center justify-center">Loading Chart...</div>
 });
 
 interface HostName {
@@ -104,11 +104,11 @@ const MemMonthlyPage = () => {
 
   return (
     <Block title="Memory Performance Metrics" subtitle="Monthly Resource Allocation Distribution" tabs={[]}>
-      <div className="bg-slate-50/50 p-6 rounded-xl border border-slate-100 mb-8 flex flex-wrap gap-5 items-end justify-center transition-all shadow-inner">
+      <div className="bg-background/50 p-6 rounded-xl border border-border mb-8 flex flex-wrap gap-5 items-end justify-center transition-all shadow-inner">
         <div className="flex-1 min-w-[180px]">
-          <label className="text-xs  text-slate-400 capitalize  mb-2 ml-1 block">Hostgroup</label>
+          <label className="text-xs  text-muted-foreground capitalize  mb-2 ml-1 block">Hostgroup</label>
           <div className="relative group">
-            <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
+            <select className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
               <option value="">Select Hostgroup</option>
               {hostGroups?.map(g => <option key={g.hostgroup_id} value={g.hostgroup}>{g.hostgroup}</option>)}
             </select>
@@ -116,9 +116,9 @@ const MemMonthlyPage = () => {
           </div>
         </div>
         <div className="flex-1 min-w-[180px]">
-          <label className="text-xs  text-slate-400 capitalize  mb-2 ml-1 block">Hostname</label>
+          <label className="text-xs  text-muted-foreground capitalize  mb-2 ml-1 block">Hostname</label>
           <div className="relative group">
-            <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm disabled:opacity-30" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
+            <select className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm disabled:opacity-30" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
               <option value="">Select Hostname</option>
               {hostGroups?.find(g => g.hostgroup === selectedGroup)?.hostnames.map(h => <option key={h.hostname_id} value={String(h.hostname_id)}>{h.hostname}</option>)}
             </select>
@@ -126,15 +126,15 @@ const MemMonthlyPage = () => {
           </div>
         </div>
         <div className="w-44">
-          <label className="text-xs  text-slate-400 capitalize  mb-2 ml-1 block">Reporting Period</label>
+          <label className="text-xs  text-muted-foreground capitalize  mb-2 ml-1 block">Reporting Period</label>
           <div className="flex gap-2">
             <div className="relative group flex-1">
-              <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm text-center" value={month} onChange={(e) => setMonth(e.target.value)}>
+              <select className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm text-center" value={month} onChange={(e) => setMonth(e.target.value)}>
                 {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
               </select>
             </div>
             <div className="relative group flex-1">
-              <select className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm text-center" value={year} onChange={(e) => setYear(e.target.value)}>
+              <select className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs  capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all appearance-none cursor-pointer shadow-sm text-center" value={year} onChange={(e) => setYear(e.target.value)}>
                 {years.map(y => <option key={y} value={y}>{y}</option>)}
               </select>
             </div>
@@ -145,15 +145,15 @@ const MemMonthlyPage = () => {
 
       <div className="flex items-center gap-3 mb-6 px-2">
         <div className={`w-2 h-2 rounded-full ${isFetching ? 'bg-blue-500 animate-pulse' : metrics ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300'}`}></div>
-        <span className="text-xs  text-slate-400 capitalize ">{isFetching ? 'Stream Incoming' : metrics ? 'Data Link Online' : 'System Ready'}</span>
+        <span className="text-xs  text-muted-foreground capitalize ">{isFetching ? 'Stream Incoming' : metrics ? 'Data Link Online' : 'System Ready'}</span>
       </div>
 
-      <div id="container" className="min-h-[500px] bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-10 animate-ease-in relative overflow-hidden">
+      <div id="container" className="min-h-[500px] bg-card rounded-[2rem] border border-border shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-10 animate-ease-in relative overflow-hidden">
         <ProgressBar isVisible={isFetching} />
         {isFetching ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm z-10">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-card/60 backdrop-blur-sm z-10">
             <Loader2 className="w-16 h-16 animate-spin text-blue-600 opacity-20" />
-            <p className="mt-8 text-xs  text-slate-400 capitalize ">Processing Monthly Aggregate...</p>
+            <p className="mt-8 text-xs  text-muted-foreground capitalize ">Processing Monthly Aggregate...</p>
           </div>
         ) : null}
 
@@ -163,7 +163,7 @@ const MemMonthlyPage = () => {
               <SarChart options={getChartOptions()} />
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-40 bg-slate-50/50 rounded-xl border-2 border-dashed border-slate-100">
+            <div className="flex flex-col items-center justify-center py-40 bg-background/50 rounded-xl border-2 border-dashed border-border">
               <Activity size={48} className="text-slate-200 mb-4" />
               <p className="text-xs  text-slate-300 capitalize ">No performance metrics retrieved for cycle</p>
             </div>

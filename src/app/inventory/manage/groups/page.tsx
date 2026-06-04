@@ -183,8 +183,8 @@ const ManageAssetsPage = () => {
         <div className="space-y-8 animate-ease-in pb-20">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div className="space-y-1">
-                    <h2 className="text-2xl text-slate-900 capitalize tracking-tight leading-none">Asset Management</h2>
-                    <p className="text-sm font-medium text-slate-400">Structural management of groups and network nodes</p>
+                    <h2 className="text-2xl text-foreground capitalize tracking-tight leading-none">Asset Management</h2>
+                    <p className="text-sm font-medium text-muted-foreground">Structural management of groups and network nodes</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="relative group w-full sm:w-64">
@@ -194,10 +194,10 @@ const ManageAssetsPage = () => {
                             placeholder="Search Infrastructure..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-12 pr-10 py-3 bg-white border border-slate-100 rounded-xl text-xs capitalize tracking-tight focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all shadow-inner"
+                            className="w-full pl-12 pr-10 py-3 bg-card border border-border rounded-xl text-xs capitalize tracking-tight focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all shadow-inner"
                         />
                         {searchTerm && (
-                            <button onClick={() => setSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 hover:bg-slate-50 rounded-xl transition-all text-slate-300 hover:text-slate-600">
+                            <button onClick={() => setSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 hover:bg-background rounded-xl transition-all text-slate-300 hover:text-slate-600">
                                 <X className="w-3.5 h-3.5" />
                             </button>
                         )}
@@ -205,20 +205,20 @@ const ManageAssetsPage = () => {
                     <div className="relative">
                         <button
                             onClick={() => setShowColumnSelector(!showColumnSelector)}
-                            className={`p-3 rounded-xl border transition-all ${showColumnSelector ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-900 shadow-sm'}`}
+                            className={`p-3 rounded-xl border transition-all ${showColumnSelector ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-card border-border text-muted-foreground hover:bg-background hover:text-foreground shadow-sm'}`}
                             title="Grid Configuration"
                         >
                             <Settings2 className="w-5 h-5" />
                         </button>
                         {showColumnSelector && (
-                            <div className="absolute right-0 mt-4 w-56 bg-white border border-slate-100 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] z-50 p-6 animate-in fade-in zoom-in duration-300">
-                                <p className="text-[9px] capitalize  text-slate-400 mb-4 px-2">Columns</p>
+                            <div className="absolute right-0 mt-4 w-56 bg-card border border-border rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] z-50 p-6 animate-in fade-in zoom-in duration-300">
+                                <p className="text-[9px] capitalize  text-muted-foreground mb-4 px-2">Columns</p>
                                 <div className="space-y-1 max-h-72 overflow-y-auto pr-2 custom-scrollbar">
                                     {allColumns.map(col => (
                                         <button
                                             key={col.id}
                                             onClick={() => toggleColumn(col.id)}
-                                            className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 text-[11px] capitalize tracking-tight text-slate-600 transition-all border border-transparent hover:border-slate-100"
+                                            className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-background text-[11px] capitalize tracking-tight text-slate-600 transition-all border border-transparent hover:border-border"
                                         >
                                             {col.label}
                                             {visibleColumns.includes(col.id) && <Check className="w-3.5 h-3.5 text-blue-600" />}
@@ -248,64 +248,64 @@ const ManageAssetsPage = () => {
                     const isExpanded = expandedGroups.includes(hg.hostgroup_id) || searchTerm !== '';
 
                     return (
-                        <div key={hg.hostgroup_id} className={`bg-white rounded-[2rem] border transition-all duration-500 group overflow-hidden ${isExpanded ? 'border-blue-100 shadow-xl shadow-blue-500/5' : 'border-slate-100 shadow-sm hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-200'}`}>
+                        <div key={hg.hostgroup_id} className={`bg-card rounded-[2rem] border transition-all duration-500 group overflow-hidden ${isExpanded ? 'border-blue-100 shadow-xl shadow-blue-500/5' : 'border-border shadow-sm hover:shadow-lg hover:shadow-slate-200/50 hover:border-border'}`}>
                             <div
-                                className={`p-6 cursor-pointer flex items-center justify-between gap-6 transition-colors duration-300 ${isExpanded ? 'bg-slate-50/30 border-b border-slate-50' : 'bg-white'}`}
+                                className={`p-6 cursor-pointer flex items-center justify-between gap-6 transition-colors duration-300 ${isExpanded ? 'bg-background/30 border-b border-slate-50' : 'bg-card'}`}
                                 onClick={() => toggleGroup(hg.hostgroup_id)}
                             >
                                 <div className="flex-1 min-w-0 flex items-center gap-6">
-                                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/30 rotate-3' : 'bg-slate-50 text-blue-600 group-hover:bg-blue-50'}`}>
+                                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/30 rotate-3' : 'bg-background text-blue-600 group-hover:bg-blue-50'}`}>
                                         <Folder className="w-6 h-6" />
                                     </div>
                                     <div className="space-y-1">
-                                        <h4 className="text-slate-900 text-lg capitalize tracking-tight leading-none">{hg.hostgroup}</h4>
+                                        <h4 className="text-foreground text-lg capitalize tracking-tight leading-none">{hg.hostgroup}</h4>
                                         <div className="flex items-center gap-3">
-                                            <span className="text-xs text-slate-400 capitalize ">{groupHosts.length} Hostnames</span>
+                                            <span className="text-xs text-muted-foreground capitalize ">{groupHosts.length} Hostnames</span>
                                             {isProtected && <span className="bg-slate-900 text-white text-[8px] capitalize px-2 py-0.5 rounded-xl tracking-tighter">System Protected</span>}
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     {canUpdate && !isProtected && (
-                                        <button onClick={(e) => { e.stopPropagation(); setEditingGroup(hg); setIsGroupModalOpen(true); }} className="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-blue-600 hover:bg-white hover:shadow-sm rounded-xl transition-all border border-transparent hover:border-slate-100"><Edit className="w-4.5 h-4.5" /></button>
+                                        <button onClick={(e) => { e.stopPropagation(); setEditingGroup(hg); setIsGroupModalOpen(true); }} className="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-blue-600 hover:bg-card hover:shadow-sm rounded-xl transition-all border border-transparent hover:border-border"><Edit className="w-4.5 h-4.5" /></button>
                                     )}
                                     {canDecommission && !isProtected && (
-                                        <button onClick={(e) => { e.stopPropagation(); handleDecommissionClick('group', hg.hostgroup_id); }} className="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-red-600 hover:bg-white hover:shadow-sm rounded-xl transition-all border border-transparent hover:border-slate-100"><Trash2 className="w-4.5 h-4.5" /></button>
+                                        <button onClick={(e) => { e.stopPropagation(); handleDecommissionClick('group', hg.hostgroup_id); }} className="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-red-600 hover:bg-card hover:shadow-sm rounded-xl transition-all border border-transparent hover:border-border"><Trash2 className="w-4.5 h-4.5" /></button>
                                     )}
-                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-slate-900 text-white rotate-180' : 'bg-slate-50 text-slate-300 group-hover:text-slate-500'}`}>
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 ${isExpanded ? 'bg-slate-900 text-white rotate-180' : 'bg-background text-slate-300 group-hover:text-muted-foreground'}`}>
                                         <ChevronDown className="w-5 h-5" />
                                     </div>
                                 </div>
                             </div>
 
                             {isExpanded && (
-                                <div className="p-8 animate-in fade-in slide-in-from-top-4 duration-500 bg-white">
-                                    <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-xl shadow-inner bg-slate-50/20">
+                                <div className="p-8 animate-in fade-in slide-in-from-top-4 duration-500 bg-card">
+                                    <div className="overflow-x-auto custom-scrollbar border border-border rounded-xl shadow-inner bg-background/20">
                                         <table className="w-full text-xs text-left border-collapse">
                                             <thead>
-                                                <tr className="bg-white border-b border-slate-100">
+                                                <tr className="bg-card border-b border-border">
                                                     {visibleColumns.map(colId => (
-                                                        <th key={colId} className="px-6 py-5 text-xs text-slate-400 capitalize  whitespace-nowrap">
+                                                        <th key={colId} className="px-6 py-5 text-xs text-muted-foreground capitalize  whitespace-nowrap">
                                                             {allColumns.find(c => c.id === colId)?.label}
                                                         </th>
                                                     ))}
-                                                    <th className="px-6 py-5 text-[9px] text-slate-400 capitalize  text-right whitespace-nowrap">Actions</th>
+                                                    <th className="px-6 py-5 text-[9px] text-muted-foreground capitalize  text-right whitespace-nowrap">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-slate-100/50">
                                                 {groupHosts.length > 0 ? groupHosts.map((h: any) => (
-                                                    <tr key={h.hostname_id} className="group/row hover:bg-blue-50/40 transition-all duration-200 border-b border-slate-100/30 last:border-0">
+                                                    <tr key={h.hostname_id} className="group/row hover:bg-blue-50/40 transition-all duration-200 border-b border-border/30 last:border-0">
                                                         {visibleColumns.map(colId => (
                                                             <td key={colId} className="px-6 py-4">
                                                                 {colId === 'hostname' ? (
                                                                     <div className="flex items-center gap-3">
                                                                         <Monitor className="w-4 h-4 text-blue-500/50 group-hover/row:text-blue-600 transition-colors" />
-                                                                        <span className="text-[11px] text-slate-800 capitalize tracking-tight group-hover/row:text-blue-700 transition-colors">{h.hostname}</span>
+                                                                        <span className="text-[11px] text-foreground capitalize tracking-tight group-hover/row:text-blue-700 transition-colors">{h.hostname}</span>
                                                                     </div>
                                                                 ) : colId === 'mem' ? (
                                                                     <span className="text-[11px] text-slate-600 tabular-nums">{h[colId]} <span className="text-[8px] opacity-40">GB</span></span>
                                                                 ) : (
-                                                                    <span className="text-[11px] text-slate-500 truncate max-w-[150px] inline-block">
+                                                                    <span className="text-[11px] text-muted-foreground truncate max-w-[150px] inline-block">
                                                                         {h[colId] || '---'}
                                                                     </span>
                                                                 )}
@@ -314,10 +314,10 @@ const ManageAssetsPage = () => {
                                                         <td className="px-6 py-4 text-right">
                                                             <div className="flex items-center justify-end gap-2 opacity-0 group-hover/row:opacity-100 transition-all translate-x-4 group-hover/row:translate-x-0">
                                                                 {canUpdate && (
-                                                                    <button onClick={() => handleEditHost(h)} className="p-2 bg-white text-slate-400 hover:text-blue-600 border border-slate-100 rounded-xl shadow-sm hover:shadow-md transition-all"><Edit className="w-3.5 h-3.5" /></button>
+                                                                    <button onClick={() => handleEditHost(h)} className="p-2 bg-card text-muted-foreground hover:text-blue-600 border border-border rounded-xl shadow-sm hover:shadow-md transition-all"><Edit className="w-3.5 h-3.5" /></button>
                                                                 )}
                                                                 {canDecommission && (
-                                                                    <button onClick={() => handleDecommissionClick('host', h.hostname_id)} className="p-2 bg-white text-slate-400 hover:text-red-500 border border-slate-100 rounded-xl shadow-sm hover:shadow-md transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
+                                                                    <button onClick={() => handleDecommissionClick('host', h.hostname_id)} className="p-2 bg-card text-muted-foreground hover:text-red-500 border border-border rounded-xl shadow-sm hover:shadow-md transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
                                                                 )}
                                                             </div>
                                                         </td>
@@ -355,14 +355,14 @@ const ManageAssetsPage = () => {
                     />
                     <div className="relative group">
                         <select
-                            className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-xl text-xs capitalize tracking-tight bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner"
+                            className="peer w-full border border-border p-4 pt-7 pb-2 rounded-xl text-xs capitalize tracking-tight bg-background/50 focus:bg-card focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner"
                             value={editingGroup ? editingGroup.pg_id : newGroup.pg_id}
                             onChange={e => editingGroup ? setEditingGroup({ ...editingGroup, pg_id: e.target.value }) : setNewGroup({ ...newGroup, pg_id: e.target.value })}
                         >
                             <option value="" disabled hidden></option>
                             {pgs.map((p: any) => <option key={p.pg_id} value={p.pg_id}>{p.pg_name}</option>)}
                         </select>
-                        <label className={`absolute left-4 transition-all pointer-events-none capitalize  ${(editingGroup?.pg_id || newGroup.pg_id) ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Security Association</label>
+                        <label className={`absolute left-4 transition-all pointer-events-none capitalize  ${(editingGroup?.pg_id || newGroup.pg_id) ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-muted-foreground'}`}>Security Association</label>
                         <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
                     </div>
                     <button
@@ -389,12 +389,12 @@ const ManageAssetsPage = () => {
                                     <select
                                         value={hostForm.hostgroup_id}
                                         onChange={e => setHostForm({ ...hostForm, hostgroup_id: e.target.value })}
-                                        className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-xl text-xs capitalize tracking-tight bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner"
+                                        className="peer w-full border border-border p-4 pt-7 pb-2 rounded-xl text-xs capitalize tracking-tight bg-background/50 focus:bg-card focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner"
                                     >
                                         <option value="" disabled hidden></option>
                                         {hostGroups.map((g: any) => <option key={g.hostgroup_id} value={g.hostgroup_id}>{g.hostgroup}</option>)}
                                     </select>
-                                    <label className={`absolute left-4 transition-all pointer-events-none capitalize  ${hostForm.hostgroup_id ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Hostgroup</label>
+                                    <label className={`absolute left-4 transition-all pointer-events-none capitalize  ${hostForm.hostgroup_id ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-muted-foreground'}`}>Hostgroup</label>
                                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
                                 </div>
                             ) : key === 'OS' ? (
@@ -402,7 +402,7 @@ const ManageAssetsPage = () => {
                                     <select
                                         value={hostForm.OS}
                                         onChange={e => setHostForm({ ...hostForm, OS: e.target.value })}
-                                        className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-xl text-xs capitalize tracking-tight bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner"
+                                        className="peer w-full border border-border p-4 pt-7 pb-2 rounded-xl text-xs capitalize tracking-tight bg-background/50 focus:bg-card focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner"
                                     >
                                         <option value="" disabled hidden></option>
                                         <option value="RedHat">Red Hat Enterprise Linux</option>
@@ -413,7 +413,7 @@ const ManageAssetsPage = () => {
                                         <option value="CentOS">CentOS</option>
                                         <option value="Other">Standard Linux / Unix</option>
                                     </select>
-                                    <label className={`absolute left-4 transition-all pointer-events-none capitalize  ${hostForm.OS ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Operating System</label>
+                                    <label className={`absolute left-4 transition-all pointer-events-none capitalize  ${hostForm.OS ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-muted-foreground'}`}>Operating System</label>
                                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
                                 </div>
                             ) : (

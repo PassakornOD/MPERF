@@ -21,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable}`}>
-      <body className="bg-slate-50 text-slate-900">
+    <html lang="en" className={`${inter.variable}`} suppressHydrationWarning>
+      <body className="antialiased font-sans">
         <Providers>
           <DashboardWrapper>
             {children}

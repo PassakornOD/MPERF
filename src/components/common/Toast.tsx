@@ -39,7 +39,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 20, scale: 0.95 }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              className={`pointer-events-auto flex items-center gap-3 px-3 py-2 rounded-xl shadow-lg border bg-white ${toast.type === 'success' ? 'border-emerald-100' :
+              className={`pointer-events-auto flex items-center gap-3 px-3 py-2 rounded-xl shadow-lg border bg-card ${toast.type === 'success' ? 'border-emerald-100' :
                 toast.type === 'error' ? 'border-red-100' :
                   'border-blue-100'
                 }`}
@@ -53,11 +53,11 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
                 {toast.type === 'info' && <Info className="w-4 h-4" />}
               </div>
               <div className="flex flex-col">
-                <p className="text-xs font-semibold text-slate-800 leading-tight">{toast.message}</p>
+                <p className="text-xs font-semibold text-foreground leading-tight">{toast.message}</p>
               </div>
               <button
                 onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
-                className="ml-auto p-1 hover:bg-slate-50 rounded-full text-slate-300 hover:text-slate-900 transition-all"
+                className="ml-auto p-1 hover:bg-background rounded-full text-slate-300 hover:text-foreground transition-all"
               >
                 <X className="w-3 h-3" />
               </button>

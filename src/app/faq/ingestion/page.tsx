@@ -16,14 +16,14 @@ const CopyButton = ({ text }: { text: string }) => {
             className="absolute right-3 top-3 p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all border border-slate-600"
             title="Copy to clipboard"
         >
-            {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-slate-400" />}
+            {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-muted-foreground" />}
         </button>
     );
 };
 
 const Section = ({ title, children, icon }: { title: string, children: React.ReactNode, icon?: React.ReactNode }) => (
     <section className="mb-16">
-        <h3 className="text-slate-400 capitalize  text-xl mb-8 flex items-center gap-2">
+        <h3 className="text-muted-foreground capitalize  text-xl mb-8 flex items-center gap-2">
             {icon ? icon : <ChevronRight size={16} className="text-blue-500" />} {title}
         </h3>
         {children}
@@ -37,8 +37,8 @@ export default function IngestionDBGuidePage() {
                 <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-blue-50 text-blue-600 text-xs capitalize  mb-8 border border-blue-100 shadow-sm shadow-blue-500/5">
                     <Database size={16} /> Technical Architecture
                 </div>
-                <h1 className="text-6xl text-slate-900 tracking-tight mb-6 capitalize italic">Ingestion Pipeline</h1>
-                <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed font-medium">Deep documentation for the SAR autonomous extraction engine and multi-dimensional database schema.</p>
+                <h1 className="text-6xl text-foreground tracking-tight mb-6 capitalize italic">Ingestion Pipeline</h1>
+                <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed font-medium">Deep documentation for the SAR autonomous extraction engine and multi-dimensional database schema.</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -55,13 +55,13 @@ export default function IngestionDBGuidePage() {
                             <div key={item.step} className="relative flex gap-8 pb-10 group last:pb-0">
                                 {idx < 4 && <div className="absolute left-[31px] top-14 bottom-0 w-1 bg-slate-100 rounded-full"></div>}
 
-                                <div className="w-16 h-16 rounded-[1.25rem] bg-white border border-slate-100 flex items-center justify-center text-blue-600 shadow-sm z-10 flex-shrink-0 group-hover:border-blue-500 transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-blue-500/10">
+                                <div className="w-16 h-16 rounded-[1.25rem] bg-card border border-border flex items-center justify-center text-blue-600 shadow-sm z-10 flex-shrink-0 group-hover:border-blue-500 transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-blue-500/10">
                                     {item.icon}
                                 </div>
                                 <div className="pt-2">
-                                    <span className="text-slate-400 capitalize  text-[9px]">{item.step} Stage</span>
-                                    <h4 className="text-slate-900 text-base mt-1 mb-2 capitalize italic tracking-tight">{item.title}</h4>
-                                    <p className="text-slate-500 text-xs leading-relaxed font-medium">{item.desc}</p>
+                                    <span className="text-muted-foreground capitalize  text-[9px]">{item.step} Stage</span>
+                                    <h4 className="text-foreground text-base mt-1 mb-2 capitalize italic tracking-tight">{item.title}</h4>
+                                    <p className="text-muted-foreground text-xs leading-relaxed font-medium">{item.desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -79,12 +79,12 @@ export default function IngestionDBGuidePage() {
                             <div key={mode.title} className="relative flex gap-8 pb-12 group last:pb-0">
                                 {idx < 2 && <div className="absolute left-[31px] top-14 bottom-0 w-1 bg-slate-100 rounded-full"></div>}
 
-                                <div className={`w-16 h-16 rounded-[1.25rem] bg-white border border-slate-100 flex items-center justify-center shadow-sm z-10 flex-shrink-0 group-hover:border-${mode.color}-500 transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg`}>
+                                <div className={`w-16 h-16 rounded-[1.25rem] bg-card border border-border flex items-center justify-center shadow-sm z-10 flex-shrink-0 group-hover:border-${mode.color}-500 transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg`}>
                                     {mode.icon}
                                 </div>
                                 <div className="pt-3">
-                                    <h4 className="text-slate-900 text-base mb-2 capitalize italic tracking-tight">{mode.title}</h4>
-                                    <p className="text-slate-500 text-xs leading-relaxed font-medium">{mode.desc}</p>
+                                    <h4 className="text-foreground text-base mb-2 capitalize italic tracking-tight">{mode.title}</h4>
+                                    <p className="text-muted-foreground text-xs leading-relaxed font-medium">{mode.desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -99,8 +99,8 @@ export default function IngestionDBGuidePage() {
                     {/* Web UI */}
                     <div>
                         <div className="flex items-center justify-between mb-10">
-                            <h4 className="text-slate-900 text-xl flex items-center gap-4 capitalize italic tracking-tight"><Globe size={24} className="text-blue-600" /> Web Console</h4>
-                            <span className="text-slate-400 capitalize  text-[9px] bg-slate-100 px-4 py-1 rounded-full border border-slate-200 shadow-inner">Operational UI</span>
+                            <h4 className="text-foreground text-xl flex items-center gap-4 capitalize italic tracking-tight"><Globe size={24} className="text-blue-600" /> Web Console</h4>
+                            <span className="text-muted-foreground capitalize  text-[9px] bg-slate-100 px-4 py-1 rounded-full border border-border shadow-inner">Operational UI</span>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                             {[
@@ -109,11 +109,11 @@ export default function IngestionDBGuidePage() {
                                 { step: "03", label: "Context", detail: "Specify chronological points (day/month) in the logic panel." },
                                 { step: "04", label: "Emission", detail: "Authorize 'Start Ingestion' and monitor the real-time stream log." }
                             ].map(item => (
-                                <div key={item.step} className="bg-slate-50/50 p-8 rounded-[2rem] border border-slate-100 flex flex-col gap-5 shadow-inner transition-all hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 group">
+                                <div key={item.step} className="bg-background/50 p-8 rounded-[2rem] border border-border flex flex-col gap-5 shadow-inner transition-all hover:bg-card hover:shadow-xl hover:shadow-slate-200/50 group">
                                     <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center text-xs group-hover:bg-blue-600 transition-colors shadow-lg">{item.step}</div>
                                     <div className="space-y-2">
-                                        <p className="text-slate-900 text-xs capitalize ">{item.label}</p>
-                                        <p className="text-slate-500 text-[11px] leading-relaxed font-medium">{item.detail}</p>
+                                        <p className="text-foreground text-xs capitalize ">{item.label}</p>
+                                        <p className="text-muted-foreground text-[11px] leading-relaxed font-medium">{item.detail}</p>
                                     </div>
                                 </div>
                             ))}
@@ -121,7 +121,7 @@ export default function IngestionDBGuidePage() {
                     </div>
 
                     {/* CLI & API */}
-                    <div className="pt-16 border-t border-slate-100 space-y-16">
+                    <div className="pt-16 border-t border-border space-y-16">
                         <div>
                             <h5 className="text-emerald-600 mb-8 flex items-center gap-3 text-sm capitalize  italic"><Terminal size={24} /> CLI Core (Automation)</h5>
                             <div className="space-y-8">
@@ -133,7 +133,7 @@ export default function IngestionDBGuidePage() {
                                     <div key={i} className="relative group">
                                         <div className="flex items-center gap-3 mb-3">
                                             <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                            <p className="text-slate-400 capitalize  text-xs"># {ex.desc}</p>
+                                            <p className="text-muted-foreground capitalize  text-xs"># {ex.desc}</p>
                                         </div>
                                         <code className="block bg-slate-950 p-6 rounded-[1.5rem] text-blue-400 text-xs font-mono shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-800 group-hover:border-emerald-500/30 transition-all duration-500">{ex.cmd}</code>
                                         <div className="absolute right-4 top-[52px]">
@@ -146,8 +146,8 @@ export default function IngestionDBGuidePage() {
                         <div>
                             <h5 className="text-sky-600 mb-8 flex items-center gap-3 text-sm capitalize  italic"><Globe size={24} /> API REST Integration</h5>
                             <div className="flex gap-4 p-5 bg-blue-50/50 rounded-xl border border-blue-100 mb-8 items-center max-w-fit shadow-inner">
-                                <span className="text-slate-400 capitalize  text-xs">ENDPOINT</span>
-                                <code className="bg-white px-4 py-1 rounded-xl border border-blue-200 text-blue-600 text-xs shadow-sm">/api/admin/ingest</code>
+                                <span className="text-muted-foreground capitalize  text-xs">ENDPOINT</span>
+                                <code className="bg-card px-4 py-1 rounded-xl border border-blue-200 text-blue-600 text-xs shadow-sm">/api/admin/ingest</code>
                             </div>
                             <div className="space-y-8">
                                 {[
@@ -157,7 +157,7 @@ export default function IngestionDBGuidePage() {
                                     <div key={i} className="relative group">
                                         <div className="flex items-center gap-3 mb-3">
                                             <div className="w-2 h-2 rounded-full bg-sky-500"></div>
-                                            <p className="text-slate-400 capitalize  text-xs"># {ex.desc}</p>
+                                            <p className="text-muted-foreground capitalize  text-xs"># {ex.desc}</p>
                                         </div>
                                         <code className="block bg-slate-950 p-6 rounded-[1.5rem] text-sky-400 text-xs font-mono shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-800 group-hover:border-sky-500/30 transition-all duration-500">{ex.payload}</code>
                                         <div className="absolute right-4 top-[52px]">
@@ -173,11 +173,11 @@ export default function IngestionDBGuidePage() {
 
             {/* 4. Parameter Reference */}
             <Section title="Schema Reference" icon={<Layers size={18} className="text-blue-600" />}>
-                <div className="modern-card overflow-hidden bg-white">
+                <div className="modern-card overflow-hidden bg-card">
                     <div className="overflow-x-auto custom-scrollbar">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-slate-50/50 border-b border-slate-100">
-                                <tr className="text-slate-400 capitalize  text-xs">
+                            <thead className="bg-background/50 border-b border-border">
+                                <tr className="text-muted-foreground capitalize  text-xs">
                                     <th className="px-10 py-6">Key Indicator</th>
                                     <th className="px-10 py-6">Validated Format</th>
                                     <th className="px-10 py-6 text-right">Functional Description</th>
@@ -195,8 +195,8 @@ export default function IngestionDBGuidePage() {
                                 ].map((row) => (
                                     <tr key={row.p} className="hover:bg-blue-50/30 transition-all duration-200 group">
                                         <td className="px-10 py-5 text-blue-600 text-xs capitalize tracking-tight group-hover:translate-x-1 transition-transform">{row.p}</td>
-                                        <td className="px-10 py-5 text-slate-400 font-mono text-xs bg-slate-50/30">{row.f}</td>
-                                        <td className="px-10 py-5 text-right text-[11px] font-bold text-slate-500">{row.d}</td>
+                                        <td className="px-10 py-5 text-muted-foreground font-mono text-xs bg-background/30">{row.f}</td>
+                                        <td className="px-10 py-5 text-right text-[11px] font-bold text-muted-foreground">{row.d}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -209,7 +209,7 @@ export default function IngestionDBGuidePage() {
             <Section title="Operational Protocols" icon={<ShieldCheck size={18} className="text-blue-600" />}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                     <div className="bg-amber-50/30 border border-amber-100 rounded-[2rem] p-10 flex gap-8 items-start shadow-sm transition-all hover:shadow-xl hover:shadow-amber-500/5 group">
-                        <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center text-amber-500 shadow-sm border border-amber-100 flex-shrink-0 group-hover:scale-110 transition-transform duration-500 group-hover:bg-amber-500 group-hover:text-white">
+                        <div className="w-16 h-16 rounded-xl bg-card flex items-center justify-center text-amber-500 shadow-sm border border-amber-100 flex-shrink-0 group-hover:scale-110 transition-transform duration-500 group-hover:bg-amber-500 group-hover:text-white">
                             <AlertTriangle size={28} />
                         </div>
                         <div>
@@ -223,7 +223,7 @@ export default function IngestionDBGuidePage() {
                         </div>
                         <div>
                             <h4 className="text-white text-base capitalize italic tracking-tight mb-3">Retention Lifecycle</h4>
-                            <p className="text-slate-400 text-xs leading-relaxed font-bold capitalize tracking-tight">Audit logs in <code>insertion_logs</code> are purged after <b>90 cycles</b>. Synchronize critical audit data with external archives periodically.</p>
+                            <p className="text-muted-foreground text-xs leading-relaxed font-bold capitalize tracking-tight">Audit logs in <code>insertion_logs</code> are purged after <b>90 cycles</b>. Synchronize critical audit data with external archives periodically.</p>
                         </div>
                     </div>
                 </div>

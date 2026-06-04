@@ -50,12 +50,12 @@ export default function FolderTabs({ tabs, children }: FolderTabsProps) {
               className={`group flex items-center justify-center gap-3 px-10 py-4 text-xs  capitalize  transition-all duration-300 relative z-10 
                 rounded-t-[1.25rem] border-t border-x skew-x-[-12deg]
                 ${isActive
-                  ? 'bg-white border-slate-200 text-blue-600 shadow-[0_-8px_20px_-4px_rgba(0,0,0,0.05)] translate-y-[1px] border-b-2 border-b-white'
-                  : 'bg-slate-200/50 border-transparent text-slate-400 hover:bg-slate-200 hover:text-slate-600'
+                  ? 'bg-card border-border text-blue-600 shadow-[0_-8px_20px_-4px_rgba(0,0,0,0.05)] translate-y-[1px] border-b-2 border-b-white'
+                  : 'bg-slate-200/50 border-transparent text-muted-foreground hover:bg-slate-200 hover:text-slate-600'
                 }`}
             >
               <div className="flex items-center gap-2.5 skew-x-[12deg]">
-                {IconComponent && <IconComponent className={`w-4 h-4 transition-colors ${isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'}`} />}
+                {IconComponent && <IconComponent className={`w-4 h-4 transition-colors ${isActive ? 'text-blue-600' : 'text-muted-foreground group-hover:text-slate-600'}`} />}
                 {tab.name}
               </div>
             </button>
@@ -66,7 +66,7 @@ export default function FolderTabs({ tabs, children }: FolderTabsProps) {
       {/* Content Area */}
       <div
         key={animateKey}
-        className="relative bg-white p-10 rounded-b-[2rem] rounded-tr-[2rem] border border-slate-200 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] animate-ease-in"
+        className="relative bg-card p-10 rounded-b-[2rem] rounded-tr-[2rem] border border-border shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] animate-ease-in"
       >
         {children}
       </div>

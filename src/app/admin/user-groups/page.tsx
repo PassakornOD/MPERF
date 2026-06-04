@@ -85,7 +85,7 @@ const ManageUserGroups = () => {
 
     return (
         <div className="space-y-8 animate-ease-in">
-            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden transition-all hover:shadow-md">
+            <div className="bg-card rounded-[2rem] border border-border shadow-sm overflow-hidden transition-all hover:shadow-md">
                 <div className="p-8 space-y-8">
                     <div className="flex items-center justify-between border-b border-slate-50 pb-6">
                         <div className="flex items-center gap-4">
@@ -93,8 +93,8 @@ const ManageUserGroups = () => {
                                 <Users className="w-6 h-6" />
                             </div>
                             <div>
-                                <h3 className="text-sm text-slate-800 capitalize ">User Groups</h3>
-                                <p className="text-xs text-slate-400 capitalize mt-0.5">Organize users into logical administrative units</p>
+                                <h3 className="text-sm text-foreground capitalize ">User Groups</h3>
+                                <p className="text-xs text-muted-foreground capitalize mt-0.5">Organize users into logical administrative units</p>
                             </div>
                         </div>
                         <button onClick={() => setIsCreateModalOpen(true)} className="btn-primary flex items-center gap-2 group">
@@ -103,17 +103,17 @@ const ManageUserGroups = () => {
                         </button>
                     </div>
 
-                    <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-xl shadow-inner bg-slate-50/20">
+                    <div className="overflow-x-auto custom-scrollbar border border-border rounded-xl shadow-inner bg-background/20">
                         <table className="w-full text-xs text-left border-collapse">
                             <thead>
-                                <tr className="bg-white border-b border-slate-100">
-                                    <th className="px-8 py-5 text-xs text-slate-400 capitalize ">Designation</th>
-                                    <th className="px-8 py-5 text-xs text-slate-400 capitalize ">Enrolled Force</th>
-                                    <th className="px-8 py-5 text-xs text-slate-400 capitalize ">Active Permissions</th>
-                                    <th className="px-8 py-5 text-xs text-slate-400 capitalize  text-right">Actions</th>
+                                <tr className="bg-card border-b border-border">
+                                    <th className="px-8 py-5 text-xs text-muted-foreground capitalize ">Designation</th>
+                                    <th className="px-8 py-5 text-xs text-muted-foreground capitalize ">Enrolled Force</th>
+                                    <th className="px-8 py-5 text-xs text-muted-foreground capitalize ">Active Permissions</th>
+                                    <th className="px-8 py-5 text-xs text-muted-foreground capitalize  text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100/50 bg-white">
+                            <tbody className="divide-y divide-slate-100/50 bg-card">
                                 {data.groups.map((g: any) => {
                                     const currentPgs = mappings.groupPgs.filter((m: any) => m.ug_id === g.ug_id);
                                     const groupMembers = mappings.userGroups
@@ -121,20 +121,20 @@ const ManageUserGroups = () => {
                                         .filter((m: any) => data.users.some((u: any) => u.user_id === m.user_id));
 
                                     return (
-                                        <tr key={g.ug_id} className="group/row hover:bg-emerald-50/40 transition-all duration-200 border-b border-slate-100/30 last:border-0">
+                                        <tr key={g.ug_id} className="group/row hover:bg-emerald-50/40 transition-all duration-200 border-b border-border/30 last:border-0">
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm group-hover/row:scale-105 transition-all">
+                                                    <div className="w-10 h-10 rounded-xl bg-background border border-border flex items-center justify-center text-emerald-600 shadow-sm group-hover/row:scale-105 transition-all">
                                                         <Users className="w-5 h-5" />
                                                     </div>
-                                                    <p className="text-slate-900 text-sm capitalize tracking-tight leading-none group-hover/row:text-emerald-700 transition-colors">{g.ug_name}</p>
+                                                    <p className="text-foreground text-sm capitalize tracking-tight leading-none group-hover/row:text-emerald-700 transition-colors">{g.ug_name}</p>
                                                 </div>
                                             </td>
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-3">
                                                     <div className="flex -space-x-2">
                                                         {groupMembers.slice(0, 3).map((m: any) => (
-                                                            <div key={m.user_id} className="w-6 h-6 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[8px] text-slate-400">
+                                                            <div key={m.user_id} className="w-6 h-6 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[8px] text-muted-foreground">
                                                                 {data.users.find(u => u.user_id === m.user_id)?.username.charAt(0).toUpperCase()}
                                                             </div>
                                                         ))}
@@ -156,12 +156,12 @@ const ManageUserGroups = () => {
                                                         <>
                                                             <button
                                                                 onClick={() => setActiveMenu(activeMenu === g.ug_id ? null : g.ug_id)}
-                                                                className={`p-2.5 rounded-xl transition-all border ${activeMenu === g.ug_id ? 'bg-white shadow-md text-slate-900 border-slate-200' : 'text-slate-300 hover:text-slate-600 border-transparent hover:bg-white hover:shadow-sm hover:border-slate-100'}`}
+                                                                className={`p-2.5 rounded-xl transition-all border ${activeMenu === g.ug_id ? 'bg-card shadow-md text-foreground border-border' : 'text-slate-300 hover:text-slate-600 border-transparent hover:bg-card hover:shadow-sm hover:border-border'}`}
                                                             >
                                                                 <MoreVertical className="w-4.5 h-4.5" />
                                                             </button>
                                                             {activeMenu === g.ug_id && (
-                                                                <div className="absolute right-0 top-full mt-2 bg-white border border-slate-100 rounded-xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15)] py-2 z-[100] w-44 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                                                                <div className="absolute right-0 top-full mt-2 bg-card border border-border rounded-xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15)] py-2 z-[100] w-44 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                                                                     <button onClick={() => {
                                                                         setEditingGroup(g);
                                                                         setEditFields({
@@ -205,11 +205,11 @@ const ManageUserGroups = () => {
                     {
                         label: 'General', content: (
                             <div className="space-y-8">
-                                <div className="flex gap-4 p-6 bg-slate-50/50 rounded-xl items-center border border-slate-100 shadow-inner">
-                                    <div className="bg-white p-4 rounded-xl text-emerald-600 shadow-sm border border-slate-100"><Users className="w-8 h-8" /></div>
+                                <div className="flex gap-4 p-6 bg-background/50 rounded-xl items-center border border-border shadow-inner">
+                                    <div className="bg-card p-4 rounded-xl text-emerald-600 shadow-sm border border-border"><Users className="w-8 h-8" /></div>
                                     <div>
-                                        <p className="text-xs text-slate-400 capitalize  mb-0.5">Identification</p>
-                                        <p className="text-xl text-slate-900 tracking-tight">{editingGroup?.ug_name}</p>
+                                        <p className="text-xs text-muted-foreground capitalize  mb-0.5">Identification</p>
+                                        <p className="text-xl text-foreground tracking-tight">{editingGroup?.ug_name}</p>
                                     </div>
                                 </div>
                                 <div className="space-y-4 pt-2">
@@ -234,8 +234,8 @@ const ManageUserGroups = () => {
                                     </button>
                                 </div>
 
-                                <div className="relative border border-slate-100 rounded-xl p-6 pt-10 bg-slate-50/20 shadow-inner">
-                                    <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] capitalize  text-blue-600 border border-slate-100 rounded-full shadow-sm flex items-center gap-2">
+                                <div className="relative border border-border rounded-xl p-6 pt-10 bg-background/20 shadow-inner">
+                                    <span className="absolute -top-3 left-6 bg-card px-4 py-1.5 text-[9px] capitalize  text-blue-600 border border-border rounded-full shadow-sm flex items-center gap-2">
                                         <User className="w-3.5 h-3.5" /> Group Members
                                     </span>
 
@@ -244,9 +244,9 @@ const ManageUserGroups = () => {
                                             {editFields.member_ids.map(uId => {
                                                 const user = data.users.find((u: any) => u.user_id === uId);
                                                 return user ? (
-                                                    <div key={uId} className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl group/item hover:border-blue-200 transition-all shadow-sm">
+                                                    <div key={uId} className="flex items-center justify-between p-3 bg-card border border-border rounded-xl group/item hover:border-blue-200 transition-all shadow-sm">
                                                         <div className="flex items-center gap-3 overflow-hidden">
-                                                            <div className="bg-slate-50 p-2 rounded-xl group-hover/item:scale-110 transition-transform flex-shrink-0"><User className="w-4 h-4 text-blue-600" /></div>
+                                                            <div className="bg-background p-2 rounded-xl group-hover/item:scale-110 transition-transform flex-shrink-0"><User className="w-4 h-4 text-blue-600" /></div>
                                                             <span className="text-xs text-slate-700 truncate">{user.username}</span>
                                                         </div>
                                                         <button onClick={async () => {
@@ -269,10 +269,10 @@ const ManageUserGroups = () => {
 
                                 {isAddingUser && (
                                     <div className="relative border-2 border-dashed border-blue-100 rounded-xl p-6 pt-10 bg-blue-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
-                                        <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] capitalize  text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
+                                        <span className="absolute -top-3 left-6 bg-card px-4 py-1.5 text-[9px] capitalize  text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
                                             <Plus className="w-3.5 h-3.5" /> Available Users
                                         </span>
-                                        <button onClick={() => setIsAddingUser(false)} className="absolute top-2 right-2 p-2 text-slate-300 hover:text-slate-900 transition-colors"><X className="w-4 h-4" /></button>
+                                        <button onClick={() => setIsAddingUser(false)} className="absolute top-2 right-2 p-2 text-slate-300 hover:text-foreground transition-colors"><X className="w-4 h-4" /></button>
 
                                         {data.users.filter((u: any) => !editFields.member_ids.includes(u.user_id)).length > 0 ? (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -283,8 +283,8 @@ const ManageUserGroups = () => {
                                                         await axios.post('/api/admin/user-groups/update', { ug_id: editingGroup.ug_id, ...editFields, member_ids: nextMembers });
                                                         fetchData();
                                                         setIsAddingUser(false);
-                                                    }} className="flex items-center gap-3 p-3 bg-white hover:bg-blue-600 hover:text-white border border-slate-100 rounded-xl transition-all shadow-sm group/btn overflow-hidden text-left">
-                                                        <div className="bg-slate-50 p-2 rounded-xl group-hover/btn:bg-blue-500 transition-colors shadow-inner"><User className="w-4 h-4 text-blue-600 group-hover/btn:text-white" /></div>
+                                                    }} className="flex items-center gap-3 p-3 bg-card hover:bg-blue-600 hover:text-white border border-border rounded-xl transition-all shadow-sm group/btn overflow-hidden text-left">
+                                                        <div className="bg-background p-2 rounded-xl group-hover/btn:bg-blue-500 transition-colors shadow-inner"><User className="w-4 h-4 text-blue-600 group-hover/btn:text-white" /></div>
                                                         <span className="text-xs capitalize tracking-tight truncate">{u.username}</span>
                                                     </button>
                                                 ))}
@@ -313,11 +313,11 @@ const ManageUserGroups = () => {
                                         const isExpanded = expandedPgs.includes(pgId);
                                         if (!pg) return null;
                                         return (
-                                            <div key={pgId} className="border border-slate-100 rounded-[1.5rem] overflow-hidden shadow-sm bg-white hover:border-emerald-100 transition-all">
-                                                <div className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-slate-50" onClick={() => setExpandedPgs(prev => isExpanded ? prev.filter(i => i !== pgId) : [...prev, pgId])}>
+                                            <div key={pgId} className="border border-border rounded-[1.5rem] overflow-hidden shadow-sm bg-card hover:border-emerald-100 transition-all">
+                                                <div className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-background" onClick={() => setExpandedPgs(prev => isExpanded ? prev.filter(i => i !== pgId) : [...prev, pgId])}>
                                                     <div className="flex items-center gap-3">
                                                         <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                                                        <span className="text-xs text-slate-800 tracking-tight">{pg.pg_name}</span>
+                                                        <span className="text-xs text-foreground tracking-tight">{pg.pg_name}</span>
                                                     </div>
                                                     <div className="flex items-center gap-3">
                                                         <span className="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-xl text-[9px] capitalize tracking-tighter border border-emerald-100">{associatedHgs.length} Hostgroups</span>
@@ -332,10 +332,10 @@ const ManageUserGroups = () => {
                                                     </div>
                                                 </div>
                                                 {isExpanded && (
-                                                    <div className="p-4 bg-slate-50/50 border-t border-slate-50 text-xs text-slate-600 grid grid-cols-2 gap-3 animate-in slide-in-from-top-2 duration-200">
+                                                    <div className="p-4 bg-background/50 border-t border-slate-50 text-xs text-slate-600 grid grid-cols-2 gap-3 animate-in slide-in-from-top-2 duration-200">
                                                         {associatedHgs.map((m: any) => {
                                                             const hg = data.allHgs.find((h: any) => h.hostgroup_id === m.hostgroup_id);
-                                                            return <div key={m.hostgroup_id} className="bg-white p-2.5 rounded-xl border border-slate-100 flex items-center gap-2 shadow-sm">
+                                                            return <div key={m.hostgroup_id} className="bg-card p-2.5 rounded-xl border border-border flex items-center gap-2 shadow-sm">
                                                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
                                                                 <span className="font-bold truncate">{(hg as any)?.hostgroup || 'Unknown'}</span>
                                                             </div>;
@@ -345,7 +345,7 @@ const ManageUserGroups = () => {
                                             </div>
                                         );
                                     }) : (
-                                        <div className="py-20 text-center border border-slate-100 rounded-[2rem] bg-slate-50/30">
+                                        <div className="py-20 text-center border border-border rounded-[2rem] bg-background/30">
                                             <ShieldCheck className="w-12 h-12 text-slate-100 mx-auto mb-3" />
                                             <p className="text-xs text-slate-300 capitalize  italic">No associated permissions</p>
                                         </div>
@@ -354,10 +354,10 @@ const ManageUserGroups = () => {
 
                                 {isAddingPg && (
                                     <div className="relative border-2 border-dashed border-emerald-100 rounded-xl p-6 pt-10 bg-emerald-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
-                                        <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] capitalize  text-emerald-600 border border-emerald-100 rounded-full shadow-sm flex items-center gap-2">
+                                        <span className="absolute -top-3 left-6 bg-card px-4 py-1.5 text-[9px] capitalize  text-emerald-600 border border-emerald-100 rounded-full shadow-sm flex items-center gap-2">
                                             <ShieldCheck className="w-3.5 h-3.5" /> Available Permissions
                                         </span>
-                                        <button onClick={() => setIsAddingPg(false)} className="absolute top-2 right-2 p-2 text-slate-300 hover:text-slate-900 transition-colors"><X className="w-4 h-4" /></button>
+                                        <button onClick={() => setIsAddingPg(false)} className="absolute top-2 right-2 p-2 text-slate-300 hover:text-foreground transition-colors"><X className="w-4 h-4" /></button>
 
                                         {data.pgs.filter((pg: any) => !editFields.pg_ids.includes(pg.pg_id)).length > 0 ? (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -368,7 +368,7 @@ const ManageUserGroups = () => {
                                                         await axios.post('/api/admin/user-groups/update', { ug_id: editingGroup.ug_id, ...editFields, pg_ids: nextPgs });
                                                         fetchData();
                                                         setIsAddingPg(false);
-                                                    }} className="flex items-center gap-3 p-3 bg-white hover:bg-emerald-600 hover:text-white border border-slate-100 rounded-xl transition-all shadow-sm group/btn overflow-hidden text-left">
+                                                    }} className="flex items-center gap-3 p-3 bg-card hover:bg-emerald-600 hover:text-white border border-border rounded-xl transition-all shadow-sm group/btn overflow-hidden text-left">
                                                         <div className="bg-emerald-50 p-2 rounded-xl group-hover/btn:bg-emerald-500 transition-colors shadow-inner"><ShieldCheck className="w-4 h-4 text-emerald-600 group-hover/btn:text-white" /></div>
                                                         <span className="text-xs capitalize tracking-tight truncate">{pg.pg_name}</span>
                                                     </button>

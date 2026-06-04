@@ -113,19 +113,19 @@ const SarManagementPage = () => {
       <div className="modern-card p-10">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12">
             <div className="space-y-1">
-                <h3 className="text-sm text-slate-800 capitalize ">Analytics Scope</h3>
-                <p className="text-xs font-bold text-slate-400 capitalize">Select metric dimension for exploration</p>
+                <h3 className="text-sm text-foreground capitalize ">Analytics Scope</h3>
+                <p className="text-xs font-bold text-muted-foreground capitalize">Select metric dimension for exploration</p>
             </div>
-            <div className="flex bg-slate-100 p-1 rounded-xl inner-shadow w-fit border border-slate-200/50">
+            <div className="flex bg-slate-100 p-1 rounded-xl inner-shadow w-fit border border-border/50">
               <button 
                 onClick={() => setType('cpu')} 
-                className={`px-8 py-2.5 rounded-xl text-xs capitalize  transition-all duration-300 ${type === 'cpu' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`px-8 py-2.5 rounded-xl text-xs capitalize  transition-all duration-300 ${type === 'cpu' ? 'bg-card text-blue-600 shadow-sm border border-border' : 'text-muted-foreground hover:text-slate-600'}`}
               >
                 CPU Analytics
               </button>
               <button 
                 onClick={() => setType('mem')} 
-                className={`px-8 py-2.5 rounded-xl text-xs capitalize  transition-all duration-300 ${type === 'mem' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`px-8 py-2.5 rounded-xl text-xs capitalize  transition-all duration-300 ${type === 'mem' ? 'bg-card text-blue-600 shadow-sm border border-border' : 'text-muted-foreground hover:text-slate-600'}`}
               >
                 Memory Analytics
               </button>
@@ -134,9 +134,9 @@ const SarManagementPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-end">
           <div className="space-y-2">
-            <label className="text-xs text-slate-400 capitalize  ml-1">Hostgroup</label>
+            <label className="text-xs text-muted-foreground capitalize  ml-1">Hostgroup</label>
             <div className="relative group">
-                <select className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3.5 px-4 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
+                <select className="w-full bg-background/50 border border-border rounded-xl py-3.5 px-4 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-card transition-all appearance-none cursor-pointer shadow-inner" value={selectedGroup} onChange={(e) => { setSelectedGroup(e.target.value); setSelectedHostnameId(''); }}>
                   <option value="">Select Target</option>
                   {hostGroups?.map((g: any) => <option key={g.hostgroup} value={g.hostgroup}>{g.hostgroup}</option>)}
                 </select>
@@ -145,9 +145,9 @@ const SarManagementPage = () => {
           </div>
           
           <div className="space-y-2">
-            <label className="text-xs text-slate-400 capitalize  ml-1">Hostname</label>
+            <label className="text-xs text-muted-foreground capitalize  ml-1">Hostname</label>
             <div className="relative group">
-                <select className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3.5 px-4 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner disabled:opacity-30" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
+                <select className="w-full bg-background/50 border border-border rounded-xl py-3.5 px-4 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-card transition-all appearance-none cursor-pointer shadow-inner disabled:opacity-30" value={selectedHostnameId} onChange={(e) => setSelectedHostnameId(e.target.value)} disabled={!selectedGroup}>
                   <option value="">Consolidated (All)</option>
                   {hostGroups?.find((g: any) => g.hostgroup === selectedGroup)?.hostnames.map((h: any) => (
                     <option key={h.hostname_id} value={h.hostname_id}>{h.hostname}</option>
@@ -158,9 +158,9 @@ const SarManagementPage = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs text-slate-400 capitalize  ml-1">Filter Depth</label>
+            <label className="text-xs text-muted-foreground capitalize  ml-1">Filter Depth</label>
             <div className="relative group">
-                <select className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3.5 px-4 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner" value={filterLevel} onChange={(e) => setFilterLevel(e.target.value as any)}>
+                <select className="w-full bg-background/50 border border-border rounded-xl py-3.5 px-4 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-card transition-all appearance-none cursor-pointer shadow-inner" value={filterLevel} onChange={(e) => setFilterLevel(e.target.value as any)}>
                   <option value="all">Unfiltered (All)</option>
                   <option value="year">Annual View</option>
                   <option value="month">Monthly View</option>
@@ -171,20 +171,20 @@ const SarManagementPage = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs text-slate-400 capitalize  ml-1">Timeline</label>
+            <label className="text-xs text-muted-foreground capitalize  ml-1">Timeline</label>
             <div className="flex gap-2">
               {filterLevel !== 'all' && (
-                  <select className="flex-1 bg-slate-50/50 border border-slate-100 rounded-xl py-3 px-2 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center" value={year} onChange={(e) => setYear(e.target.value)}>
+                  <select className="flex-1 bg-background/50 border border-border rounded-xl py-3 px-2 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center" value={year} onChange={(e) => setYear(e.target.value)}>
                       {years.map(y => <option key={y} value={y}>{y}</option>)}
                   </select>
               )}
               {(filterLevel === 'month' || filterLevel === 'day') && (
-                  <select className="flex-1 bg-slate-50/50 border border-slate-100 rounded-xl py-3 px-2 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center" value={month} onChange={(e) => setMonth(e.target.value)}>
+                  <select className="flex-1 bg-background/50 border border-border rounded-xl py-3 px-2 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center" value={month} onChange={(e) => setMonth(e.target.value)}>
                       {months.map(m => <option key={m.val} value={m.val}>{m.name}</option>)}
                   </select>
               )}
               {filterLevel === 'day' && (
-                  <select className="flex-1 bg-slate-50/50 border border-slate-100 rounded-xl py-3 px-2 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center" value={day} onChange={(e) => setDay(e.target.value)}>
+                  <select className="flex-1 bg-background/50 border border-border rounded-xl py-3 px-2 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all shadow-inner appearance-none text-center" value={day} onChange={(e) => setDay(e.target.value)}>
                       {Array.from({ length: getDaysInMonth(month, year) }, (_, i) => String(i + 1).padStart(2, '0')).map(d => <option key={d} value={d}>{d}</option>)}
                   </select>
               )}
@@ -211,15 +211,15 @@ const SarManagementPage = () => {
       />
 
       {filterLevel === 'month' && summaryData.length > 0 && (
-          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-10 space-y-10 transition-all hover:shadow-lg">
+          <div className="bg-card rounded-[2rem] border border-border shadow-sm p-10 space-y-10 transition-all hover:shadow-lg">
             <div className="flex items-center justify-between border-b border-slate-50 pb-6">
                 <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">
                         <Calendar className="w-5 h-5" />
                     </div>
                     <div>
-                        <h3 className="text-sm text-slate-800 capitalize ">Availability Summary</h3>
-                        <p className="text-xs font-bold text-slate-400 capitalize mt-0.5">Inventory of records for cycle {year}-{month}</p>
+                        <h3 className="text-sm text-foreground capitalize ">Availability Summary</h3>
+                        <p className="text-xs font-bold text-muted-foreground capitalize mt-0.5">Inventory of records for cycle {year}-{month}</p>
                     </div>
                 </div>
             </div>
@@ -235,17 +235,17 @@ const SarManagementPage = () => {
                         <div key={id} className="space-y-5 animate-ease-in">
                             <div className="flex items-center gap-3">
                                 <Monitor size={14} className="text-blue-500" />
-                                <span className="text-[11px] text-slate-800 capitalize tracking-tight">{hostname}</span>
+                                <span className="text-[11px] text-foreground capitalize tracking-tight">{hostname}</span>
                                 <span className="text-[9px] text-slate-300 capitalize ">System ID: {id}</span>
                             </div>
-                            <div className="flex flex-wrap gap-2.5 p-6 bg-slate-50/30 rounded-xl border border-slate-100 shadow-inner">
+                            <div className="flex flex-wrap gap-2.5 p-6 bg-background/30 rounded-xl border border-border shadow-inner">
                                 {records.map((s: any) => {
                                     const dateObj = new Date(s.date);
                                     const d = String(dateObj.getDate()).padStart(2, '0');
                                     const m = String(dateObj.getMonth() + 1).padStart(2, '0');
                                     const y = dateObj.getFullYear();
                                     return (
-                                        <div key={s.date} className="px-4 py-2.5 bg-white text-slate-600 rounded-xl text-xs border border-slate-100 shadow-sm hover:border-blue-300 hover:text-blue-600 transition-all cursor-default">
+                                        <div key={s.date} className="px-4 py-2.5 bg-card text-slate-600 rounded-xl text-xs border border-border shadow-sm hover:border-blue-300 hover:text-blue-600 transition-all cursor-default">
                                             {d}-{m}-{y} &bull; <span className="text-blue-600">{s.count}</span> <span className="text-[8px] opacity-60 capitalize">Entries</span>
                                         </div>
                                     );
@@ -259,15 +259,15 @@ const SarManagementPage = () => {
       )}
 
       {queryData.length > 0 && (
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden transition-all hover:shadow-lg animate-in fade-in slide-in-from-top-4 duration-500">
-          <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-xl shadow-inner bg-slate-50/20 mx-10 my-10">
+        <div className="bg-card rounded-[2rem] border border-border shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden transition-all hover:shadow-lg animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="overflow-x-auto custom-scrollbar border border-border rounded-xl shadow-inner bg-background/20 mx-10 my-10">
             <table className="w-full text-xs text-left border-collapse">
               <thead>
-                <tr className="bg-white text-slate-400 capitalize text-[9px]  border-b border-slate-100">
+                <tr className="bg-card text-muted-foreground capitalize text-[9px]  border-b border-border">
                   {Object.keys(queryData[0]).map(key => <th key={key} className="px-10 py-6 whitespace-nowrap">{key}</th>) || null}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100/50 bg-white">
+              <tbody className="divide-y divide-slate-100/50 bg-card">
                 {queryData.map((row, idx) => (
                   <tr key={idx} className="hover:bg-blue-50/30 transition-all duration-200 group">
                     {Object.entries(row).map(([key, val]: [string, any], i) => (
@@ -280,15 +280,15 @@ const SarManagementPage = () => {
               </tbody>
             </table>
           </div>
-          <div className="px-10 py-8 bg-slate-50/30 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="px-10 py-8 bg-background/30 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-400 capitalize ">Viewing Page</span>
-                  <div className="bg-white border border-slate-200 px-3 py-1 rounded-xl text-xs text-blue-600 shadow-sm">{page} <span className="text-slate-300 font-medium px-1">/</span> {totalPages}</div>
+                  <span className="text-xs text-muted-foreground capitalize ">Viewing Page</span>
+                  <div className="bg-card border border-border px-3 py-1 rounded-xl text-xs text-blue-600 shadow-sm">{page} <span className="text-slate-300 font-medium px-1">/</span> {totalPages}</div>
                   <span className="text-xs text-slate-300 capitalize  ml-4">Total Population: {total.toLocaleString()} Records</span>
               </div>
               <div className="flex gap-2">
-                  <button onClick={() => handleQuery(page - 1, true)} disabled={page <= 1} className="px-6 py-2.5 rounded-xl bg-white border border-slate-200 text-xs capitalize  hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-20 shadow-sm active:scale-95">Prev</button>
-                  <button onClick={() => handleQuery(page + 1, true)} disabled={page >= totalPages} className="px-6 py-2.5 rounded-xl bg-white border border-slate-200 text-xs capitalize  hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-20 shadow-sm active:scale-95">Next</button>
+                  <button onClick={() => handleQuery(page - 1, true)} disabled={page <= 1} className="px-6 py-2.5 rounded-xl bg-card border border-border text-xs capitalize  hover:bg-background hover:border-slate-300 transition-all disabled:opacity-20 shadow-sm active:scale-95">Prev</button>
+                  <button onClick={() => handleQuery(page + 1, true)} disabled={page >= totalPages} className="px-6 py-2.5 rounded-xl bg-card border border-border text-xs capitalize  hover:bg-background hover:border-slate-300 transition-all disabled:opacity-20 shadow-sm active:scale-95">Next</button>
               </div>
           </div>
         </div>

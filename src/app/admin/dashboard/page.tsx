@@ -18,12 +18,12 @@ const UnifiedAdminDashboard = () => {
     <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6">
       <div className="mb-12 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
         <div className="space-y-2">
-          <h1 className="text-2xl text-slate-900 capitalize italic tracking-tight leading-none">Admin Control</h1>
-          <p className="text-sm font-medium text-slate-400">Centralized governance for users, groups, and resource permissions</p>
+          <h1 className="text-2xl text-foreground capitalize italic tracking-tight leading-none">Admin Control</h1>
+          <p className="text-sm font-medium text-muted-foreground">Centralized governance for users, groups, and resource permissions</p>
         </div>
         
         {/* Tabs */}
-        <div className="bg-slate-100 p-1 rounded-xl inner-shadow flex w-fit border border-slate-200/50">
+        <div className="bg-slate-100 p-1 rounded-xl inner-shadow flex w-fit border border-border/50">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -31,10 +31,10 @@ const UnifiedAdminDashboard = () => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-6 py-2.5 rounded-xl text-xs capitalize transition-all duration-300 flex items-center gap-2.5 ${
-                  isActive ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'
+                  isActive ? 'bg-card text-blue-600 shadow-sm border border-border' : 'text-muted-foreground hover:text-slate-600'
                 }`}
               >
-                <tab.icon className={`w-3.5 h-3.5 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} /> {tab.label}
+                <tab.icon className={`w-3.5 h-3.5 ${isActive ? 'text-blue-600' : 'text-muted-foreground'}`} /> {tab.label}
               </button>
             );
           })}

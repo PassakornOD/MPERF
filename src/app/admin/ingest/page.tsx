@@ -128,7 +128,7 @@ const IngestPage = () => {
             
             {/* 1. Selection Mode */}
             <div className="space-y-6">
-              <label className="flex items-center gap-2.5 text-xs text-slate-400 capitalize px-1">
+              <label className="flex items-center gap-2.5 text-xs text-muted-foreground capitalize px-1">
                 <Clock className="w-3.5 h-3.5" /> Ingestion Strategy
               </label>
               <div className="grid grid-cols-1 gap-2.5">
@@ -143,10 +143,10 @@ const IngestPage = () => {
                     className={`flex items-center gap-3.5 px-5 py-4 rounded-xl border-2 transition-all text-xs capitalize tracking-wider ${
                       formData.mode === m.id 
                       ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm' 
-                      : 'border-slate-50 bg-slate-50/30 text-slate-400 hover:border-slate-200 hover:bg-slate-50'
+                      : 'border-slate-50 bg-background/30 text-muted-foreground hover:border-border hover:bg-background'
                     }`}
                   >
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${formData.mode === m.id ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'bg-white border border-slate-100 text-slate-300'}`}>
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${formData.mode === m.id ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'bg-card border border-border text-slate-300'}`}>
                         <m.icon className="w-4 h-4" />
                     </div>
                     {m.label}
@@ -157,7 +157,7 @@ const IngestPage = () => {
 
             {/* 2. Filters */}
             <div className="space-y-6">
-              <label className="flex items-center gap-2.5 text-xs text-slate-400 capitalize px-1">
+              <label className="flex items-center gap-2.5 text-xs text-muted-foreground capitalize px-1">
                 <Layers className="w-3.5 h-3.5" /> Granular Filtering
               </label>
               <div className="space-y-4">
@@ -166,7 +166,7 @@ const IngestPage = () => {
                   <select
                     value={formData.hostgroup}
                     onChange={(e) => setFormData({ ...formData, hostgroup: e.target.value, hostname: '' })}
-                    className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 pl-12 pr-4 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner"
+                    className="w-full bg-background/50 border border-border rounded-xl py-4 pl-12 pr-4 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-card transition-all appearance-none cursor-pointer shadow-inner"
                   >
                     <option value="">Global Scan (All Groups)</option>
                     {hostgroups.map(hg => (
@@ -180,7 +180,7 @@ const IngestPage = () => {
                   <select
                     value={formData.hostname}
                     onChange={(e) => setFormData({ ...formData, hostname: e.target.value })}
-                    className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 pl-12 pr-4 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner"
+                    className="w-full bg-background/50 border border-border rounded-xl py-4 pl-12 pr-4 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-card transition-all appearance-none cursor-pointer shadow-inner"
                   >
                     <option value="">Consolidated Scan (All Hosts)</option>
                     {filteredHostnames.map(hn => (
@@ -194,7 +194,7 @@ const IngestPage = () => {
                   <select
                     value={formData.os}
                     onChange={(e) => setFormData({ ...formData, os: e.target.value })}
-                    className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-4 pl-12 pr-4 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-white transition-all appearance-none cursor-pointer shadow-inner"
+                    className="w-full bg-background/50 border border-border rounded-xl py-4 pl-12 pr-4 text-xs capitalize tracking-tight text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 focus:bg-card transition-all appearance-none cursor-pointer shadow-inner"
                   >
                     <option value="All">Unified Platforms</option>
                     <option value="RedHat">RedHat Enterprise Linux</option>
@@ -206,14 +206,14 @@ const IngestPage = () => {
 
             {/* 3. Date Configuration */}
             <div className="space-y-6">
-              <label className="flex items-center gap-2.5 text-xs text-slate-400 capitalize px-1">
+              <label className="flex items-center gap-2.5 text-xs text-muted-foreground capitalize px-1">
                 <Calendar className="w-3.5 h-3.5" /> Timeline Context
               </label>
               
-              <div className="space-y-4 p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 shadow-inner flex flex-col justify-center min-h-[160px]">
+              <div className="space-y-4 p-6 bg-background/50 rounded-[2rem] border border-border shadow-inner flex flex-col justify-center min-h-[160px]">
                 {formData.mode === 'yesterday' && (
                   <div className="text-center py-4 space-y-2">
-                    <p className="text-xs text-slate-400 capitalize">Targeting Window</p>
+                    <p className="text-xs text-muted-foreground capitalize">Targeting Window</p>
                     <p className="text-sm text-blue-600 capitalize italic animate-pulse">Yesterday's Operational Logs</p>
                   </div>
                 )}
@@ -221,7 +221,7 @@ const IngestPage = () => {
                 {formData.mode === 'specific' && (
                   <div className="grid grid-cols-2 gap-3 animate-in fade-in zoom-in duration-300">
                     <div className="space-y-1">
-                        <label className="text-[9px] text-slate-400 capitalize ml-1">Day</label>
+                        <label className="text-[9px] text-muted-foreground capitalize ml-1">Day</label>
                         <input
                             type="number"
                             min="1"
@@ -229,15 +229,15 @@ const IngestPage = () => {
                             placeholder="DD"
                             value={formData.day}
                             onChange={(e) => setFormData({ ...formData, day: e.target.value })}
-                            className="w-full bg-white border border-slate-100 rounded-xl py-3 px-4 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all"
+                            className="w-full bg-card border border-border rounded-xl py-3 px-4 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all"
                         />
                     </div>
                     <div className="space-y-1">
-                        <label className="text-[9px] text-slate-400 capitalize ml-1">Month</label>
+                        <label className="text-[9px] text-muted-foreground capitalize ml-1">Month</label>
                         <select
                             value={formData.month}
                             onChange={(e) => setFormData({ ...formData, month: e.target.value })}
-                            className="w-full bg-white border border-slate-100 rounded-xl py-3 px-4 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all appearance-none"
+                            className="w-full bg-card border border-border rounded-xl py-3 px-4 text-xs outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all appearance-none"
                         >
                             <option value="">Select</option>
                             {months.map(m => <option key={m} value={m}>{m}</option>)}
@@ -251,11 +251,11 @@ const IngestPage = () => {
 
                 {formData.mode === 'month' && (
                   <div className="space-y-1 animate-in fade-in zoom-in duration-300">
-                    <label className="text-[9px] text-slate-400 capitalize ml-1">Archive Month</label>
+                    <label className="text-[9px] text-muted-foreground capitalize ml-1">Archive Month</label>
                     <select
                       value={formData.month}
                       onChange={(e) => setFormData({ ...formData, month: e.target.value })}
-                      className="w-full bg-white border border-slate-100 rounded-xl py-4 px-5 text-xs capitalize outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all appearance-none"
+                      className="w-full bg-card border border-border rounded-xl py-4 px-5 text-xs capitalize outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 shadow-sm transition-all appearance-none"
                     >
                       <option value="">Select Target Month</option>
                       {months.map(m => <option key={m} value={m}>{m}</option>)}
@@ -289,12 +289,12 @@ const IngestPage = () => {
           <div className="px-10 py-5 bg-slate-800/50 border-b border-slate-800 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className={`w-2.5 h-2.5 rounded-full ${ingesting ? 'bg-blue-500 animate-pulse' : results.length > 0 ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-slate-600'}`}></div>
-              <span className="text-xs text-slate-400 capitalize">Operational Stream Log</span>
+              <span className="text-xs text-muted-foreground capitalize">Operational Stream Log</span>
             </div>
             {results.length > 0 && (
               <button 
                 onClick={() => setResults([])}
-                className="text-xs text-slate-500 hover:text-white transition-all capitalize bg-slate-700/50 px-3 py-1 rounded-xl"
+                className="text-xs text-muted-foreground hover:text-white transition-all capitalize bg-slate-700/50 px-3 py-1 rounded-xl"
               >
                 Flush Log
               </button>
@@ -309,7 +309,7 @@ const IngestPage = () => {
               </div>
             ) : (
               results.map((line, idx) => (
-                <div key={idx} className="flex gap-6 border-b border-slate-800/30 py-2 last:border-0 hover:bg-white/5 transition-all group rounded-xl px-2 -mx-2">
+                <div key={idx} className="flex gap-6 border-b border-slate-800/30 py-2 last:border-0 hover:bg-card/5 transition-all group rounded-xl px-2 -mx-2">
                   <span className="text-slate-600 w-10 text-right select-none font-bold tabular-nums">{(idx + 1).toString().padStart(3, '0')}</span>
                   <span className={`
                     ${line.includes('[Success]') ? 'text-emerald-400 font-bold' : ''}

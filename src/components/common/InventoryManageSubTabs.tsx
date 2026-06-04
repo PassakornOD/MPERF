@@ -14,7 +14,7 @@ export default function InventoryManageSubTabs() {
   const router = useRouter();
 
   return (
-    <div className="flex gap-2 mb-6 border-b border-slate-200 pb-2">
+    <div className="flex gap-2 mb-6 border-b border-border pb-2">
       {subTabs.map((tab) => {
         const isActive = pathname === tab.href;
         return (
@@ -24,7 +24,7 @@ export default function InventoryManageSubTabs() {
             className={`px-4 py-2 text-sm font-bold rounded-xl transition-all ${
               isActive 
                 ? 'bg-blue-100 text-blue-700' 
-                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                : 'text-muted-foreground hover:text-foreground hover:bg-slate-100'
             }`}
           >
             {tab.name}

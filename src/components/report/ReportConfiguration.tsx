@@ -28,7 +28,7 @@ const ReportConfiguration: React.FC<ReportConfigurationProps> = ({
     onYearChange,
 }) => {
     return (
-        <div className="relative border border-slate-100 rounded-xl p-4 sm:p-5 pt-7 bg-white shadow-sm transition-all hover:shadow-md">
+        <div className="relative border border-border rounded-xl p-4 sm:p-5 pt-7 bg-card shadow-sm transition-all hover:shadow-md">
             <span className="absolute -top-3 left-4 bg-blue-50 text-blue-700 px-3 py-1 text-[9px] font-bold capitalize  border border-blue-100 rounded-full shadow-sm flex items-center gap-1.5">
                 <Calendar className="w-3 h-3" /> Metadata
             </span>
@@ -54,12 +54,12 @@ const ReportConfiguration: React.FC<ReportConfigurationProps> = ({
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                         <div className="space-y-0.5">
-                            <label className="text-[8px] font-bold text-slate-400 capitalize tracking-tight ml-1">Start Date</label>
-                            <input type="date" value={startDate} onChange={e => onStartDateChange(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-xl p-2 text-xs font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" />
+                            <label className="text-[8px] font-bold text-muted-foreground capitalize tracking-tight ml-1">Start Date</label>
+                            <input type="date" value={startDate} onChange={e => onStartDateChange(e.target.value)} className="w-full bg-background border border-border rounded-xl p-2 text-xs font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" />
                         </div>
                         <div className="space-y-0.5">
-                            <label className="text-[8px] font-bold text-slate-400 capitalize tracking-tight ml-1">End Date</label>
-                            <input type="date" value={endDate} onChange={e => onEndDateChange(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-xl p-2 text-xs font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" />
+                            <label className="text-[8px] font-bold text-muted-foreground capitalize tracking-tight ml-1">End Date</label>
+                            <input type="date" value={endDate} onChange={e => onEndDateChange(e.target.value)} className="w-full bg-background border border-border rounded-xl p-2 text-xs font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" />
                         </div>
                     </div>
                 </div>
@@ -70,14 +70,14 @@ const ReportConfiguration: React.FC<ReportConfigurationProps> = ({
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                         <div className="space-y-0.5">
-                            <label className="text-[8px] font-bold text-slate-400 capitalize tracking-tight ml-1">Target Month</label>
-                            <select value={month} onChange={e => onMonthChange(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-xl p-2 text-xs font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner">
+                            <label className="text-[8px] font-bold text-muted-foreground capitalize tracking-tight ml-1">Target Month</label>
+                            <select value={month} onChange={e => onMonthChange(e.target.value)} className="w-full bg-background border border-border rounded-xl p-2 text-xs font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner">
                                 {Array.from({ length: 12 }, (_, i) => <option key={i + 1} value={String(i + 1)}>{new Date(2000, i).toLocaleString('en-US', { month: 'long' })}</option>)}
                             </select>
                         </div>
                         <div className="space-y-0.5">
-                            <label className="text-[8px] font-bold text-slate-400 capitalize tracking-tight ml-1">Target Year</label>
-                            <input type="number" value={year} onChange={e => onYearChange(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-xl p-2 text-xs font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" />
+                            <label className="text-[8px] font-bold text-muted-foreground capitalize tracking-tight ml-1">Target Year</label>
+                            <input type="number" value={year} onChange={e => onYearChange(e.target.value)} className="w-full bg-background border border-border rounded-xl p-2 text-xs font-semibold focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-inner" />
                         </div>
                     </div>
                 </div>

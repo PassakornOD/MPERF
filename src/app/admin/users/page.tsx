@@ -103,7 +103,7 @@ const AdminUsersPage = () => {
 
     return (
         <div className="space-y-8 animate-ease-in">
-            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden transition-all hover:shadow-md">
+            <div className="bg-card rounded-[2rem] border border-border shadow-sm overflow-hidden transition-all hover:shadow-md">
                 <div className="p-8 space-y-8">
                     <div className="flex items-center justify-between border-b border-slate-50 pb-6">
                         <div className="flex items-center gap-4">
@@ -111,8 +111,8 @@ const AdminUsersPage = () => {
                                 <User className="w-6 h-6" />
                             </div>
                             <div>
-                                <h3 className="text-sm text-slate-800 capitalize ">User Profile</h3>
-                                <p className="text-xs text-slate-400 capitalize mt-0.5">Manage system access and global roles</p>
+                                <h3 className="text-sm text-foreground capitalize ">User Profile</h3>
+                                <p className="text-xs text-muted-foreground capitalize mt-0.5">Manage system access and global roles</p>
                             </div>
                         </div>
                         <button onClick={() => setIsModalOpen(true)} className="bg-slate-900 text-white px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-all shadow-md flex items-center gap-2 group">
@@ -121,30 +121,30 @@ const AdminUsersPage = () => {
                         </button>
                     </div>
 
-                    <div className="overflow-x-auto custom-scrollbar border border-slate-100 rounded-xl shadow-inner bg-slate-50/20">
+                    <div className="overflow-x-auto custom-scrollbar border border-border rounded-xl shadow-inner bg-background/20">
                         <table className="w-full text-xs text-left border-collapse">
                             <thead>
-                                <tr className="bg-white border-b border-slate-100">
-                                    <th className="px-8 py-5 text-xs text-slate-400 capitalize ">Identity</th>
-                                    <th className="px-8 py-5 text-xs text-slate-400 capitalize ">Role Authority</th>
-                                    <th className="px-8 py-5 text-xs text-slate-400 capitalize ">Memberships</th>
-                                    <th className="px-8 py-5 text-xs text-slate-400 capitalize  text-right">Actions</th>
+                                <tr className="bg-card border-b border-border">
+                                    <th className="px-8 py-5 text-xs text-muted-foreground capitalize ">Identity</th>
+                                    <th className="px-8 py-5 text-xs text-muted-foreground capitalize ">Role Authority</th>
+                                    <th className="px-8 py-5 text-xs text-muted-foreground capitalize ">Memberships</th>
+                                    <th className="px-8 py-5 text-xs text-muted-foreground capitalize  text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100/50 bg-white">
+                            <tbody className="divide-y divide-slate-100/50 bg-card">
                                 {users.map(u => {
                                     const userGroups = userMappings.filter((m: any) => m.user_id === u.user_id);
                                     const isSelf = Number(u.user_id) === Number((session?.user as any)?.id);
 
                                     return (
-                                        <tr key={u.user_id} className="group/row hover:bg-blue-50/40 transition-all duration-200 border-b border-slate-100/30 last:border-0">
+                                        <tr key={u.user_id} className="group/row hover:bg-blue-50/40 transition-all duration-200 border-b border-border/30 last:border-0">
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-blue-600 shadow-sm group-hover/row:scale-105 transition-all">
+                                                    <div className="w-10 h-10 rounded-xl bg-background border border-border flex items-center justify-center text-blue-600 shadow-sm group-hover/row:scale-105 transition-all">
                                                         <User className="w-5 h-5" />
                                                     </div>
                                                     <div>
-                                                        <p className="text-slate-900 text-sm capitalize tracking-tight leading-none mb-1 group-hover/row:text-blue-700 transition-colors">{u.username}</p>
+                                                        <p className="text-foreground text-sm capitalize tracking-tight leading-none mb-1 group-hover/row:text-blue-700 transition-colors">{u.username}</p>
                                                         {isSelf && <span className="bg-emerald-50 text-emerald-600 text-[8px] capitalize px-1.5 py-0.5 rounded-xl border border-emerald-100 shadow-sm">Current Session</span>}
                                                     </div>
                                                 </div>
@@ -152,14 +152,14 @@ const AdminUsersPage = () => {
                                             <td className="px-8 py-5">
                                                 <span className={`px-3 py-1 rounded-full text-[9px] capitalize  border ${u.role === 'admin' ? 'bg-blue-600 text-white border-blue-700 shadow-md shadow-blue-500/20' :
                                                     u.role === 'sysadmin' ? 'bg-slate-900 text-white border-slate-800' :
-                                                        'bg-slate-100 text-slate-600 border-slate-200 shadow-inner'
+                                                        'bg-slate-100 text-slate-600 border-border shadow-inner'
                                                     }`}>{u.role}</span>
                                             </td>
                                             <td className="px-8 py-5">
                                                 <div className="flex flex-wrap gap-2 max-w-[280px]">
                                                     {userGroups.length > 0 ? userGroups.slice(0, 2).map((m: any) => {
                                                         const group = groups.find((g: any) => g.ug_id === m.ug_id);
-                                                        return group ? <span key={group.ug_id} className="bg-white border border-slate-100 text-slate-500 px-2.5 py-1 rounded-xl font-bold text-[9px] shadow-sm whitespace-nowrap">{group.ug_name}</span> : null;
+                                                        return group ? <span key={group.ug_id} className="bg-card border border-border text-muted-foreground px-2.5 py-1 rounded-xl font-bold text-[9px] shadow-sm whitespace-nowrap">{group.ug_name}</span> : null;
                                                     }) : <span className="text-[9px] font-bold text-slate-300 capitalize  italic">No Active Groups</span>}
                                                     {userGroups.length > 2 && <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded-xl text-[9px] shadow-sm border border-blue-100">+{userGroups.length - 2}</span>}
                                                 </div>
@@ -168,12 +168,12 @@ const AdminUsersPage = () => {
                                                 <div className="relative flex justify-end">
                                                     <button
                                                         onClick={() => setActiveMenu(activeMenu === u.user_id ? null : u.user_id)}
-                                                        className={`p-2.5 rounded-xl transition-all border ${activeMenu === u.user_id ? 'bg-white shadow-md text-slate-900 border-slate-200' : 'text-slate-300 hover:text-slate-600 border-transparent hover:bg-white hover:shadow-sm hover:border-slate-100'}`}
+                                                        className={`p-2.5 rounded-xl transition-all border ${activeMenu === u.user_id ? 'bg-card shadow-md text-foreground border-border' : 'text-slate-300 hover:text-slate-600 border-transparent hover:bg-card hover:shadow-sm hover:border-border'}`}
                                                     >
                                                         <MoreVertical className="w-4.5 h-4.5" />
                                                     </button>
                                                     {activeMenu === u.user_id && (
-                                                        <div className="absolute right-0 top-full mt-2 bg-white border border-slate-100 rounded-xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15)] py-2 z-[100] w-44 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                                                        <div className="absolute right-0 top-full mt-2 bg-card border border-border rounded-xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15)] py-2 z-[100] w-44 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                                                             <button onClick={() => {
                                                                 setEditUser(u);
                                                                 setEditFields({ role: u.role, group_ids: userMappings.filter((m: any) => m.user_id === u.user_id).map((m: any) => m.ug_id) });
@@ -211,15 +211,15 @@ const AdminUsersPage = () => {
                     {
                         label: 'General', content: (
                             <div className="space-y-8">
-                                <div className="flex gap-4 p-6 bg-slate-50/50 rounded-xl items-center border border-slate-100 shadow-inner">
-                                    <div className="bg-white p-4 rounded-xl text-blue-600 shadow-sm border border-slate-100"><User className="w-8 h-8" /></div>
+                                <div className="flex gap-4 p-6 bg-background/50 rounded-xl items-center border border-border shadow-inner">
+                                    <div className="bg-card p-4 rounded-xl text-blue-600 shadow-sm border border-border"><User className="w-8 h-8" /></div>
                                     <div>
-                                        <p className="text-xs text-slate-400 capitalize  mb-0.5">Identification</p>
-                                        <p className="text-xl text-slate-900 tracking-tight">{editUser?.username}</p>
+                                        <p className="text-xs text-muted-foreground capitalize  mb-0.5">Identification</p>
+                                        <p className="text-xl text-foreground tracking-tight">{editUser?.username}</p>
                                     </div>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-400 capitalize  mb-4 ml-1">Assigned Role</p>
+                                    <p className="text-xs text-muted-foreground capitalize  mb-4 ml-1">Assigned Role</p>
                                     <div className="grid grid-cols-3 gap-3">
                                         {roles.map(r => {
                                             const isSelf = Number(editUser?.user_id) === Number((session?.user as any)?.id);
@@ -238,7 +238,7 @@ const AdminUsersPage = () => {
                                                     }}
                                                     className={`px-4 py-3 rounded-xl text-xs capitalize  transition-all duration-300 border ${isSelected
                                                         ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20'
-                                                        : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300 hover:text-slate-600 shadow-sm'
+                                                        : 'bg-card border-border text-muted-foreground hover:border-slate-300 hover:text-slate-600 shadow-sm'
                                                         } ${(isProtected || isSelf) ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
                                                 >
                                                     {r.role_name}
@@ -259,8 +259,8 @@ const AdminUsersPage = () => {
                                     </button>
                                 </div>
 
-                                <div className="relative border border-slate-100 rounded-xl p-6 pt-10 bg-slate-50/20 shadow-inner">
-                                    <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] capitalize  text-blue-600 border border-slate-100 rounded-full shadow-sm flex items-center gap-2">
+                                <div className="relative border border-border rounded-xl p-6 pt-10 bg-background/20 shadow-inner">
+                                    <span className="absolute -top-3 left-6 bg-card px-4 py-1.5 text-[9px] capitalize  text-blue-600 border border-border rounded-full shadow-sm flex items-center gap-2">
                                         <Users className="w-3.5 h-3.5" /> Active Memberships
                                     </span>
 
@@ -271,9 +271,9 @@ const AdminUsersPage = () => {
                                                 const isPersonalGroup = group?.ug_name.toLowerCase() === editUser?.username.toLowerCase();
 
                                                 return group ? (
-                                                    <div key={ugId} className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl group/item hover:border-blue-200 transition-all shadow-sm">
+                                                    <div key={ugId} className="flex items-center justify-between p-3 bg-card border border-border rounded-xl group/item hover:border-blue-200 transition-all shadow-sm">
                                                         <div className="flex items-center gap-3 overflow-hidden">
-                                                            <div className="bg-slate-50 p-2 rounded-xl group-hover/item:scale-110 transition-transform flex-shrink-0"><Users className="w-4 h-4 text-blue-600" /></div>
+                                                            <div className="bg-background p-2 rounded-xl group-hover/item:scale-110 transition-transform flex-shrink-0"><Users className="w-4 h-4 text-blue-600" /></div>
                                                             <div className="flex flex-col truncate">
                                                                 <span className="text-xs text-slate-700 truncate">{group.ug_name}</span>
                                                                 {isPersonalGroup && <span className="text-[8px] text-blue-500 capitalize ">Personal Group</span>}
@@ -301,10 +301,10 @@ const AdminUsersPage = () => {
 
                                 {isAddingGroup && (
                                     <div className="relative border-2 border-dashed border-blue-100 rounded-xl p-6 pt-10 bg-blue-50/20 animate-in fade-in slide-in-from-top-4 duration-300">
-                                        <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] capitalize  text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
+                                        <span className="absolute -top-3 left-6 bg-card px-4 py-1.5 text-[9px] capitalize  text-blue-600 border border-blue-100 rounded-full shadow-sm flex items-center gap-2">
                                             <Plus className="w-3.5 h-3.5" /> Available Groups
                                         </span>
-                                        <button onClick={() => setIsAddingGroup(false)} className="absolute top-2 right-2 p-2 text-slate-300 hover:text-slate-900 transition-colors"><X className="w-4 h-4" /></button>
+                                        <button onClick={() => setIsAddingGroup(false)} className="absolute top-2 right-2 p-2 text-slate-300 hover:text-foreground transition-colors"><X className="w-4 h-4" /></button>
 
                                         {groups.filter((g: any) => !editFields.group_ids.includes(Number(g.ug_id))).length > 0 ? (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -315,8 +315,8 @@ const AdminUsersPage = () => {
                                                         await axios.post('/api/admin/user-group-mapping', { user_id: editUser.user_id, group_ids: nextGroups, type: 'user_to_group' });
                                                         fetchData();
                                                         setIsAddingGroup(false);
-                                                    }} className="flex items-center gap-3 p-3 bg-white hover:bg-blue-600 hover:text-white border border-slate-100 rounded-xl transition-all shadow-sm group/btn overflow-hidden text-left">
-                                                        <div className="bg-slate-50 p-2 rounded-xl group-hover/btn:bg-blue-500 transition-colors shadow-inner"><Users className="w-4 h-4 text-blue-600 group-hover/btn:text-white" /></div>
+                                                    }} className="flex items-center gap-3 p-3 bg-card hover:bg-blue-600 hover:text-white border border-border rounded-xl transition-all shadow-sm group/btn overflow-hidden text-left">
+                                                        <div className="bg-background p-2 rounded-xl group-hover/btn:bg-blue-500 transition-colors shadow-inner"><Users className="w-4 h-4 text-blue-600 group-hover/btn:text-white" /></div>
                                                         <span className="text-xs capitalize tracking-tight truncate">{g.ug_name}</span>
                                                     </button>
                                                 ))}
@@ -340,8 +340,8 @@ const AdminUsersPage = () => {
                                     if (groupPgs.length === 0) return null;
 
                                     return (
-                                        <div key={ugId} className="relative border border-slate-100 rounded-xl p-6 pt-10 bg-slate-50/10">
-                                            <span className="absolute -top-3 left-6 bg-white px-4 py-1.5 text-[9px] capitalize  text-slate-500 border border-slate-100 rounded-full shadow-sm flex items-center gap-2 italic">
+                                        <div key={ugId} className="relative border border-border rounded-xl p-6 pt-10 bg-background/10">
+                                            <span className="absolute -top-3 left-6 bg-card px-4 py-1.5 text-[9px] capitalize  text-muted-foreground border border-border rounded-full shadow-sm flex items-center gap-2 italic">
                                                 Inherited from: {group?.ug_name}
                                             </span>
                                             <div className="space-y-3">
@@ -349,11 +349,11 @@ const AdminUsersPage = () => {
                                                     const associatedHgs = pgh.filter((m: any) => m.pg_id === pg.pg_id);
                                                     const isExpanded = expandedPgs.includes(pg.pg_id);
                                                     return (
-                                                        <div key={pg.pg_id} className="border border-slate-100 rounded-xl overflow-hidden shadow-sm bg-white hover:border-blue-100 transition-all">
-                                                            <div className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-slate-50" onClick={() => setExpandedPgs(prev => isExpanded ? prev.filter(i => i !== pg.pg_id) : [...prev, pg.pg_id])}>
+                                                        <div key={pg.pg_id} className="border border-border rounded-xl overflow-hidden shadow-sm bg-card hover:border-blue-100 transition-all">
+                                                            <div className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-background" onClick={() => setExpandedPgs(prev => isExpanded ? prev.filter(i => i !== pg.pg_id) : [...prev, pg.pg_id])}>
                                                                 <div className="flex items-center gap-3">
                                                                     <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                                                                    <span className="text-xs text-slate-800 tracking-tight">{pg.pg_name}</span>
+                                                                    <span className="text-xs text-foreground tracking-tight">{pg.pg_name}</span>
                                                                 </div>
                                                                 <div className="flex items-center gap-3">
                                                                     <span className="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-xl text-[9px] capitalize tracking-tighter border border-emerald-100">
@@ -363,10 +363,10 @@ const AdminUsersPage = () => {
                                                                 </div>
                                                             </div>
                                                             {isExpanded && (
-                                                                <div className="p-4 bg-slate-50/50 border-t border-slate-50 text-xs text-slate-600 grid grid-cols-2 gap-3 animate-in slide-in-from-top-2 duration-200">
+                                                                <div className="p-4 bg-background/50 border-t border-slate-50 text-xs text-slate-600 grid grid-cols-2 gap-3 animate-in slide-in-from-top-2 duration-200">
                                                                     {associatedHgs.map((m: any) => {
                                                                         const hg = allHostgroups.find((h: any) => h.hostgroup_id === m.hostgroup_id);
-                                                                        return <div key={m.hostgroup_id} className="bg-white p-2.5 rounded-xl border border-slate-100 flex items-center gap-2 shadow-sm">
+                                                                        return <div key={m.hostgroup_id} className="bg-card p-2.5 rounded-xl border border-border flex items-center gap-2 shadow-sm">
                                                                             <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                                                                             <span className="font-bold truncate">{hg?.hostgroup || 'Unknown'}</span>
                                                                         </div>;
@@ -381,7 +381,7 @@ const AdminUsersPage = () => {
                                     );
                                 })}
                                 {editFields.group_ids.length === 0 && (
-                                    <div className="py-20 text-center border border-slate-100 rounded-xl bg-slate-50/30">
+                                    <div className="py-20 text-center border border-border rounded-xl bg-background/30">
                                         <ShieldCheck className="w-12 h-12 text-slate-100 mx-auto mb-3" />
                                         <p className="text-xs text-slate-300 capitalize  italic">No groups or permissions found</p>
                                     </div>
@@ -422,14 +422,14 @@ const AdminUsersPage = () => {
 
                     <div className="relative group">
                         <select
-                            className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-xl text-xs font-bold bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none"
+                            className="peer w-full border border-border p-4 pt-7 pb-2 rounded-xl text-xs font-bold bg-background/50 focus:bg-card focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none"
                             value={newUser.role}
                             onChange={e => setNewUser({ ...newUser, role: e.target.value })}
                         >
                             <option value="" disabled hidden></option>
                             {roles.map(r => <option key={r.role_id} value={r.role_name}>{r.role_name}</option>)}
                         </select>
-                        <label className={`absolute left-4 transition-all pointer-events-none capitalize  ${newUser.role ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Assign Global Role</label>
+                        <label className={`absolute left-4 transition-all pointer-events-none capitalize  ${newUser.role ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-muted-foreground'}`}>Assign Global Role</label>
                         <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
                     </div>
 

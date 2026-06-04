@@ -43,10 +43,10 @@ const NavItem = ({ item, isCollapsed, pathname, isOpen, onToggle }: { item: any,
 
   const NavContent = (
     <div className={`flex items-center gap-3.5 px-4 py-2.5 rounded-lg transition-all duration-300 group ${isActive
-      ? 'text-white'
-      : 'text-slate-400 hover:bg-white/5 hover:text-white'
+      ? 'bg-blue-600 text-white shadow-sm'
+      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
       }`}>
-      <item.icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500 group-hover:text-blue-400'}`} />
+      <item.icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-muted-foreground group-hover:text-blue-500'}`} />
       {!isCollapsed && <span className="text-xs font-semibold capitalize">{item.name}</span>}
       {hasSubItems && !isCollapsed && (
         <ChevronDown className={`w-4 h-4 ml-auto transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -75,7 +75,9 @@ const NavItem = ({ item, isCollapsed, pathname, isOpen, onToggle }: { item: any,
                   <Link
                     key={sub.name}
                     href={sub.href}
-                    className={`flex items-center justify-between gap-3 px-4 py-2 text-xs transition-colors rounded-lg ${isSubActive ? 'bg-white/10 text-white ' : 'text-slate-500 hover:text-white'
+                    className={`flex items-center justify-between gap-3 px-4 py-2 text-xs transition-colors rounded-lg ${isSubActive
+                      ? 'bg-blue-600/10 text-blue-600 dark:text-blue-400 font-bold'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                       }`}
                   >
                     <div className="flex items-center gap-3">
@@ -98,7 +100,7 @@ const NavGroup = ({ title, items, isCollapsed, pathname, openItem, onToggle }: {
   return (
     <div className="space-y-1">
       {!isCollapsed && (
-        <div className="px-4 text-[10px]  text-slate-500 uppercase mb-2">
+        <div className="px-4 text-[10px]  text-muted-foreground uppercase mb-2">
           {title}
         </div>
       )}
@@ -208,16 +210,16 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-screen bg-slate-950 text-slate-300 transition-all duration-300 z-[100] flex flex-col border-r border-slate-800 ${isCollapsed ? 'w-[80px]' : 'w-[260px]'}`}
+      className={`fixed left-0 top-0 h-screen bg-card text-foreground transition-all duration-300 z-[100] flex flex-col border-r border-border ${isCollapsed ? 'w-[80px]' : 'w-[260px]'}`}
     >
-      <div className="h-[70px] flex items-center px-6 border-b border-slate-800">
+      <div className="h-[70px] flex items-center px-6 border-b border-border">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shrink-0">
             <span className="text-white  text-lg italic">M</span>
           </div>
           {!isCollapsed && (
             <div className="flex flex-col leading-tight">
-              <h1 className="text-sm font-bold tracking-tight text-white capitalize">Metrisar</h1>
+              <h1 className="text-sm font-bold tracking-tight text-foreground capitalize">Metrisar</h1>
             </div>
           )}
         </div>
@@ -228,29 +230,10 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
         {govItems.length > 0 && <NavGroup title="Settings" items={govItems} isCollapsed={isCollapsed} pathname={pathname} openItem={openItem} onToggle={handleToggle} />}
       </div>
 
-      <div className="p-3 border-t border-slate-800 space-y-2">
-        {!isCollapsed && (
-          <div className="px-2 mb-4 animate-in fade-in duration-300">
-            <div className="flex items-center gap-3 p-3 bg-slate-900 rounded-xl border border-slate-800">
-              <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shadow-sm">
-                <User className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col min-w-0">
-                <p className="text-[11px]  text-white truncate">{session?.user?.name || 'Operator'}</p>
-                <p className="text-[9px] font-bold text-slate-500 capitalize">{userRole || 'Guest'}</p>
-              </div>
-              <button
-                onClick={() => signOut({ callbackUrl: '/login' })}
-                className="ml-auto p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
+      <div className="p-3">
         <button
           onClick={onToggle}
-          className="w-full flex items-center justify-center py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-500 hover:text-white rounded-lg transition-all"
+          className="w-full flex items-center justify-center py-2.5 bg-muted hover:bg-accent text-muted-foreground hover:text-foreground rounded-lg transition-all"
         >
           {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>

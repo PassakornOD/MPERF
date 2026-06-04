@@ -1,5 +1,6 @@
 'use client';
 
+import { ThemeProvider } from '@/components/ThemeProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionProvider } from 'next-auth/react';
 import { ModalProvider } from '@/components/context/ModalContext';
@@ -18,11 +19,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
-        <ModalProvider>
-          <ToastProvider>
-            {children}
-          </ToastProvider>
-        </ModalProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ModalProvider>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </ModalProvider>
+        </ThemeProvider>
       </SessionProvider>
     </QueryClientProvider>
   );

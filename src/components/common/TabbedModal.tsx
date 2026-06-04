@@ -29,25 +29,25 @@ const TabbedModal = ({
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50 backdrop-blur-[1px] transition-all">
-      <div className={`bg-white rounded-xl w-full ${maxWidth} flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200`}>
-        <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 bg-white">
-          <h2 className="text-lg font-semibold text-slate-800 tracking-tight">
+      <div className={`bg-card rounded-xl w-full ${maxWidth} flex flex-col shadow-2xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-200`}>
+        <div className="flex justify-between items-center px-6 py-4 border-b border-border bg-card">
+          <h2 className="text-lg font-semibold text-foreground tracking-tight">
             {title}
           </h2>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-600 transition-colors">
+          <button onClick={onClose} className="p-1.5 text-muted-foreground hover:text-slate-600 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
         
-        <div className="flex px-6 gap-1 bg-slate-50 border-b border-slate-100">
+        <div className="flex px-6 gap-1 bg-background border-b border-border">
             {tabs.map((tab, idx) => (
                 <button 
                     key={idx} 
                     onClick={() => setActiveTab(idx)}
                     className={`px-4 py-2.5 text-xs font-semibold transition-all border-b-2 ${
                         activeTab === idx 
-                        ? 'border-blue-600 text-blue-600 bg-white shadow-sm' 
-                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                        ? 'border-blue-600 text-blue-600 bg-card shadow-sm' 
+                        : 'border-transparent text-muted-foreground hover:text-slate-700 hover:bg-slate-100'
                     }`}
                 >
                     {tab.label}

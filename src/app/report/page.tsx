@@ -311,17 +311,17 @@ const ReportExportPage = () => {
         <div className="max-w-7xl mx-auto space-y-10 pb-20 animate-ease-in px-4 sm:px-6">
             <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
                 <div className="space-y-2">
-                    <h2 className="text-2xl text-slate-900 capitalize tracking-tight leading-none">Generate Report</h2>
-                    <p className="text-xs font-medium text-slate-400 tracking-tight">Configure and export high-fidelity server utilization documents</p>
+                    <h2 className="text-2xl text-foreground capitalize tracking-tight leading-none">Generate Report</h2>
+                    <p className="text-xs font-medium text-muted-foreground tracking-tight">Configure and export high-fidelity server utilization documents</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-4">
-                    <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-xl inner-shadow border border-slate-200/50">
+                    <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-xl inner-shadow border border-border/50">
                         <button
                             onClick={() => {
                                 resetConfiguration();
                                 setActiveAction('create-template');
                             }}
-                            className={`px-5 py-2.5 rounded-xl text-xs font-bold capitalize transition-all duration-300 ${activeAction === 'create-template' ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`px-5 py-2.5 rounded-xl text-xs font-bold capitalize transition-all duration-300 ${activeAction === 'create-template' ? 'bg-card text-blue-600 shadow-sm border border-border' : 'text-muted-foreground hover:text-slate-600'}`}
                         >
                             Create Template
                         </button>
@@ -330,18 +330,18 @@ const ReportExportPage = () => {
                                 resetConfiguration();
                                 setActiveAction('quick-gen');
                             }}
-                            className={`px-5 py-2.5 rounded-xl text-xs font-bold capitalize transition-all duration-300 ${activeAction === 'quick-gen' ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`px-5 py-2.5 rounded-xl text-xs font-bold capitalize transition-all duration-300 ${activeAction === 'quick-gen' ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' : 'text-muted-foreground hover:text-slate-600'}`}
                         >
                             On-Demand Report
                         </button>
                     </div>
-                    <div className="flex items-center gap-4 bg-white px-5 py-2.5 rounded-xl border border-slate-100 shadow-sm">
+                    <div className="flex items-center gap-4 bg-card px-5 py-2.5 rounded-xl border border-border shadow-sm">
                         <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">
                             <CheckCircle2 className="w-5 h-5" />
                         </div>
                         <div>
-                            <p className="text-[9px]  text-slate-400 capitalize  leading-none mb-1">Selected</p>
-                            <p className="text-xs  text-slate-900 leading-none">{selectedHostnames.length} Hostnames</p>
+                            <p className="text-[9px]  text-muted-foreground capitalize  leading-none mb-1">Selected</p>
+                            <p className="text-xs  text-foreground leading-none">{selectedHostnames.length} Hostnames</p>
                         </div>
                     </div>
                 </div>
@@ -360,37 +360,37 @@ const ReportExportPage = () => {
                 ) : (
                     <div className="space-y-4">
                         {templates.length === 0 ? (
-                            <div className="py-24 text-center border-2 border-dashed border-slate-100 rounded-[2rem] bg-slate-50/20">
+                            <div className="py-24 text-center border-2 border-dashed border-border rounded-[2rem] bg-background/20">
                                 <Layers className="w-16 h-16 text-slate-100 mx-auto mb-6" />
-                                <p className="text-slate-400  text-xs capitalize ">No operational templates found</p>
+                                <p className="text-muted-foreground  text-xs capitalize ">No operational templates found</p>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 gap-4">
                                 {templates.map(template => (
-                                    <div key={template.id} className={`flex flex-col md:flex-row md:items-center gap-6 p-5 bg-slate-50/50 border border-slate-100 rounded-xl hover:bg-white hover:border-blue-200 hover:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.05)] transition-all duration-500 group ${template.hosts.length > 50 ? 'opacity-40 grayscale pointer-events-none' : ''}`}>
+                                    <div key={template.id} className={`flex flex-col md:flex-row md:items-center gap-6 p-5 bg-background/50 border border-border rounded-xl hover:bg-card hover:border-blue-200 hover:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.05)] transition-all duration-500 group ${template.hosts.length > 50 ? 'opacity-40 grayscale pointer-events-none' : ''}`}>
                                         <div className="flex-1 flex items-center gap-5 min-w-0">
-                                            <div className="w-14 h-14 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-blue-600 shadow-sm shrink-0 group-hover:scale-105 transition-transform duration-500">
+                                            <div className="w-14 h-14 rounded-xl bg-card border border-border flex items-center justify-center text-blue-600 shadow-sm shrink-0 group-hover:scale-105 transition-transform duration-500">
                                                 <Layers className="w-6 h-6" />
                                             </div>
                                             <div className="min-w-0">
                                                 <div className="flex items-center gap-3 mb-1">
-                                                    <h4 className=" text-slate-900 text-sm capitalize tracking-tight truncate">{template.name}</h4>
-                                                    <span className="bg-slate-100 text-slate-400 text-xs capitalize px-2 py-0.5 rounded-xl border border-slate-50">ID:{template.id}</span>
+                                                    <h4 className=" text-foreground text-sm capitalize tracking-tight truncate">{template.name}</h4>
+                                                    <span className="bg-slate-100 text-muted-foreground text-xs capitalize px-2 py-0.5 rounded-xl border border-slate-50">ID:{template.id}</span>
                                                 </div>
-                                                <div className="flex items-center gap-2 text-[9px]  text-slate-400 capitalize  italic opacity-70">
+                                                <div className="flex items-center gap-2 text-[9px]  text-muted-foreground capitalize  italic opacity-70">
                                                     <Clock className="w-3.5 h-3.5" /> Updated {template.lastUpdated}
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="flex-1">
-                                            <div className="bg-white/50 px-4 py-3 inline-flex flex-col gap-1 max-w-full">
+                                            <div className="bg-card/50 px-4 py-3 inline-flex flex-col gap-1 max-w-full">
                                                 <h4 className=" text-slate-700 text-xs capitalize tracking-tight truncate flex items-center gap-2">
                                                     <FileText className="w-3.5 h-3.5 text-blue-500/40" />
                                                     {template.reportTitle}
                                                 </h4>
                                                 <div className="flex items-center gap-4">
-                                                    <span className="text-xs text-slate-400 capitalize  flex items-center gap-1.5"><Monitor className="w-3.5 h-3.5 text-slate-300" /> {template.hosts.length} Hostnames</span>
-                                                    <span className="text-xs text-slate-400 capitalize  flex items-center gap-1.5"><Activity className="w-3.5 h-3.5 text-slate-300" /> {template.charts.length} Dimensions</span>
+                                                    <span className="text-xs text-muted-foreground capitalize  flex items-center gap-1.5"><Monitor className="w-3.5 h-3.5 text-slate-300" /> {template.hosts.length} Hostnames</span>
+                                                    <span className="text-xs text-muted-foreground capitalize  flex items-center gap-1.5"><Activity className="w-3.5 h-3.5 text-slate-300" /> {template.charts.length} Dimensions</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -427,7 +427,7 @@ const ReportExportPage = () => {
             </div>
 
             {activeAction && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-top-10 duration-700 bg-white border border-slate-100 rounded-[2rem] p-10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)]">
+                <div className="space-y-8 animate-in fade-in slide-in-from-top-10 duration-700 bg-card border border-border rounded-[2rem] p-10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)]">
                     <div className="flex items-center justify-between border-b border-slate-50 pb-8">
                         <div className="flex items-center gap-6">
                             <div className={`w-16 h-16 rounded-xl flex items-center justify-center shadow-lg transition-all duration-500 ${activeAction === 'create-template' ? 'bg-blue-600 text-white shadow-blue-500/30' :
@@ -437,7 +437,7 @@ const ReportExportPage = () => {
                                     activeAction === 'quick-gen' ? <FileText size={28} /> : <Monitor size={28} />}
                             </div>
                             <div>
-                                <h3 className="text-xl  text-slate-900 tracking-tight capitalize">
+                                <h3 className="text-xl  text-foreground tracking-tight capitalize">
                                     {activeAction === 'create-template' ? 'Create Template' :
                                         activeAction === 'quick-gen' ? 'On-Demand Report Generation' : 'Modify & Execute Cycle'}
                                 </h3>
@@ -446,7 +446,7 @@ const ReportExportPage = () => {
                         </div>
                         <button
                             onClick={() => setActiveAction(null)}
-                            className="p-3 bg-slate-50 text-slate-300 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-all border border-slate-100 shadow-inner group"
+                            className="p-3 bg-background text-slate-300 hover:bg-slate-100 hover:text-foreground rounded-xl transition-all border border-border shadow-inner group"
                         >
                             <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
                         </button>
@@ -534,8 +534,8 @@ const ReportExportPage = () => {
                 <div className="p-8 space-y-6">
                     <div className="text-center space-y-2">
                         <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto" />
-                        <p className="text-sm  text-slate-900 capitalize tracking-tight">{exportStatus}</p>
-                        <p className="text-xs font-medium text-slate-400">{progress}% Complete</p>
+                        <p className="text-sm  text-foreground capitalize tracking-tight">{exportStatus}</p>
+                        <p className="text-xs font-medium text-muted-foreground">{progress}% Complete</p>
                     </div>
                     <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
                         <div
@@ -560,7 +560,7 @@ const ReportExportPage = () => {
             <Modal isOpen={!!pdfUrl} onClose={() => setPdfUrl(null)} title="Document Preview" maxWidth="max-w-6xl" onDownload={() => {
                 const link = document.createElement('a'); link.href = pdfUrl!; link.download = `Metrisar_Analytics_${Date.now()}.pdf`; link.click();
             }}>
-                {pdfUrl && <iframe src={pdfUrl} className="w-full h-[85vh] rounded-[2rem] border border-slate-100 shadow-inner bg-slate-900/5" title="Analytics Viewer" />}
+                {pdfUrl && <iframe src={pdfUrl} className="w-full h-[85vh] rounded-[2rem] border border-border shadow-inner bg-slate-900/5" title="Analytics Viewer" />}
             </Modal>
 
             <Modal isOpen={isLimitModalOpen} onClose={() => setIsLimitModalOpen(false)} title="System Payload Limit">
@@ -568,8 +568,8 @@ const ReportExportPage = () => {
                     <div className="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-10 border-4 border-amber-100 shadow-inner">
                         <AlertCircle className="w-12 h-12 text-amber-500" />
                     </div>
-                    <h3 className="text-2xl  text-slate-900 mb-6 capitalize tracking-tight italic">Maximum 50 Node Cluster</h3>
-                    <p className="text-slate-400 font-medium leading-relaxed mb-12 max-w-md mx-auto text-sm">{limitMessage}</p>
+                    <h3 className="text-2xl  text-foreground mb-6 capitalize tracking-tight italic">Maximum 50 Node Cluster</h3>
+                    <p className="text-muted-foreground font-medium leading-relaxed mb-12 max-w-md mx-auto text-sm">{limitMessage}</p>
                     <button
                         onClick={() => setIsLimitModalOpen(false)}
                         className="w-full py-4 bg-slate-900 hover:bg-black text-white rounded-xl  text-xs capitalize  transition-all shadow-xl active:scale-[0.98]"
