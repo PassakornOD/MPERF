@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Terminal, ShieldCheck, Container, FileText, ChevronRight, Check } from 'lucide-react';
+import { Terminal, ShieldCheck, Container, FileText, ChevronRight, Check, Lock, Settings, Shield } from 'lucide-react';
 
 const Section = ({ title, children, icon }: { title: string, children: React.ReactNode, icon?: React.ReactNode }) => (
   <section className="mb-16">
@@ -82,6 +82,68 @@ export default function DockerGuidePage() {
               <p className="flex gap-4"><span className="text-slate-300 select-none">01</span> DATABASE_URL=mysql://admin:secret@mperf-db:3306/sarlog</p>
               <p className="flex gap-4"><span className="text-slate-300 select-none">02</span> NEXTAUTH_URL=http://localhost:3000</p>
               <p className="flex gap-4"><span className="text-slate-300 select-none">03</span> NEXTAUTH_SECRET=system_cryptographic_seed_0xff</p>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* 4. Security & SSL */}
+      <Section title="SSL/TLS Encryption" icon={<Lock size={18} className="text-blue-600" />}>
+        <div className="modern-card p-10 bg-card mb-8">
+          <div className="flex gap-4 p-5 bg-amber-50/50 rounded-xl border border-amber-100 mb-8 items-center">
+            <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-white shrink-0"><Settings size={20} /></div>
+            <p className="text-xs text-amber-800 font-bold">HTTPS requires a valid certificate in the <code className="bg-card px-2 py-0.5 rounded border border-amber-200">nginx/certs/</code> directory.</p>
+          </div>
+
+          <div className="bg-slate-950 p-8 rounded-[2rem] text-slate-300 font-mono text-xs border border-slate-800 mb-8">
+            <div className="space-y-6">
+              <div>
+                <p className="text-muted-foreground mb-2"># 01. Create certificate directory</p>
+                <code className="text-blue-400">mkdir -p nginx/certs</code>
+              </div>
+              <div>
+                <p className="text-muted-foreground mb-2"># 02. Generate self-signed certificate (valid 365 days)</p>
+                <code className="text-emerald-400 break-all">
+                  openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout nginx/certs/selfsigned.key -out nginx/certs/selfsigned.crt
+                </code>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <ChevronRight size={14} className="text-blue-500" /> Nginx Configuration Snippet
+            </h4>
+            <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 text-slate-400 font-mono text-[10px] leading-relaxed">
+              <pre>
+{`server {
+    listen 443 ssl;
+    ssl_certificate     /etc/nginx/certs/selfsigned.crt;
+    ssl_certificate_key /etc/nginx/certs/selfsigned.key;
+    ...
+}`}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* 5. Database Hardening */}
+      <Section title="Credential Hardening" icon={<Shield size={18} className="text-blue-600" />}>
+        <div className="modern-card p-10 bg-card">
+          <p className="text-sm text-slate-600 mb-6 font-medium">To avoid plain-text passwords in configuration files, you can use Base64 encoding.</p>
+          
+          <div className="bg-slate-950 p-8 rounded-[2rem] text-slate-300 font-mono text-xs border border-slate-800 mb-8">
+            <p className="text-muted-foreground mb-2"># Generate Base64 encoded password string</p>
+            <code className="text-blue-400">echo -n 'your_password_here' | base64</code>
+          </div>
+
+          <div className="flex gap-4 p-5 bg-blue-50/50 rounded-xl border border-blue-100 items-center">
+            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0"><FileText size={20} /></div>
+            <div>
+              <p className="text-xs text-blue-800 font-bold mb-1">Implementation in <code className="bg-card px-2 py-0.5 rounded border border-blue-200">.env</code>:</p>
+              <p className="text-[10px] text-blue-700 font-mono italic">Prefix the value with "base64:" to enable automatic decoding.</p>
+              <code className="block mt-2 bg-card p-2 rounded border border-blue-200 text-[10px]">DB_PASSWORD=base64:cGFzc3dvcmQ=</code>
             </div>
           </div>
         </div>
