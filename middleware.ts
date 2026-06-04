@@ -30,6 +30,16 @@ export async function middleware(req: NextRequest) {
 
   if (isGroup2Route) {
     console.log(`[Middleware Check] Path: ${pathname}, Role: ${userRole}`);
+    
+    // Specifically restrict SAR Management to admins only
+    if (pathname.startsWith('/admin/sar-management')) {
+        if (userRole !== 'admin') {
+            const url = req.nextUrl.clone();
+            url.pathname = '/';
+            return NextResponse.redirect(url);
+        }
+    }
+
     // Only allow if role is admin, sysadmin or operation
     if (userRole !== 'admin' && userRole !== 'sysadmin' && userRole !== 'operation') {
       console.log(`[Middleware Block] Access denied for role: ${userRole}`);
@@ -39,7 +49,24 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // 4. Group 1 routes and all others for authenticated users are allowed
+  // 4. FAQ Restrictions
+  if (pathname.startsWith('/faq')) {
+      if (userRole === 'admin') return NextResponse.next();
+      
+      if (userRole === 'sysadmin') {
+          const allowedFaqPaths = ['/faq', '/faq/info', '/faq/admin', '/faq/operations'];
+          if (allowedFaqPaths.some(path => pathname.startsWith(path))) {
+              return NextResponse.next();
+          }
+      }
+      
+      // Redirect 'operation' or unauthorized sysadmin to dashboard
+      const url = req.nextUrl.clone();
+      url.pathname = '/';
+      return NextResponse.redirect(url);
+  }
+
+  // 5. Group 1 routes and all others for authenticated users are allowed
   return NextResponse.next();
 }
 
