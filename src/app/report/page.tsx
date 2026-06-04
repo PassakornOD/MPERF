@@ -582,16 +582,16 @@ const ReportExportPage = () => {
             <ConfirmModal
                 isOpen={deleteConfirm.isOpen}
                 onClose={() => setDeleteConfirm({ isOpen: false, templateId: null })}
-                title="Critical Action Override"
-                message="This will permanently decommission the selected reporting template from the database. All unique configurations will be lost."
+                title={`Delete Reporting Template ID:${deleteConfirm.templateId}`}
+                message="This will permanently delete the selected reporting template from the database. All unique configurations will be lost."
                 onConfirm={async () => {
                     if (deleteConfirm.templateId) {
                         try {
                             await axios.delete(`/api/report-templates/${deleteConfirm.templateId}`);
-                            showToast('Template successfully decommissioned', 'success');
+                            showToast('Template successfully deleted', 'success');
                             refetchTemplates();
                         } catch (e) {
-                            showToast('Failed to purge template', 'error');
+                            showToast('Failed to delete template', 'error');
                         }
                     }
                 }}

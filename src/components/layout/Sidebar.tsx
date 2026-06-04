@@ -204,7 +204,7 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
         { name: 'Permissions', href: '/admin/permission-groups', icon: ShieldCheck },
       ]
     }
-  ] : [];
+  ] : []);
 
   return (
     <aside

@@ -341,15 +341,15 @@ const ManageAssetsPage = () => {
             </div>
 
             {/* Group Modal */}
-            <Modal isOpen={isGroupModalOpen} onClose={() => { setIsGroupModalOpen(false); setEditingGroup(null); }} title={editingGroup ? "Modify Infrastructure Group Configuration" : "New Infrastructure Group Registration"} maxWidth="max-w-md">
+            <Modal isOpen={isGroupModalOpen} onClose={() => { setIsGroupModalOpen(false); setEditingGroup(null); }} title={editingGroup ? `Modify hostgroup: ${editingGroup.hostgroup}` : "Create New Hostgroup"} maxWidth="max-w-md">
                 <div className="space-y-6 pt-2">
                     <FloatingInput
-                        label="Group Identity Name"
+                        label="Hostgroup Name"
                         value={editingGroup ? editingGroup.hostgroup : newGroup.hostgroup}
                         onChange={e => editingGroup ? setEditingGroup({ ...editingGroup, hostgroup: e.target.value }) : setNewGroup({ ...newGroup, hostgroup: e.target.value })}
                     />
                     <FloatingInput
-                        label="Primary Stakeholder / Owner"
+                        label="Owner Name"
                         value={editingGroup ? editingGroup.owner : newGroup.owner}
                         onChange={e => editingGroup ? setEditingGroup({ ...editingGroup, owner: e.target.value }) : setNewGroup({ ...newGroup, owner: e.target.value })}
                     />
@@ -372,15 +372,15 @@ const ManageAssetsPage = () => {
                     >
                         {groupMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : (
                             <>
-                                Commit Configuration <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                                Save Configuration <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                             </>
                         )}
                     </button>
                 </div>
             </Modal>
 
-            {/* Network Node Modal */}
-            <Modal isOpen={isHostModalOpen} onClose={() => { setIsHostModalOpen(false); setEditingHost(null); }} title={editingHost ? `Update node: ${editingHost.hostname}` : "New Node Registration"} maxWidth="max-w-2xl">
+            {/* Hostnames Modal */}
+            <Modal isOpen={isHostModalOpen} onClose={() => { setIsHostModalOpen(false); setEditingHost(null); }} title={editingHost ? `Update Hostname: ${editingHost.hostname}` : "Create New Hostname"} maxWidth="max-w-2xl">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                     {Object.keys(hostForm).map(key => (
                         <div key={key} className={key === 'OS' ? 'md:col-span-2' : ''}>
@@ -394,7 +394,7 @@ const ManageAssetsPage = () => {
                                         <option value="" disabled hidden></option>
                                         {hostGroups.map((g: any) => <option key={g.hostgroup_id} value={g.hostgroup_id}>{g.hostgroup}</option>)}
                                     </select>
-                                    <label className={`absolute left-4 transition-all pointer-events-none capitalize  ${hostForm.hostgroup_id ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Sector Assignment</label>
+                                    <label className={`absolute left-4 transition-all pointer-events-none capitalize  ${hostForm.hostgroup_id ? 'top-2 text-[9px] text-blue-600' : 'top-1/2 -translate-y-1/2 text-xs text-slate-400'}`}>Hostgroup</label>
                                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-blue-600 pointer-events-none transition-colors" />
                                 </div>
                             ) : key === 'OS' ? (
@@ -405,7 +405,7 @@ const ManageAssetsPage = () => {
                                         className="peer w-full border border-slate-100 p-4 pt-7 pb-2 rounded-xl text-xs capitalize tracking-tight bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all appearance-none cursor-pointer shadow-inner"
                                     >
                                         <option value="" disabled hidden></option>
-                                        <option value="Red Hat">Red Hat Enterprise Linux</option>
+                                        <option value="RedHat">Red Hat Enterprise Linux</option>
                                         <option value="Solaris">Oracle Solaris / SunOS</option>
                                         <option value="AIX">IBM AIX</option>
                                         <option value="Ubuntu">Ubuntu Server</option>
@@ -432,7 +432,7 @@ const ManageAssetsPage = () => {
                     >
                         {hostMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : (
                             <>
-                                {editingHost ? 'Apply Node Updates' : 'Authorize Node Enrollment'} <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                                {editingHost ? 'Save Changes' : 'Add Hostname'} <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                             </>
                         )}
                     </button>
@@ -443,7 +443,7 @@ const ManageAssetsPage = () => {
                 isOpen={isConfirmOpen}
                 onClose={() => setIsConfirmOpen(false)}
                 onConfirm={handleConfirmDecommission}
-                title={confirmData?.type === 'group' ? 'Decommission Infrastructure Group' : 'Decommission Network Node'}
+                title={confirmData?.type === 'group' ? 'Delete Hostgroup' : 'Delete Hostname'}
                 message={
                     confirmData?.type === 'group'
                         ? "Are you sure you want to delete this hostgroup? All associated hostnames and their performance data tables will be permanently removed. This action cannot be undone."
