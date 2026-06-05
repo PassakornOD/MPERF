@@ -20,14 +20,17 @@ export async function GET() {
   const params: any[] = [];
 
   if (user.role !== 'admin') {
+    const isSysAdmin = user.role === 'sysadmin';
     query += ` AND h.hostgroup_id IN (
         SELECT DISTINCT pgh.hostgroup_id 
-        FROM user_to_user_groups uug
-        JOIN ug_permission_groups upg ON uug.ug_id = upg.ug_id
-        JOIN pg_hostgroups pgh ON upg.pg_id = pgh.pg_id
-        WHERE uug.user_id = ?
+        FROM pg_hostgroups pgh
+        JOIN permission_groups pg ON pgh.pg_id = pg.pg_id
+        LEFT JOIN ug_permission_groups upg ON pg.pg_id = upg.pg_id 
+        LEFT JOIN user_to_user_groups uug ON upg.ug_id = uug.ug_id
+        WHERE uug.user_id = ? ${isSysAdmin ? 'OR pg.created_by = ?' : ''}
     )`;
     params.push(user.id);
+    if (isSysAdmin) params.push(user.id);
   }
 
   query += ' ORDER BY i.actiondate DESC LIMIT 100';

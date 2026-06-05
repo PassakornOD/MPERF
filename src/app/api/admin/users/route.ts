@@ -16,14 +16,8 @@ export async function GET() {
     let query = 'SELECT user_id, username, role FROM user';
     let params: any[] = [];
 
-    // If current user is NOT a super-admin, filter out protected users
-    if (user.username !== 'sysreport' && user.username !== 'mfadmin') {
-      query += ' WHERE username NOT IN (?, ?)';
-      params = ['sysreport', 'mfadmin'];
-    }
-
-    // Sysadmin access logic (further filtering for non-super-admins)
-    if (user.role === 'sysadmin' && user.username !== 'sysreport' && user.username !== 'mfadmin') {
+    // Sysadmin access logic: see themselves and users they created (via group membership)
+    if (user.role === 'sysadmin') {
       query = `
         SELECT DISTINCT u.user_id, u.username, u.role 
         FROM user u
@@ -33,8 +27,11 @@ export async function GET() {
           WHERE user_id = ? 
           AND ug_id NOT IN (SELECT ug_id FROM user_groups WHERE ug_name = 'sysadmin')
         )
-        AND u.username NOT IN ('sysreport', 'mfadmin')
       `;
+      // If current user is NOT a super-admin, filter out protected users from sysadmin view
+      if (user.username !== 'sysreport' && user.username !== 'mfadmin') {
+          query += " AND u.username NOT IN ('sysreport', 'mfadmin')";
+      }
       params = [user.id];
     }
 
@@ -87,6 +84,12 @@ export async function POST(req: Request) {
         const [groupRes]: any = await connection.query('INSERT INTO user_groups (ug_name) VALUES (?)', [username]);
         const personalGroupId = groupRes.insertId;
         await connection.query('INSERT INTO user_to_user_groups (user_id, ug_id) VALUES (?, ?)', [newUserId, personalGroupId]);
+
+        // 2. If the creator is a sysadmin (and not a superuser), add them to this group 
+        // so they can see/manage the user they just created.
+        if (user.role === 'sysadmin' && user.username !== 'sysreport' && user.username !== 'mfadmin') {
+            await connection.query('INSERT INTO user_to_user_groups (user_id, ug_id) VALUES (?, ?)', [user.id, personalGroupId]);
+        }
 
         await connection.commit();
         logSecurityEvent(`User created: ${username} with role ${role}`, { by: user.name });

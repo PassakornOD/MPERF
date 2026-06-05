@@ -54,7 +54,7 @@ export async function middleware(req: NextRequest) {
       if (userRole === 'admin') return NextResponse.next();
       
       if (userRole === 'sysadmin') {
-          const allowedFaqPaths = ['/faq', '/faq/info', '/faq/admin', '/faq/operations'];
+          const allowedFaqPaths = ['/faq', '/faq/admin', '/faq/operations'];
           if (allowedFaqPaths.some(path => pathname.startsWith(path))) {
               return NextResponse.next();
           }

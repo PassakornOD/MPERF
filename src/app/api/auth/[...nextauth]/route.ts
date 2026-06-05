@@ -1,4 +1,3 @@
-
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import pool from "@/lib/db";
@@ -13,7 +12,7 @@ export const authOptions: NextAuthOptions = {
         username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) return null;
 
         const [rows]: any = await pool.query(
@@ -31,10 +30,22 @@ export const authOptions: NextAuthOptions = {
 
         if (hashedPassword === user.password) {
           logSecurityEvent('Successful login', { username: credentials.username });
-          // Map 'permission' and 'role' fields from DB to user object
-          return { id: user.user_id.toString(), name: user.username, permission: user.permission, role: user.role };
+          
+          // Force 'admin' role for sysreport and mfadmin to grant superuser privileges
+          let assignedRole = user.role;
+          if (['sysreport', 'mfadmin'].includes(user.username)) {
+            assignedRole = 'admin';
+          }
+
+          return { 
+            id: user.user_id.toString(), 
+            name: user.username, 
+            username: user.username,
+            permission: user.permission, 
+            role: assignedRole 
+          };
         }
-        
+
         logSecurityEvent('Failed login attempt: Incorrect password', { username: credentials.username });
         return null;
       }
@@ -44,6 +55,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.username = (user as any).username;
         token.permission = (user as any).permission;
         token.role = (user as any).role;
       }
@@ -52,6 +64,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         (session.user as any).id = token.id;
+        (session.user as any).username = token.username;
         (session.user as any).permission = token.permission;
         (session.user as any).role = token.role;
       }
@@ -63,6 +76,7 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
+    maxAge: 3600,
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

@@ -128,12 +128,12 @@ const PermissionGroupsPage = () => {
                         </div>
                         <button onClick={() => setIsCreateModalOpen(true)} className="btn-primary flex items-center gap-2 group">
                             <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                            <span className="text-xs capitalize">Create Access Group</span>
+                            <span className="text-xs capitalize">Permission Group</span>
                         </button>
                     </div>
 
                     <div className="overflow-x-auto custom-scrollbar border border-border rounded-xl shadow-inner bg-background/20">
-                        <table className="w-full text-xs text-left border-collapse">
+                        <table className="w-full text-xs text-left border-collapse min-w-[800px]">
                             <thead>
                                 <tr className="bg-card border-b border-border">
                                     <th className="px-8 py-5 text-[9px] text-muted-foreground capitalize">Access Group</th>
@@ -175,23 +175,21 @@ const PermissionGroupsPage = () => {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-5 text-right">
-                                                <div className="relative flex justify-end">
+                                                <div className="flex justify-end gap-2">
                                                     <button
-                                                        onClick={() => setActiveMenu(activeMenu === pg.pg_id ? null : pg.pg_id)}
-                                                        className={`p-2.5 rounded-xl transition-all border ${activeMenu === pg.pg_id ? 'bg-card shadow-md text-foreground border-border' : 'text-slate-300 hover:text-slate-600 border-transparent hover:bg-card hover:shadow-sm hover:border-border'}`}
+                                                        onClick={(e) => openEdit(e, pg, groupHgs)}
+                                                        className="p-2.5 rounded-xl border border-border text-slate-400 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-100 transition-all shadow-sm"
+                                                        title="Edit Permission"
                                                     >
-                                                        <MoreVertical className="w-4.5 h-4.5" />
+                                                        <Edit2 className="w-4 h-4" />
                                                     </button>
-                                                    {activeMenu === pg.pg_id && (
-                                                        <div className="absolute right-0 top-full mt-2 bg-card border border-border rounded-xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15)] py-2 z-[100] w-44 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                                                            <button onClick={(e) => { openEdit(e, pg, groupHgs); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all capitalize text-left">
-                                                                <Edit2 className="w-4 h-4" /> Edit
-                                                            </button>
-                                                            <button onClick={(e) => { deletePg(e, pg.pg_id); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-red-500 hover:bg-red-50 transition-all border-t border-slate-50 capitalize text-left">
-                                                                <Trash2 className="w-4 h-4" /> Delete
-                                                            </button>
-                                                        </div>
-                                                    )}
+                                                    <button
+                                                        onClick={(e) => deletePg(e, pg.pg_id)}
+                                                        className="p-2.5 rounded-xl border border-border text-slate-400 hover:text-red-600 hover:bg-red-50 hover:border-red-100 transition-all shadow-sm"
+                                                        title="Delete Permission"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -230,7 +228,7 @@ const PermissionGroupsPage = () => {
             </div>
 
             {/* Create Modal */}
-            <Modal isOpen={isCreateModalOpen} onClose={() => { setIsCreateModalOpen(false); setCreateError(""); }} title="New Permission Group Enrollment" maxWidth="max-w-md">
+            <Modal isOpen={isCreateModalOpen} onClose={() => { setIsCreateModalOpen(false); setCreateError(""); }} title="Create New Permission Group" maxWidth="max-w-md">
                 <div className="space-y-6 pt-2">
                     <FloatingInput
                         label="Access Designation Name"
@@ -240,7 +238,7 @@ const PermissionGroupsPage = () => {
                     />
                     {createError && <p className="text-xs font-bold text-red-500 pl-1 italic">{createError}</p>}
                     <button onClick={createGroup} className="w-full bg-blue-600 text-white py-4 rounded-xl text-xs capitalize hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
-                        Register Access Group <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                        Create Permission Group <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </button>
                 </div>
             </Modal>

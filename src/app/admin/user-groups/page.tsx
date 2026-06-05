@@ -104,7 +104,7 @@ const ManageUserGroups = () => {
                     </div>
 
                     <div className="overflow-x-auto custom-scrollbar border border-border rounded-xl shadow-inner bg-background/20">
-                        <table className="w-full text-xs text-left border-collapse">
+                        <table className="w-full text-xs text-left border-collapse min-w-[800px]">
                             <thead>
                                 <tr className="bg-card border-b border-border">
                                     <th className="px-8 py-5 text-xs text-muted-foreground capitalize ">Designation</th>
@@ -151,37 +151,34 @@ const ManageUserGroups = () => {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-5 text-right">
-                                                <div className="relative flex justify-end">
+                                                <div className="flex justify-end gap-2">
                                                     {!['admin', 'sysadmin', 'operation'].includes(g.ug_name.toLowerCase()) && (
                                                         <>
                                                             <button
-                                                                onClick={() => setActiveMenu(activeMenu === g.ug_id ? null : g.ug_id)}
-                                                                className={`p-2.5 rounded-xl transition-all border ${activeMenu === g.ug_id ? 'bg-card shadow-md text-foreground border-border' : 'text-slate-300 hover:text-slate-600 border-transparent hover:bg-card hover:shadow-sm hover:border-border'}`}
+                                                                onClick={() => {
+                                                                    setEditingGroup(g);
+                                                                    setEditFields({
+                                                                        ug_name: g.ug_name,
+                                                                        member_ids: groupMembers.map((m: any) => m.user_id),
+                                                                        pg_ids: currentPgs.map((m: any) => m.pg_id)
+                                                                    });
+                                                                    setActiveTab(0);
+                                                                    setExpandedPgs([]);
+                                                                    setIsAddingUser(false);
+                                                                    setIsAddingPg(false);
+                                                                }}
+                                                                className="p-2.5 rounded-xl border border-border text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 hover:border-emerald-100 transition-all shadow-sm"
+                                                                title="Edit Group"
                                                             >
-                                                                <MoreVertical className="w-4.5 h-4.5" />
+                                                                <Edit2 className="w-4 h-4" />
                                                             </button>
-                                                            {activeMenu === g.ug_id && (
-                                                                <div className="absolute right-0 top-full mt-2 bg-card border border-border rounded-xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15)] py-2 z-[100] w-44 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                                                                    <button onClick={() => {
-                                                                        setEditingGroup(g);
-                                                                        setEditFields({
-                                                                            ug_name: g.ug_name,
-                                                                            member_ids: groupMembers.map((m: any) => m.user_id),
-                                                                            pg_ids: currentPgs.map((m: any) => m.pg_id)
-                                                                        });
-                                                                        setActiveTab(0);
-                                                                        setExpandedPgs([]);
-                                                                        setIsAddingUser(false);
-                                                                        setIsAddingPg(false);
-                                                                        setActiveMenu(null);
-                                                                    }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all capitalize  text-left">
-                                                                        <Edit2 className="w-4 h-4" /> Edit
-                                                                    </button>
-                                                                    <button onClick={() => { setDeleteTargetId(g.ug_id); setIsDeleteModalOpen(true); setActiveMenu(null); }} className="flex items-center gap-3 w-full px-5 py-3 text-[11px] text-red-500 hover:bg-red-50 transition-all border-t border-slate-50 capitalize  text-left">
-                                                                        <Trash2 className="w-4 h-4" /> Delete
-                                                                    </button>
-                                                                </div>
-                                                            )}
+                                                            <button
+                                                                onClick={() => { setDeleteTargetId(g.ug_id); setIsDeleteModalOpen(true); }}
+                                                                className="p-2.5 rounded-xl border border-border text-slate-400 hover:text-red-600 hover:bg-red-50 hover:border-red-100 transition-all shadow-sm"
+                                                                title="Delete Group"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </button>
                                                         </>
                                                     )}
                                                 </div>
@@ -385,7 +382,7 @@ const ManageUserGroups = () => {
                 ]}
             />
 
-            <Modal isOpen={isCreateModalOpen} onClose={() => { setIsCreateModalOpen(false); setCreateError(''); }} title="New Group Registration" maxWidth="max-w-md">
+            <Modal isOpen={isCreateModalOpen} onClose={() => { setIsCreateModalOpen(false); setCreateError(''); }} title="Create New User Group" maxWidth="max-w-md">
                 <div className="space-y-6 pt-2">
                     <FloatingInput
                         label="Group Designation Name"
@@ -395,7 +392,7 @@ const ManageUserGroups = () => {
                     />
                     {createError && <p className="text-xs font-bold text-red-500 pl-1 italic">{createError}</p>}
                     <button onClick={createGroup} className="w-full bg-blue-600 text-white py-4 rounded-xl text-xs capitalize  hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 mt-4 flex items-center justify-center group">
-                        Register Group <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                        Create User Group <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </button>
                 </div>
             </Modal>

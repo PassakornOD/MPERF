@@ -18,6 +18,7 @@ export class MetricService {
 
     // Filter by permission chain if not global admin
     if (role !== 'admin') {
+      const isSysAdmin = role === 'sysadmin';
       query += `
         WHERE hg.hostgroup_id IN (
             SELECT pgh.hostgroup_id 
@@ -25,10 +26,11 @@ export class MetricService {
             JOIN permission_groups pg ON pgh.pg_id = pg.pg_id
             LEFT JOIN ug_permission_groups upg ON pg.pg_id = upg.pg_id 
             LEFT JOIN user_to_user_groups uug ON upg.ug_id = uug.ug_id
-            WHERE uug.user_id = ? OR pg.created_by = ?
+            WHERE uug.user_id = ? ${isSysAdmin ? 'OR pg.created_by = ?' : ''}
         )
       `;
-      params.push(userId, userId);
+      params.push(userId);
+      if (isSysAdmin) params.push(userId);
     }
 
     query += ' ORDER BY hg.hostgroup ASC';
@@ -57,14 +59,15 @@ export class MetricService {
       // Only global admin bypassing checks
       if (role === 'admin') return true;
       
+      const isSysAdmin = role === 'sysadmin';
       const [rows]: any = await pool.query(
           `SELECT 1 FROM hostgroup hg
            LEFT JOIN pg_hostgroups pgh ON hg.hostgroup_id = pgh.hostgroup_id
            LEFT JOIN permission_groups pg ON pgh.pg_id = pg.pg_id
            LEFT JOIN ug_permission_groups upg ON pg.pg_id = upg.pg_id 
            LEFT JOIN user_to_user_groups uug ON upg.ug_id = uug.ug_id
-           WHERE hg.hostgroup = ? AND (pg.created_by = ? OR uug.user_id = ?)`,
-          [hostgroup, userId, userId]
+           WHERE hg.hostgroup = ? AND (uug.user_id = ? ${isSysAdmin ? 'OR pg.created_by = ?' : ''})`,
+          isSysAdmin ? [hostgroup, userId, userId] : [hostgroup, userId]
       );
       return rows.length > 0;
   }
