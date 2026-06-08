@@ -13,7 +13,7 @@ const CopyButton = ({ text }: { text: string }) => {
     return (
         <button
             onClick={handleCopy}
-            className="absolute right-3 top-3 p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all border border-slate-600"
+            className="absolute right-3 top-4 p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all border border-slate-600"
             title="Copy to clipboard"
         >
             {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-muted-foreground" />}
@@ -37,13 +37,13 @@ export default function IngestionDBGuidePage() {
                 <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-blue-50 text-blue-600 text-xs capitalize  mb-8 border border-blue-100 shadow-sm shadow-blue-500/5">
                     <Database size={16} /> Technical Architecture
                 </div>
-                <h1 className="text-6xl text-foreground tracking-tight mb-6 capitalize italic">Ingestion Pipeline</h1>
+                <h1 className="text-6xl text-foreground tracking-tight mb-6 capitalize italic">Ingestion Database Guide</h1>
                 <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed font-medium">Deep documentation for the SAR autonomous extraction engine and multi-dimensional database schema.</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 {/* 1. System Overview */}
-                <Section title="Processing sequence" icon={<Database size={18} className="text-blue-600" />}>
+                <Section title="System Overview" icon={<Database size={18} className="text-blue-600" />}>
                     <div className="space-y-6">
                         {[
                             { step: "01", title: "Autonomous Scanning", desc: "Recursive directory detection powered by sector-based hostgroup mapping.", icon: <Search className="w-5 h-5" /> },
@@ -69,7 +69,7 @@ export default function IngestionDBGuidePage() {
                 </Section>
 
                 {/* 2. Operation Modes */}
-                <Section title="Execution Strategies" icon={<Terminal size={18} className="text-blue-600" />}>
+                <Section title="Operation Modes" icon={<Terminal size={18} className="text-blue-600" />}>
                     <div className="space-y-6">
                         {[
                             { title: 'Rolling Yesterday', desc: "Autonomous target resolution for nodes emitted in the previous 24h cycle.", icon: <Clock className="text-orange-500 w-5 h-5" />, color: 'orange' },
@@ -93,7 +93,7 @@ export default function IngestionDBGuidePage() {
             </div>
 
             {/* 3. Usage Interfaces */}
-            <Section title="Interaction Interfaces" icon={<Globe size={18} className="text-blue-600" />}>
+            <Section title="Usage Interfaces" icon={<Globe size={18} className="text-blue-600" />}>
                 <div className="modern-card overflow-hidden p-12 space-y-20">
 
                     {/* Web UI */}
@@ -135,10 +135,10 @@ export default function IngestionDBGuidePage() {
                                             <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
                                             <p className="text-muted-foreground capitalize  text-xs"># {ex.desc}</p>
                                         </div>
-                                        <code className="block bg-slate-950 p-6 rounded-[1.5rem] text-blue-400 text-xs font-mono shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-800 group-hover:border-emerald-500/30 transition-all duration-500">{ex.cmd}</code>
-                                        <div className="absolute right-4 top-[52px]">
+                                        <code className="relative block bg-slate-950 p-6 rounded-[1.5rem] text-blue-400 text-xs font-mono shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-800 group-hover:border-emerald-500/30 transition-all duration-500">
+                                            {ex.cmd}
                                             <CopyButton text={ex.cmd} />
-                                        </div>
+                                        </code>
                                     </div>
                                 ))}
                             </div>
@@ -159,10 +159,10 @@ export default function IngestionDBGuidePage() {
                                             <div className="w-2 h-2 rounded-full bg-sky-500"></div>
                                             <p className="text-muted-foreground capitalize  text-xs"># {ex.desc}</p>
                                         </div>
-                                        <code className="block bg-slate-950 p-6 rounded-[1.5rem] text-sky-400 text-xs font-mono shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-800 group-hover:border-sky-500/30 transition-all duration-500">{ex.payload}</code>
-                                        <div className="absolute right-4 top-[52px]">
+                                        <code className="relative block bg-slate-950 p-6 rounded-[1.5rem] text-sky-400 text-xs font-mono shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border border-slate-800 group-hover:border-sky-500/30 transition-all duration-500">
+                                            {ex.payload}
                                             <CopyButton text={ex.payload} />
-                                        </div>
+                                        </code>
                                     </div>
                                 ))}
                             </div>
@@ -172,7 +172,7 @@ export default function IngestionDBGuidePage() {
             </Section>
 
             {/* 4. Parameter Reference */}
-            <Section title="Schema Reference" icon={<Layers size={18} className="text-blue-600" />}>
+            <Section title="Parameter Reference" icon={<Layers size={18} className="text-blue-600" />}>
                 <div className="modern-card overflow-hidden bg-card">
                     <div className="overflow-x-auto custom-scrollbar">
                         <table className="w-full text-left border-collapse">
