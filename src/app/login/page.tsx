@@ -91,14 +91,6 @@ export default function LoginPage() {
                   className="w-full bg-background border border-border pl-14 pr-14 py-4 rounded-xl text-xs font-bold focus:bg-card focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all shadow-inner"
                   required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  disabled={!password}
-                  className={`absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors ${!password ? 'opacity-30 cursor-not-allowed' : ''}`}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
               </div>
             </div>
 
