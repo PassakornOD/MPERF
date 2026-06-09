@@ -4,7 +4,7 @@ import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/common/Toast';
-import { ChevronRight, Lock, User, Loader2, Eye, EyeOff } from 'lucide-react';
+import { ChevronRight, Lock, User, Loader2, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function LoginPage() {
@@ -12,12 +12,19 @@ export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>, value: string) => {
+    setter(value);
+    if (error) setError(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
     try {
       const result = await signIn('credentials', {
         username,
@@ -26,7 +33,7 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        showToast('Authentication failed: Please verify your credentials.', 'error');
+        setError('Authentication failed: Please verify your credentials.');
       } else {
         router.push('/');
       }
@@ -60,6 +67,16 @@ export default function LoginPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="bg-red-50 text-red-600 px-4 py-3 rounded-xl border border-red-200 flex items-center gap-3 text-xs font-medium"
+              >
+                <AlertTriangle size={16} />
+                {error}
+              </motion.div>
+            )}
             <div className="space-y-1">
               <label className="text-[10px] text-muted-foreground capitalize  ml-4 block mb-1">Username</label>
               <div className="relative group">
@@ -70,7 +87,7 @@ export default function LoginPage() {
                   type="text"
                   placeholder="e.g. sysadmin"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => handleInputChange(setUsername, e.target.value)}
                   className="w-full bg-background border border-border pl-14 pr-6 py-4 rounded-xl text-xs font-bold focus:bg-card focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all shadow-inner"
                   required
                 />
@@ -87,7 +104,7 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••••••"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => handleInputChange(setPassword, e.target.value)}
                   className="w-full bg-background border border-border pl-14 pr-14 py-4 rounded-xl text-xs font-bold focus:bg-card focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 outline-none transition-all shadow-inner"
                   required
                 />
@@ -111,7 +128,7 @@ export default function LoginPage() {
           </form>
 
           {/* Footer */}
-          <div className="mt-16 text-center border-t border-border pt-8">
+          <div className="mt-8 text-center border-t border-border pt-8">
             <p className="text-[9px] text-muted-foreground/60 capitalize  leading-relaxed">
               Metrisar Management Console v2.0.0<br />
               &copy; {new Date().getFullYear()} MFEC Infrastructure Services
