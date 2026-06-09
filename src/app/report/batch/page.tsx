@@ -300,7 +300,7 @@ const BatchReportPage = () => {
             <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 bg-card p-8 rounded-[2rem] border border-border shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700"><FileText size={120} /></div>
                 <div className="relative z-10 space-y-2">
-                    <h2 className="text-2xl  text-foreground capitalize italic tracking-tight leading-none">Batch Processing</h2>
+                    <h2 className="text-2xl  text-foreground capitalize tracking-tight leading-none">Batch Processing</h2>
                     <p className="text-sm font-medium text-muted-foreground tracking-tight">Deploy pre-configured reporting cycles for global infrastructure visibility</p>
                 </div>
                 <button onClick={() => { setEditingTemplateId(null); setTemplateName(''); setReportTitle(''); setSelectedHostnames([]); setStep(1); setIsModalOpen(true); }} className="relative z-10 flex items-center justify-center gap-3 bg-blue-600 text-white px-8 py-3 rounded-xl  text-xs capitalize  transition-all hover:bg-blue-700 shadow-xl shadow-blue-500/20 active:scale-95 group">

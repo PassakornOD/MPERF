@@ -77,7 +77,7 @@ const UtilizationStats = ({ type }: { type: 'CPU' | 'Mem' }) => {
         </button>
       </div>
 
-      <div id="container" className="bg-card rounded-[2rem] border border-border shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden animate-ease-in relative">
+      <div id="container" className="bg-card rounded-xl border border-border shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] overflow-hidden animate-ease-in relative">
         <ProgressBar isVisible={isFetching} />
         <div className="overflow-x-auto custom-scrollbar">
           {isFetching ? (

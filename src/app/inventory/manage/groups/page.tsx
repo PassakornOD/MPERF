@@ -211,7 +211,7 @@ const ManageAssetsPage = () => {
                             <Settings2 className="w-5 h-5" />
                         </button>
                         {showColumnSelector && (
-                            <div className="absolute right-0 mt-4 w-56 bg-card border border-border rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] z-50 p-6 animate-in fade-in zoom-in duration-300">
+                            <div className="absolute right-0 mt-4 w-56 bg-card border border-border rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] z-50 p-6 animate-in fade-in zoom-in duration-300">
                                 <p className="text-[9px] capitalize  text-muted-foreground mb-4 px-2">Columns</p>
                                 <div className="space-y-1 max-h-72 overflow-y-auto pr-2 custom-scrollbar">
                                     {allColumns.map(col => (
@@ -248,7 +248,7 @@ const ManageAssetsPage = () => {
                     const isExpanded = expandedGroups.includes(hg.hostgroup_id) || searchTerm !== '';
 
                     return (
-                        <div key={hg.hostgroup_id} className={`bg-card rounded-[2rem] border transition-all duration-500 group overflow-hidden ${isExpanded ? 'border-blue-100 shadow-xl shadow-blue-500/5' : 'border-border shadow-sm hover:shadow-lg hover:shadow-slate-200/50 hover:border-border'}`}>
+                        <div key={hg.hostgroup_id} className={`bg-card rounded-xl border transition-all duration-500 group overflow-hidden ${isExpanded ? 'border-blue-100 shadow-xl shadow-blue-500/5' : 'border-border shadow-sm hover:shadow-lg hover:shadow-slate-200/50 hover:border-border'}`}>
                             <div
                                 className={`p-6 cursor-pointer flex items-center justify-between gap-6 transition-colors duration-300 ${isExpanded ? 'bg-background/30 border-b border-slate-50' : 'bg-card'}`}
                                 onClick={() => toggleGroup(hg.hostgroup_id)}

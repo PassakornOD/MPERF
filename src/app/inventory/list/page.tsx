@@ -74,7 +74,7 @@ const InventoryList = () => {
               <Settings2 className="w-5 h-5" />
             </button>
             {isColumnDropdownOpen && (
-              <div className="absolute right-0 mt-4 bg-card border border-border rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] p-8 w-72 z-50 animate-in fade-in zoom-in duration-300">
+              <div className="absolute right-0 mt-4 bg-card border border-border rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] p-8 w-72 z-50 animate-in fade-in zoom-in duration-300">
                 <p className="text-[10px] text-muted-foreground capitalize  mb-6 px-2">Visibility Engine</p>
                 <div className="max-h-72 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
                   {allColumns.map(col => (
@@ -98,7 +98,7 @@ const InventoryList = () => {
       </div>
 
       {isFetching ? (
-        <div className="text-center py-40 bg-card rounded-[2rem] border border-border shadow-sm">
+        <div className="text-center py-40 bg-card rounded-xl border border-border shadow-sm">
           <Loader2 className="w-16 h-16 animate-spin mx-auto text-blue-600 opacity-20" />
           <p className="mt-8 text-xs text-slate-300 capitalize ">Synching with Infrastructure...</p>
         </div>
@@ -107,7 +107,7 @@ const InventoryList = () => {
           {filteredHostgroups?.map((hg: any) => {
             const isExpanded = expandedGroupIds.includes(hg.hostgroup_id);
             return (
-              <div key={hg.hostgroup_id} className={`bg-card rounded-[2rem] border transition-all duration-500 group overflow-hidden ${isExpanded ? 'border-blue-100 shadow-xl shadow-blue-500/5' : 'border-border shadow-sm hover:shadow-lg hover:shadow-slate-200/50 hover:border-border'}`}>
+              <div key={hg.hostgroup_id} className={`bg-card rounded-xl border transition-all duration-500 group overflow-hidden ${isExpanded ? 'border-blue-100 shadow-xl shadow-blue-500/5' : 'border-border shadow-sm hover:shadow-lg hover:shadow-slate-200/50 hover:border-border'}`}>
                 <div
                   className={`p-6 cursor-pointer flex items-center justify-between gap-6 transition-colors duration-300 ${isExpanded ? 'bg-background/30 border-b border-slate-50' : 'bg-card'}`}
                   onClick={() => toggleGroup(hg.hostgroup_id)}
@@ -138,7 +138,7 @@ const InventoryList = () => {
 
                 {isExpanded && (
                   <div className="p-8 bg-card border-t border-slate-50 animate-in fade-in slide-in-from-top-4 duration-500">
-                    <div className="overflow-x-auto custom-scrollbar border border-border rounded-[2rem] shadow-inner bg-background/20">
+                    <div className="overflow-x-auto custom-scrollbar border border-border rounded-xl shadow-inner bg-background/20">
                       {hg.hostnames?.length > 0 ? (
                         <table className="w-full text-xs text-left border-collapse">
                           <thead>
@@ -177,7 +177,7 @@ const InventoryList = () => {
             );
           })}
           {filteredHostgroups?.length === 0 && (
-            <div className="py-40 text-center bg-card rounded-[2rem] border border-border shadow-sm">
+            <div className="py-40 text-center bg-card rounded-xl border border-border shadow-sm">
               <Search className="w-16 h-16 text-slate-100 mx-auto mb-6" />
               <p className="text-sm text-slate-300 capitalize ">No match found for query: "{searchTerm}"</p>
             </div>

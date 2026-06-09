@@ -96,7 +96,7 @@ export default function LoginPage() {
             <div className="pt-4">
               <button
                 disabled={isLoading}
-                className="w-full bg-foreground text-background py-5 rounded-xl text-xl capitalize  hover:opacity-90 transition-all shadow-2xl shadow-foreground/10 active:scale-[0.98] group flex items-center justify-center gap-3 disabled:opacity-50"
+                className="w-full bg-foreground text-background py-5 rounded-xl text-lg capitalize  hover:opacity-90 transition-all shadow-2xl shadow-foreground/10 active:scale-[0.98] group flex items-center justify-center gap-3 disabled:opacity-50"
               >
                 {isLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -112,7 +112,7 @@ export default function LoginPage() {
           {/* Footer */}
           <div className="mt-16 text-center border-t border-border pt-8">
             <p className="text-[9px] text-muted-foreground/60 capitalize  leading-relaxed">
-              Metrisar Management Console v2.7.0-CLEO<br />
+              Metrisar Management Console v2.0.0<br />
               &copy; {new Date().getFullYear()} MFEC Infrastructure Services
             </p>
           </div>

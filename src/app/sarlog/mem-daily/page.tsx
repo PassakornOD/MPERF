@@ -261,7 +261,7 @@ const MemDailyPage = () => {
         )}
       </div>
 
-      <div id="container" className="min-h-[500px] bg-card rounded-[2rem] border border-border shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-10 animate-ease-in relative overflow-hidden">
+      <div id="container" className="min-h-[500px] bg-card rounded-xl border border-border shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-10 animate-ease-in relative overflow-hidden">
         <ProgressBar isVisible={isFetching} />
         {isFetching ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-card/60 backdrop-blur-sm z-10">
