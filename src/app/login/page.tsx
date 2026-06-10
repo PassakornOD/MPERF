@@ -61,7 +61,7 @@ export default function LoginPage() {
             <div className="w-20 h-20 rounded-[2rem] bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-600/30 mb-6 rotate-3 hover:rotate-0 transition-transform duration-500 cursor-default">
               <span className="text-white text-4xl italic">M</span>
             </div>
-            <h1 className="text-3xl tracking-tight text-foreground capitalize italic leading-none">Metrisar</h1>
+            <h1 className="text-3xl tracking-tight text-foreground capitalize italic leading-none">Mperf</h1>
             <p className="text-[10px] text-muted-foreground capitalize  mt-3">Infrastructure Analytics Platform</p>
           </div>
 
@@ -130,7 +130,7 @@ export default function LoginPage() {
           {/* Footer */}
           <div className="mt-8 text-center border-t border-border pt-8">
             <p className="text-[9px] text-muted-foreground/60 capitalize  leading-relaxed">
-              Metrisar Management Console v2.0.0<br />
+              Mperf Management Console v2.0.0<br />
               &copy; {new Date().getFullYear()} MFEC Infrastructure Services
             </p>
           </div>

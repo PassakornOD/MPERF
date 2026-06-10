@@ -20,7 +20,7 @@ export default function DockerGuidePage() {
           <ShieldCheck size={16} /> Deployment Architecture
         </div>
         <h1 className="text-6xl text-foreground tracking-tight mb-6 capitalize italic">Docker Runtime Guide</h1>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed font-medium">Standardized instructions for containerizing and deploying the Metrisar infrastructure analytics environment.</p>
+        <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed font-medium">Standardized instructions for containerizing and deploying the Mperf infrastructure analytics environment.</p>
       </header>
 
       {/* 1. Prerequisites */}

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -214,14 +215,7 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
     >
       <div className="h-[70px] flex items-center px-6 border-b border-border">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shrink-0">
-            <span className="text-white  text-lg italic">M</span>
-          </div>
-          {!isCollapsed && (
-            <div className="flex flex-col leading-tight">
-              <h1 className="text-sm font-bold tracking-tight text-foreground capitalize">Metrisar</h1>
-            </div>
-          )}
+          <Image src="/logo/mperf2.png" alt="Mperf Logo" width={48} height={48} className="object-contain" />
         </div>
       </div>
 

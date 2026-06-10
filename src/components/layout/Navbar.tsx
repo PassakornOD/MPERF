@@ -57,7 +57,7 @@ const Navbar = () => {
               <span className="text-white  text-xl italic">M</span>
             </div>
             <div className="flex flex-col leading-tight">
-              <h1 className="text-lg  tracking-tight text-foreground capitalize italic">Metrisar</h1>
+              <h1 className="text-lg  tracking-tight text-foreground capitalize italic">Mperf</h1>
               <span className="text-xs  text-muted capitalize ">Infrastructure</span>
             </div>
           </div>

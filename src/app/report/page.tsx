@@ -557,11 +557,12 @@ const ReportExportPage = () => {
                 </div>
             </Modal>
 
-            <Modal isOpen={!!pdfUrl} onClose={() => setPdfUrl(null)} title="Document Preview" maxWidth="max-w-6xl" onDownload={() => {
-                const link = document.createElement('a'); link.href = pdfUrl!; link.download = `Metrisar_Analytics_${Date.now()}.pdf`; link.click();
+            <Modal isOpen={!!pdfUrl} onClose={() => setPdfUrl(null)} title="REPORT PREVIEW" maxWidth="max-w-6xl" onDownload={() => {
+                const link = document.createElement('a'); link.href = pdfUrl!; link.download = `Mperf_Analytics_${Date.now()}.pdf`; link.click();
             }}>
                 {pdfUrl && <iframe src={pdfUrl} className="w-full h-[85vh] rounded-none border border-border shadow-inner bg-slate-900/5" title="Analytics Viewer" />}
             </Modal>
+
 
             <Modal isOpen={isLimitModalOpen} onClose={() => setIsLimitModalOpen(false)} title="System Payload Limit">
                 <div className="p-12 text-center">

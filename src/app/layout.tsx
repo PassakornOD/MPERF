@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Metrisar - Admin Dashboard",
+  title: "Mperf - Admin Dashboard",
   description: "Modernized Sar Stat Dashboard",
 };
 
