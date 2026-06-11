@@ -235,17 +235,19 @@ const BatchReportPage = () => {
 
     const toggleHostname = (h: any) => {
         let groupName = h.group;
+        const hostId = String(h.id || h.hostname_id);
+        
         if (!groupName && hostGroupsRaw) {
-            const foundGroup = hostGroupsRaw.find((g: any) => g.hostnames.some((hn: any) => String(hn.hostname_id) === String(h.hostname_id)));
+            const foundGroup = hostGroupsRaw.find((g: any) => g.hostnames.some((hn: any) => String(hn.hostname_id) === hostId));
             if (foundGroup) groupName = foundGroup.hostgroup;
         }
 
         setSelectedHostnames(prev => {
-            const exists = prev.find(p => p.id === String(h.hostname_id));
+            const exists = prev.find(p => p.id === hostId);
             if (exists) {
-                return prev.filter(p => p.id !== String(h.hostname_id));
+                return prev.filter(p => p.id !== hostId);
             } else {
-                return [...prev, { id: String(h.hostname_id), name: h.hostname, group: groupName, mem: h.mem }];
+                return [...prev, { id: hostId, name: h.name || h.hostname, group: groupName, mem: h.mem }];
             }
         });
     };

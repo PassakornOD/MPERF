@@ -240,10 +240,8 @@ const SarManagementPage = () => {
                             </div>
                             <div className="flex flex-wrap gap-2.5 p-6 bg-background/30 rounded-xl border border-border shadow-inner">
                                 {records.map((s: any) => {
-                                    const dateObj = new Date(s.date);
-                                    const d = String(dateObj.getDate()).padStart(2, '0');
-                                    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-                                    const y = dateObj.getFullYear();
+                                    const dateStr = typeof s.date === 'string' ? s.date.split('T')[0] : new Date(s.date).toISOString().split('T')[0];
+                                    const [y, m, d] = dateStr.split('-');
                                     return (
                                         <div key={s.date} className="px-4 py-2.5 bg-card text-slate-600 rounded-xl text-xs border border-border shadow-sm hover:border-blue-300 hover:text-blue-600 transition-all cursor-default">
                                             {d}-{m}-{y} &bull; <span className="text-blue-600">{s.count}</span> <span className="text-[8px] opacity-60 capitalize">Entries</span>
@@ -272,7 +270,7 @@ const SarManagementPage = () => {
                   <tr key={idx} className="hover:bg-blue-50/30 transition-all duration-200 group">
                     {Object.entries(row).map(([key, val]: [string, any], i) => (
                       <td key={i} className="px-10 py-5 font-bold text-slate-600 whitespace-nowrap group-hover:text-blue-700">
-                        {key === 'time' ? new Date(val).toISOString().replace('T', ' ').substring(0, 19) : val}
+                        {key === 'time' && val ? (typeof val === 'string' ? val.replace('T', ' ').substring(0, 19) : new Date(val).toLocaleString()) : val}
                       </td>
                     ))}
                   </tr>

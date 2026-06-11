@@ -101,7 +101,9 @@ const LogsPage = () => {
               <tbody className="divide-y divide-slate-100/50 bg-card">
                 {logs.map((log: any, idx: number) => (
                   <tr key={idx} className="hover:bg-blue-50/30 transition-all duration-200 group">
-                    <td className="px-8 py-4 text-muted-foreground font-medium tabular-nums">{new Date(new Date(log.timestamp).getTime() + 7 * 60 * 60 * 1000).toISOString().replace('T', ' ').substring(0, 19)}</td>
+                    <td className="px-8 py-4 text-muted-foreground font-medium tabular-nums">
+                      {log.timestamp ? (typeof log.timestamp === 'string' ? log.timestamp.replace('T', ' ').substring(0, 19) : new Date(log.timestamp).toLocaleString()) : ''}
+                    </td>
                     <td className="px-8 py-4 text-slate-700 capitalize tracking-tight">{log.user}</td>
                     <td className="px-8 py-4 font-bold text-blue-600"><code className="bg-blue-50/50 px-2 py-0.5 rounded text-xs">{log.table_name}</code></td>
                     <td className="px-8 py-4">

@@ -215,7 +215,7 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
     >
       <div className="h-[70px] flex items-center px-6 border-b border-border">
         <div className="flex items-center gap-3 overflow-hidden">
-          <Image src="/logo/mperf2.png" alt="Mperf Logo" width={48} height={48} className="object-contain" />
+          <Image src="/logo/mperf1.png" alt="Mperf Logo" width={125} height={68} className="object-contain" />
         </div>
       </div>
 

@@ -3,6 +3,7 @@
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useToast } from '@/components/common/Toast';
 import { ChevronRight, Lock, User, Loader2, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -57,12 +58,18 @@ export default function LoginPage() {
       >
         <div className="bg-card p-10 sm:p-12 rounded-[2rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] flex flex-col border border-border">
           {/* Header */}
-          <div className="mb-12 flex flex-col items-center text-center">
-            <div className="w-20 h-20 rounded-[2rem] bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-600/30 mb-6 rotate-3 hover:rotate-0 transition-transform duration-500 cursor-default">
-              <span className="text-white text-4xl italic">M</span>
+          <div className="mb-6 flex flex-col items-center text-center">
+            <div className="relative">
+              <Image
+                src="/logo/mperf1.png"
+                alt="Mperf Logo"
+                width={294}
+                height={160}
+                className="object-contain"
+                priority
+              />
             </div>
-            <h1 className="text-3xl tracking-tight text-foreground capitalize italic leading-none">Mperf</h1>
-            <p className="text-[10px] text-muted-foreground capitalize  mt-3">Infrastructure Analytics Platform</p>
+            {/* <p className="text-[10px] text-muted-foreground capitalize mt-2">Infrastructure Analytics Platform</p> */}
           </div>
 
           {/* Form */}
