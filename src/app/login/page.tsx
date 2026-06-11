@@ -137,7 +137,7 @@ export default function LoginPage() {
           {/* Footer */}
           <div className="mt-8 text-center border-t border-border pt-8">
             <p className="text-[9px] text-muted-foreground/60 capitalize  leading-relaxed">
-              Mperf Management Console v2.0.0<br />
+              Mperf Management Console v2.1.0<br />
               &copy; {new Date().getFullYear()} MFEC Infrastructure Services
             </p>
           </div>

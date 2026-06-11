@@ -8,7 +8,7 @@ const Footer = () => {
           &copy; {new Date().getFullYear()} &nbsp; Mperf Analytics &bull; Professional Infrastructure Intelligence
         </p>
         <div className="flex items-center gap-6">
-          <span className="text-[9px]  text-muted-foreground/60 uppercase ">v2.0.0 Production</span>
+          <span className="text-[9px]  text-muted-foreground/60 uppercase ">v2.1.0 Production</span>
           <div className="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
           <span className="text-[9px]  text-emerald-600 uppercase ">Systems Online</span>
         </div>
