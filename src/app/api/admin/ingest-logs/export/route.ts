@@ -32,9 +32,15 @@ export async function GET(req: Request) {
 
     // Convert to CSV
     const header = 'Timestamp,User,Table,Status,Records,Message\n';
-    const csv = rows.map((row: any) => 
-        `"${row.timestamp}","${row.user}","${row.table_name}","${row.status}",${row.records_processed},"${row.message.replace(/"/g, '""')}"`
-    ).join('\n');
+    const csv = rows.map((row: any) => {
+        const date = row.timestamp ? 
+          (typeof row.timestamp === 'string' ? 
+            new Date(row.timestamp.includes('T') ? row.timestamp : row.timestamp.replace(' ', 'T') + 'Z') : 
+            new Date(row.timestamp)) : 
+          null;
+        const formattedDate = date ? date.toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false }).replace(',', '') : '';
+        return `"${formattedDate}","${row.user}","${row.table_name}","${row.status}",${row.records_processed},"${row.message.replace(/"/g, '""')}"`;
+    }).join('\n');
 
     return new NextResponse(header + csv, {
       headers: {

@@ -56,7 +56,7 @@ const ReportExportPage = () => {
     const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean, templateId: number | null }>({ isOpen: false, templateId: null });
 
     const getPrevMonthDates = () => {
-        const now = new Date();
+        const now = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Bangkok"}));
         const firstDay = new Date(now.getFullYear(), now.getMonth() - 1, 1);
         const lastDay = new Date(now.getFullYear(), now.getMonth(), 0);
         const format = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -77,13 +77,19 @@ const ReportExportPage = () => {
             return res.data.map((t: any) => {
                 try {
                     const config = typeof t.config === 'string' ? JSON.parse(t.config) : t.config;
+                    const dateStr = t.updated_at || t.created_at;
+                    // Ensure the date string is treated as UTC if it doesn't have timezone info
+                    const lastUpdatedDate = dateStr ? 
+                        (dateStr.includes('Z') || dateStr.includes('+') ? new Date(dateStr) : new Date(dateStr.replace(' ', 'T') + 'Z')) : 
+                        new Date();
+                        
                     return {
                         id: t.id,
                         name: t.name,
                         reportTitle: config.reportTitle || '',
                         hosts: config.hosts || config.selectedHostnames || [],
                         charts: config.charts || config.activeReports || [],
-                        lastUpdated: new Date(t.updated_at || t.created_at).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false })
+                        lastUpdated: lastUpdatedDate.toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false })
                     };
                 } catch (e) { return null; }
             }).filter((t: any) => t !== null);
@@ -234,7 +240,7 @@ const ReportExportPage = () => {
                 reportTitle: reportTitle,
                 targetMonth: parseInt(month),
                 targetYear: parseInt(year),
-                generatedDate: new Date().toLocaleDateString(),
+                generatedDate: new Date().toLocaleDateString('en-GB', { timeZone: 'Asia/Bangkok' }),
                 hostgroups: hostgroupsWithData as any
             };
 

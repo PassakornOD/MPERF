@@ -58,13 +58,13 @@ export default function LoginPage() {
       >
         <div className="bg-card p-10 sm:p-12 rounded-[2rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] flex flex-col border border-border">
           {/* Header */}
-          <div className="mb-6 flex flex-col items-center text-center">
+          <div className="mb-10 flex flex-col items-center text-center">
             <div className="relative">
               <Image
                 src="/logo/mperf1.png"
                 alt="Mperf Logo"
-                width={294}
-                height={160}
+                width={245}
+                height={89}
                 className="object-contain"
                 priority
               />

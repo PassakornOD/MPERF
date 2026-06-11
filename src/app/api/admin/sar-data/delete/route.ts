@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   try {
     const { hostgroup, type, date, month, year, hostname_id, level } = await req.json();
 
-    if (!hostgroup || !type || !hostname_id || !level) {
+    if (!hostgroup || !type || !level) {
       return NextResponse.json({ error: 'All required fields are missing' }, { status: 400 });
     }
 
@@ -23,24 +23,35 @@ export async function POST(req: Request) {
     let params: any[] = [];
 
     if (level === 'year') {
-        if (!year || !hostname_id) return NextResponse.json({ error: 'Year and hostname_id are required' }, { status: 400 });
-        query = `DELETE FROM \`${tableName}\` WHERE YEAR(time) = ? AND hostname_id = ?`;
-        params = [year, hostname_id];
+        if (!year) return NextResponse.json({ error: 'Year is required' }, { status: 400 });
+        query = `DELETE FROM \`${tableName}\` WHERE YEAR(time) = ?`;
+        params = [year];
+        if (hostname_id) {
+            query += ' AND hostname_id = ?';
+            params.push(hostname_id);
+        }
     } else if (level === 'month') {
-        if (!month || !year || !hostname_id) return NextResponse.json({ error: 'Year, Month, and hostname_id are required' }, { status: 400 });
-        query = `DELETE FROM \`${tableName}\` WHERE YEAR(time) = ? AND MONTH(time) = ? AND hostname_id = ?`;
-        params = [year, month, hostname_id];
+        if (!month || !year) return NextResponse.json({ error: 'Year and Month are required' }, { status: 400 });
+        query = `DELETE FROM \`${tableName}\` WHERE YEAR(time) = ? AND MONTH(time) = ?`;
+        params = [year, month];
+        if (hostname_id) {
+            query += ' AND hostname_id = ?';
+            params.push(hostname_id);
+        }
     } else if (level === 'all') {
-        if (hostname_id && hostname_id.trim() !== '') {
-            query = `DELETE FROM \`${tableName}\` WHERE hostname_id = ?`;
+        query = `DELETE FROM \`${tableName}\``;
+        if (hostname_id && hostname_id.toString().trim() !== '') {
+            query += ' WHERE hostname_id = ?';
             params = [hostname_id];
-        } else {
-            query = `DELETE FROM \`${tableName}\``;
         }
     } else {
-        if (!date || !hostname_id) return NextResponse.json({ error: 'Date and hostname_id are required' }, { status: 400 });
-        query = `DELETE FROM \`${tableName}\` WHERE DATE(time) = ? AND hostname_id = ?`;
-        params = [date, hostname_id];
+        if (!date) return NextResponse.json({ error: 'Date is required' }, { status: 400 });
+        query = `DELETE FROM \`${tableName}\` WHERE DATE(time) = ?`;
+        params = [date];
+        if (hostname_id) {
+            query += ' AND hostname_id = ?';
+            params.push(hostname_id);
+        }
     }
 
     await pool.query(query, params);

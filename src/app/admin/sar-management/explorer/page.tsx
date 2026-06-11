@@ -86,7 +86,7 @@ const SarManagementPage = () => {
   };
 
   const handleDelete = async () => {
-      if (!selectedGroup || !selectedHostnameId) return showToast('Hostgroup and Hostname required', 'error');
+      if (!selectedGroup) return showToast('Hostgroup required', 'error');
       
       try {
           await axios.post('/api/admin/sar-data/delete', {
@@ -207,7 +207,7 @@ const SarManagementPage = () => {
           onClose={() => setIsConfirmOpen(false)} 
           onConfirm={handleDelete}
           title="Security Override Required"
-          message={`Permanent deletion of SAR ${type.toUpperCase()} records for ${selectedGroup}${selectedHostnameId ? ` / ${selectedHostnameId}` : ''} at ${filterLevel} resolution. This action cannot be reversed.`}
+          message={`Permanent deletion of SAR ${type.toUpperCase()} records for ${selectedGroup}${selectedHostnameId ? ` / ${selectedHostnameId}` : ' / All Hostnames'} at ${filterLevel} resolution. This action cannot be reversed.`}
       />
 
       {filterLevel === 'month' && summaryData.length > 0 && (
@@ -270,7 +270,11 @@ const SarManagementPage = () => {
                   <tr key={idx} className="hover:bg-blue-50/30 transition-all duration-200 group">
                     {Object.entries(row).map(([key, val]: [string, any], i) => (
                       <td key={i} className="px-10 py-5 font-bold text-slate-600 whitespace-nowrap group-hover:text-blue-700">
-                        {key === 'time' && val ? (typeof val === 'string' ? val.replace('T', ' ').substring(0, 19) : new Date(val).toLocaleString()) : val}
+                        {key === 'time' && val ? 
+                          (typeof val === 'string' ? 
+                            new Date(val.includes('T') ? val : val.replace(' ', 'T')).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false }) : 
+                            new Date(val).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false })
+                          ) : val}
                       </td>
                     ))}
                   </tr>

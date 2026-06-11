@@ -102,7 +102,11 @@ const LogsPage = () => {
                 {logs.map((log: any, idx: number) => (
                   <tr key={idx} className="hover:bg-blue-50/30 transition-all duration-200 group">
                     <td className="px-8 py-4 text-muted-foreground font-medium tabular-nums">
-                      {log.timestamp ? (typeof log.timestamp === 'string' ? log.timestamp.replace('T', ' ').substring(0, 19) : new Date(log.timestamp).toLocaleString()) : ''}
+                      {log.timestamp ? 
+                        (typeof log.timestamp === 'string' ? 
+                          new Date(log.timestamp.includes('T') ? log.timestamp : log.timestamp.replace(' ', 'T') + 'Z').toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false }) : 
+                          new Date(log.timestamp).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false })
+                        ) : ''}
                     </td>
                     <td className="px-8 py-4 text-slate-700 capitalize tracking-tight">{log.user}</td>
                     <td className="px-8 py-4 font-bold text-blue-600"><code className="bg-blue-50/50 px-2 py-0.5 rounded text-xs">{log.table_name}</code></td>
